@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-base.dfir-iris",
+	"nodeVersion": "2.0.2",
+	"codexVersion": "1.0",
+	"categories": ["Communication"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://docs.dfir-iris.org/latest/_static/iris_api_reference_v2.0.4.html"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://docs.dfir-iris.org/"
+			}
+		]
+	}
+}

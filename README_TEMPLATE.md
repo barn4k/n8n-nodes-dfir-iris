@@ -1,8 +1,8 @@
 # n8n-nodes-_node-name_
 
-This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
+This is an n8n community node. It lets you use DFIR IRIS in your n8n workflows.
 
-_App/service name_ is _one or two sentences describing the service this node integrates with_.
+DFIR IRIS is an open-source IRP platform.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
@@ -10,7 +10,6 @@ _App/service name_ is _one or two sentences describing the service this node int
 [Operations](#operations)  
 [Credentials](#credentials)  <!-- delete if no auth needed -->  
 [Compatibility](#compatibility)  
-[Usage](#usage)  <!-- delete if not using this section -->  
 [Resources](#resources)  
 [Version history](#version-history)  <!-- delete if not using this section -->  
 
@@ -20,29 +19,23 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-_List the operations supported by your node._
+alert
 
 ## Credentials
 
-_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
+Obtain the API token from the Dfir Iris platform. See the [guide](https://docs.dfir-iris.org/latest/_static/iris_api_reference_v2.0.2.html#section/IRIS-API)
 
 ## Compatibility
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
-
-## Usage
-
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
-
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+Tested with n8n v.1.36.1. Should works with later version also.
 
 ## Resources
 
 * [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-* _Link to app/service documentation._
+* [dfir iris api v2.0.2 reference](https://docs.dfir-iris.org/latest/_static/iris_api_reference_v2.0.2.html)
 
 ## Version history
 
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
+- v2.0.2 - main version, mapped to the api v2.0.2
 
 
