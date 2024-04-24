@@ -9,6 +9,12 @@ import type {
 } from 'n8n-workflow';
 
 const apiName = "dfirIrisApi"
+function compareVersions(a: string, b: string){
+	//  1 - a > b
+	//  0 - a = b
+	// -1 - a < b
+	return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+}
 /**
  * Make an API request to IRIS
  */
@@ -19,8 +25,31 @@ export async function apiRequest(
 	body: IDataObject | GenericValue | GenericValue[] = {},
 	query: IDataObject = {},
 ) {
+	console.log('iris > transport > apiRequest')
 	const credentials = await this.getCredentials(apiName);
+	// console.log('cred', credentials)
 	const baseUrl = (credentials?.isHttp ? "http://" : "https://") + credentials?.host;
+
+	const apiVer = credentials?.apiVersion as string
+	const apiVerOptions: IHttpRequestOptions = {
+		method: 'GET',
+		body: {},
+		qs: {},
+		url: `${baseUrl}/api/versions`,
+		headers: {
+			'content-type': 'application/json; charset=utf-8',
+		},
+		skipSslCertificateValidation: credentials.allowUnauthorizedCerts as boolean,
+	};
+	const apiVerResponse = await this.helpers.httpRequestWithAuthentication.call(this, apiName, apiVerOptions);
+
+	const apiMin = apiVerResponse?.data?.api_min
+	const apiMax = apiVerResponse?.data?.api_current
+	const srvVer = apiVerResponse?.data?.iris_current
+
+	if (compareVersions(apiVer, apiMin) < 0 || compareVersions(apiVer, apiMax) > 0 ) {
+		throw new Error(`API version is not supported. Used: v${apiVer}, supported: v${apiMin}-${apiMax}. Server version: ${srvVer}`)
+	}
 
 	const options: IHttpRequestOptions = {
 		method,
@@ -29,7 +58,6 @@ export async function apiRequest(
 		url: `${baseUrl}/${endpoint}`,
 		headers: {
 			'content-type': 'application/json; charset=utf-8',
-
 		},
 		skipSslCertificateValidation: credentials.allowUnauthorizedCerts as boolean,
 	};

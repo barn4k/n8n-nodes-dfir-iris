@@ -10,13 +10,13 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 	const items = this.getInputData();
 	const operationResult: INodeExecutionData[] = [];
 	let responseData: IDataObject | IDataObject[] = [];
-
+	console.log('iris > router')
 	for (let i = 0; i < items.length; i++) {
 		const resource = this.getNodeParameter<DfirIris>('resource', i);
 		let operation = this.getNodeParameter('operation', i);
-		if (operation === 'del') {
-			operation = 'delete';
-		}
+		// if (operation === 'del') {
+		// 	operation = 'delete';
+		// }
 
 		const iris = {
 			resource,
@@ -26,11 +26,11 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 		try {
 			if (iris.resource === 'alert') {
 				responseData = await alert[iris.operation].execute.call(this, i);
-			// } else if (mattermost.resource === 'message') {
+			// } else if (iris.resource === 'message') {
 			// 	responseData = await message[mattermost.operation].execute.call(this, i);
-			// } else if (mattermost.resource === 'reaction') {
+			// } else if (iris.resource === 'reaction') {
 			// 	responseData = await reaction[mattermost.operation].execute.call(this, i);
-			// } else if (mattermost.resource === 'user') {
+			// } else if (iris.resource === 'user') {
 			// 	responseData = await user[mattermost.operation].execute.call(this, i);
 			}
 

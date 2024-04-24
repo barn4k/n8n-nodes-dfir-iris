@@ -1,22 +1,18 @@
 import type { AlertProperties } from '../../Interfaces';
 
-const _operation = 'add'
-const _resource = 'alert'
-
 export const alertAddDescription: AlertProperties = [
 	{
 		displayName: 'Alert Title',
 		name: 'alertTitle',
 		type: 'string',
 		default: '',
-		// required: true,
+		required: true,
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
-		// description: 'Alert Title',
 	},
 	{
 		displayName: 'Alert Description',
@@ -28,11 +24,10 @@ export const alertAddDescription: AlertProperties = [
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
-		// required: true,
 	},
 	{
 		displayName: 'Alert Source',
@@ -41,11 +36,10 @@ export const alertAddDescription: AlertProperties = [
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
-		// required: true,
 		description: 'Source of the alert (where it comes from)',
 	},
 	{
@@ -54,13 +48,12 @@ export const alertAddDescription: AlertProperties = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
 		description: 'Reference to the source. Usually it is a unique ID.',
-		// required: true,
 	},
 	{
 		displayName: 'Alert Source Link',
@@ -68,8 +61,8 @@ export const alertAddDescription: AlertProperties = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
@@ -79,14 +72,15 @@ export const alertAddDescription: AlertProperties = [
 		displayName: 'Alert Severity Name or ID',
 		name: 'alertSeverity',
 		type: 'options',
+		required: true,
 		typeOptions: {
 			loadOptionsMethod: 'getAlertSeverity',
 		},
 		options: [],
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
@@ -95,6 +89,7 @@ export const alertAddDescription: AlertProperties = [
 	{
 		displayName: 'Alert Status Name or ID',
 		name: 'alertStatus',
+		required: true,
 		type: 'options',
 		typeOptions: {
 			loadOptionsMethod: 'getAlertStatus',
@@ -102,8 +97,8 @@ export const alertAddDescription: AlertProperties = [
 		options: [],
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
@@ -111,12 +106,12 @@ export const alertAddDescription: AlertProperties = [
 	},
 	{
 		displayName: 'Alert Context',
-		name: 'alertContext',
+		name: 'alertContextType',
 		type: 'options',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		options: [
@@ -137,9 +132,9 @@ export const alertAddDescription: AlertProperties = [
 		type: 'fixedCollection',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
-				alertContext: ['keypair'],
+				operation: ['add'],
+				resource: ['alert'],
+				alertContextType: ['keypair'],
 			},
 		},
 		typeOptions: {
@@ -147,12 +142,7 @@ export const alertAddDescription: AlertProperties = [
 		},
 		placeholder: 'Add context field',
 		default: {
-			parameters: [
-				{
-					name: '',
-					value: '',
-				},
-			],
+			parameters: [],
 		},
 		options: [
 			{
@@ -181,9 +171,9 @@ export const alertAddDescription: AlertProperties = [
 		type: 'json',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
-				alertContext: ['json'],
+				operation: ['add'],
+				resource: ['alert'],
+				alertContextType: ['json'],
 			},
 		},
 		default: '{}',
@@ -194,11 +184,11 @@ export const alertAddDescription: AlertProperties = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
-		default: '',
+		default: `${(new Date).toISOString().split(".")[0]}`,
 		description: 'Time of the Event in UTC according to RFC',
 		hint: "e.g. 2023-03-26T03:00:30"
 	},
@@ -208,8 +198,8 @@ export const alertAddDescription: AlertProperties = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
@@ -221,8 +211,8 @@ export const alertAddDescription: AlertProperties = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
@@ -232,11 +222,10 @@ export const alertAddDescription: AlertProperties = [
 		displayName: 'Add IOCs',
 		name: 'useIOCs',
 		type: 'boolean',
-		placeholder: 'Add IOC',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: false,
@@ -253,8 +242,8 @@ export const alertAddDescription: AlertProperties = [
 		},
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 				useIOCs: [true]
 			},
 		},
@@ -266,6 +255,7 @@ export const alertAddDescription: AlertProperties = [
 					{
 						displayName: "Value",
 						name: "ioc_value",
+						required: true,
 						type: "string",
 						default: ""
 					},
@@ -279,6 +269,7 @@ export const alertAddDescription: AlertProperties = [
 					{
 						displayName: "TLP Name or ID",
 						name: "ioc_tlp_id",
+						required: true,
 						type: "options",
 						description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
 						typeOptions: {
@@ -289,6 +280,7 @@ export const alertAddDescription: AlertProperties = [
 					{
 						displayName: "Type Name or ID",
 						name: "ioc_type_id",
+						required: true,
 						type: "options",
 						description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
 						typeOptions: {
@@ -320,11 +312,10 @@ export const alertAddDescription: AlertProperties = [
 		displayName: 'Assets',
 		name: 'useAssets',
 		type: 'boolean',
-		placeholder: 'Add Assets',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: false,
@@ -341,8 +332,8 @@ export const alertAddDescription: AlertProperties = [
 		},
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 				useAssets: [true]
 			},
 		},
@@ -355,6 +346,7 @@ export const alertAddDescription: AlertProperties = [
 						displayName: "Name",
 						name: "asset_name",
 						type: "string",
+						required: true,
 						default: ""
 					},
 					{
@@ -367,6 +359,7 @@ export const alertAddDescription: AlertProperties = [
 					{
 						displayName: "Type Name or ID",
 						name: "asset_type_id",
+						required: true,
 						type: "options",
 						description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code-examples/expressions/">expression</a>',
 						typeOptions: {
@@ -405,7 +398,6 @@ export const alertAddDescription: AlertProperties = [
 			}
 		],
 	},
-
 	{
 		displayName: 'Alert Customer Name or ID',
 		name: 'alertCustomer',
@@ -417,8 +409,8 @@ export const alertAddDescription: AlertProperties = [
 		required: true,
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: '',
@@ -429,11 +421,33 @@ export const alertAddDescription: AlertProperties = [
 		type: 'json',
 		displayOptions: {
 			show: {
-				operation: [_operation],
-				resource: [_resource],
+				operation: ['add'],
+				resource: ['alert'],
 			},
 		},
 		default: "{}",
 		description: 'JSON of the source content (raw event)',
+	},
+	{
+		displayName: 'Options',
+		name: 'options',
+		placeholder: 'Add Option',
+		type: 'collection',
+		default: {},
+		displayOptions: {
+			show: {
+				operation: ['add'],
+				resource: ['alert'],
+			},
+		},
+		options: [
+			{
+				displayName: 'Return Fields',
+				name: 'fields',
+				type: 'string',
+				description: 'List of comma-separated fields. add (!) in the beginning to exclude fields (e.g. !alert_id,alert_status). Wilcards (*) supported',
+				default: '',
+			}
+		]
 	},
 ];

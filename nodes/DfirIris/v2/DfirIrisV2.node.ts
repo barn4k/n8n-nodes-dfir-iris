@@ -9,7 +9,7 @@ import { versionDescription } from './actions/versionDescription';
 import { loadOptions } from './methods';
 import { router } from './actions/router';
 
-export class DfirIrisV202 implements INodeType {
+export class DfirIrisV2 implements INodeType {
 	description: INodeTypeDescription;
 
 	constructor(baseDescription: INodeTypeBaseDescription) {
@@ -20,8 +20,9 @@ export class DfirIrisV202 implements INodeType {
 	}
 
 	methods = { loadOptions };
-
+	
 	async execute(this: IExecuteFunctions) {
+		console.log('node > router')
 		return await router.call(this);
 	}
 }

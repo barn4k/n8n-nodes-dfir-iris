@@ -34,19 +34,19 @@ export class DfirIrisApi implements ICredentialType {
 		{
 			displayName: 'API Version',
 			name: 'apiVersion',
-			default: 'v2.0.2',
+			default: '2.0.2',
 			type: 'options',
-			description: 'The version of api to be used',
+			description: 'The API version to use',
 			options: [
 				{
 					name: 'v2.0.2',
-					value: 'v2.0.2',
+					value: '2.0.2',
 					description:
 						'API for DFIR IRIS v2.3.x',
 				},
 				{
 					name: 'v2.0.4',
-					value: 'v2.0.4',
+					value: '2.0.4',
 					description:
 						'API for DFIR IRIS v2.4.x',
 				},

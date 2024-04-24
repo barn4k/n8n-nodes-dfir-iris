@@ -1,9 +1,9 @@
 import type { INodeProperties } from 'n8n-workflow';
 import * as add from './add';
-// import * as del from './del';
+import * as fetch from './fetch';
+import * as update from './update';
 
-// export { create, del as delete };
-export { add };
+export { add, fetch, update };
 
 export const descriptions: INodeProperties[] = [
 	{
@@ -23,22 +23,24 @@ export const descriptions: INodeProperties[] = [
 				description: 'Add a new Alert',
 				action: 'Add a new alert',
 			},
-			// {
-			// 	name: 'Create',
-			// 	value: 'create',
-			// 	description: 'Create a new channel',
-			// 	action: 'Create a channel',
-			// },
-			// {
-			// 	name: 'Delete',
-			// 	value: 'delete',
-			// 	description: 'Soft delete a channel',
-			// 	action: 'Delete a channel',
-			// }
+			{
+				name: 'Fetch Alert',
+				value: 'fetch',
+				description: 'Fetch an Alert',
+				action: 'Fetch an alert',
+			},
+			{
+				name: 'Update Alert',
+				value: 'update',
+				description: 'Update an Alert',
+				action: 'Update an alert',
+			},
+
 		],
-		default: 'add',
+		default: 'fetch',
 	},
 	...add.description,
-	// ...del.description,
-	// ...members.description,
+	...fetch.description,
+	...update.description,
+
 ];

@@ -1,7 +1,7 @@
 import type { INodeTypeBaseDescription, IVersionedNodeType } from 'n8n-workflow';
 import { VersionedNodeType } from 'n8n-workflow';
 
-import { DfirIrisV202 } from './v202/DfirIrisV202.node';
+import { DfirIrisV2 } from './v2/DfirIrisV2.node';
 
 export class DfirIris extends VersionedNodeType {
 	constructor() {
@@ -16,7 +16,8 @@ export class DfirIris extends VersionedNodeType {
 		};
 
 		const nodeVersions: IVersionedNodeType['nodeVersions'] = {
-			202: new DfirIrisV202(baseDescription),
+			202: new DfirIrisV2(baseDescription),
+			204: new DfirIrisV2(baseDescription),
 		};
 
 		super(nodeVersions, baseDescription);

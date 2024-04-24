@@ -2,7 +2,7 @@ import type { AllEntities, Entity, PropertiesOf } from 'n8n-workflow';
 
 type DfirIrisMap = {
 	// alert: 'fetch' | 'filter' | 'add' | 'update' | 'delete' | 'escalate' | 'merge' | 'unmerge';
-	alert: 'add';
+	alert: 'add' | 'fetch' | 'update';
 };
 
 export type DfirIris = AllEntities<DfirIrisMap>;
@@ -24,11 +24,26 @@ export interface IAttachment {
 	};
 }
 
-export interface alertIOC {
+export interface IKeypair {
+	name: string
+	value: string
+}
+
+export interface IIOC {
 	ioc_value: string,
+	ioc_tlp_id: number,
+	ioc_type_id: number,
 	ioc_description?: string,
-	ioc_tlp: number,
-	ioc_type: number,
-	ioc_tags: string,
-	ioc_enrichment: object
+	ioc_tags?: string,
+	ioc_enrichment?: object
+}
+
+export interface IAsset {
+	asset_name: string,
+	asset_type_id: number,
+	asset_description?: string,
+	asset_ip?: string,
+	asset_domain?: string,
+	asset_tags?: string,
+	asset_enrichment?: object
 }

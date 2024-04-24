@@ -10,11 +10,11 @@ export const versionDescription: INodeTypeDescription = {
 	name: 'dfirIris',
 	icon: 'file:iris.svg',
 	group: ['output'],
-	version: 202,
+	version: [202, 204],
 	subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 	description: 'works with DFIR IRIS IRP',
 	defaults: {
-		name: 'dfirIris',
+		name: 'Dfir Iris',
 	},
 	inputs: ['main'],
 	outputs: ['main'],
