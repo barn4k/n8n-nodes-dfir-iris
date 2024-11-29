@@ -14,17 +14,21 @@ import {
 	// BINARY_ENCODING
 } from 'n8n-workflow';
 
-// import { returnAllOrLimit } from '../../utils/descriptions';
-
 import {
 	addAdditionalFields,
 	apiRequest,
 	fieldsRemover,
-	// returnAllOrLimit,
-	returnRaw,
-	filterFields,
+	// returnRaw,
+	fieldProperties,
 	// getPropertyName
 } from './GenericFunctions';
+
+import {
+	returnRaw,
+	noteFields,
+	noteFieldsShort,
+	// returnAllOrLimit,
+} from './types';
 
 // import { DfirIrisV2 } from './v2/DfirIrisV2.node';
 
@@ -76,10 +80,10 @@ export class DfirIris implements INodeType {
 						name: 'Note',
 						value: 'note',
 					},
-					// {
-					// 	name: 'Note Group',
-					// 	value: 'noteGroup',
-					// },
+					{
+						name: 'Note Group',
+						value: 'noteGroup',
+					},
 					// {
 					// 	name: 'Task',
 					// 	value: 'task',
@@ -89,7 +93,7 @@ export class DfirIris implements INodeType {
 			},
 
 			// ----------------------------------
-			//         operation
+			//         note
 			// ----------------------------------
 
 			{
@@ -208,7 +212,7 @@ export class DfirIris implements INodeType {
 				default: {},
 				options: [
 					...returnRaw,
-					...filterFields,
+					...fieldProperties(noteFields),
 				],
 			},
 
@@ -288,7 +292,7 @@ export class DfirIris implements INodeType {
 				default: {},
 				options: [
 					...returnRaw,
-					...filterFields,
+					...fieldProperties(noteFieldsShort),
 				],
 			},
 
@@ -330,7 +334,7 @@ export class DfirIris implements INodeType {
 						description: 'Add custom attributes',
 					},
 					...returnRaw,
-					...filterFields,
+					...fieldProperties(noteFieldsShort),
 				],
 			},
 
@@ -351,7 +355,6 @@ export class DfirIris implements INodeType {
 				},
 				default: "",
 			},
-			// ...returnAllOrLimit,
 			{
 				displayName: 'Additional Fields',
 				name: 'additionalFields',
@@ -365,7 +368,8 @@ export class DfirIris implements INodeType {
 				},
 				default: {},
 				options: [
-					...filterFields,
+					...returnRaw,
+					...fieldProperties(noteFields),
 				],
 			},
 		]
@@ -704,7 +708,7 @@ export class DfirIris implements INodeType {
 				// }
 
 				let responseData;
-				let filterString: string
+				// let filterString: string
 
 				if (binaryData) {
 					// const binaryPropertyName = this.getNodeParameter('binaryPropertyName', 0);
@@ -752,25 +756,14 @@ export class DfirIris implements INodeType {
 					// const limit = this.getNodeParameter('limit', i, 100);
 					let isRaw = false
 
-					// if method with paging
-					// if (paging){
-					// 	if (!returnAll){
-					// 		if(limit > 0){
-					// 			responseData.data = responseData.data.splice()
-					// 		}
-					// 	}
-					// }
-
 					if (additionalFields.hasOwnProperty('isRaw'))
 						isRaw = additionalFields.isRaw as boolean
 
 					// field remover
 					if (additionalFields.hasOwnProperty('fields')){
-						filterString = additionalFields.fields as string
-						console.log('filterString', filterString)
-						console.log('responseData[1]', responseData)
-						responseData = fieldsRemover(responseData, filterString)
-						console.log('responseData[2]', responseData)
+						// console.log('responseData[1]', responseData)
+						responseData = fieldsRemover(responseData, additionalFields)
+						// console.log('responseData[2]', responseData)
 					}
 					if (!isRaw)
 						responseData = responseData.data

@@ -7,14 +7,20 @@ import type {
 	IHttpRequestOptions,
 	IWebhookFunctions,
 	JsonObject,
+	INodeProperties,
 } from 'n8n-workflow';
 import {
 	NodeApiError,
 	NodeOperationError,
-	INodeProperties,
+	// INodeProperties,
 	jsonParse
 } from 'n8n-workflow';
 
+
+// export interface IFieldProperty {
+// 	name: string,
+// 	value: string
+// }
 
 // Interface in n8n
 // export interface IMarkupKeyboard {
@@ -64,81 +70,55 @@ import {
 // 	selective?: boolean;
 // }
 
-export const returnAllOrLimit: INodeProperties[] = [
-	{
-		displayName: 'Return All',
-		name: 'returnAll',
-		type: 'boolean',
-		default: false,
-		description: 'Whether to return all results or only up to a given limit',
-	},
-	{
-		displayName: 'Limit',
-		name: 'limit',
-		type: 'number',
-		displayOptions: {
-			show: {
-				returnAll: [false],
-			},
+export function fieldProperties(fields: string[]){
+	return [
+		{
+			displayName: 'Return Fields',
+			name: 'fields',
+			type: 'multiOptions',
+			options: fields.map( (f) => { return {name: f, value: f} } ),
+			default: [],
+			description: 'Fields to be included',
 		},
-		typeOptions: {
-			minValue: 1,
+		{
+			displayName: 'Exclude',
+			name: 'inverseFields',
+			type: 'boolean',
+			options: fields.map( (f) => { return {name: f, value: f} } ),
+			default: false,
+			description: 'if the selected fields should be excluded instead',
 		},
-		default: 100,
-		description: 'Max number of results to return',
-	},
-];
+	] as INodeProperties[]
+}
 
-export const returnRaw: INodeProperties[] = [
-	{
-		displayName: 'Return Raw',
-		name: 'isRaw',
-		type: 'boolean',
-		default: false,
-		description: 'return the raw response',
-	},
-];
+export function fieldsRemover(responseData: any, additionalFields: IDataObject){
+	const fields = additionalFields.fields as string[] || []
+	const inverseFields = additionalFields.inverseFields as boolean || false
 
-export const filterFields: INodeProperties[] = [
-	{
-		displayName: 'Return Fields',
-		name: 'fields',
-		type: 'string',
-		description: 'List of comma-separated fields. add (!) in the beginning to exclude fields (e.g. !alert_id,alert_status). Wilcards also (*) supported',
-		default: '',
-	}
-];
-
-export function fieldsRemover(responseData: any, filterString: string){
-	const inverseFilter = filterString.indexOf("!") === 0 ? true : false
-	if (inverseFilter)
-		filterString = filterString.replace("!", "")
-
-	let fields = filterString ? filterString.split(",") : []
- 	let fieldsToRemove: string[]
+	// console.log('fields', fields)
+	// console.log('inverseFields', inverseFields)
 
 	if (fields && 'data' in responseData){
-		const dataFields = Object.keys(responseData.data)
+		if(fields.includes('*'))
+			return responseData
 
-		// if wildcarded
-		fields.filter(f => f.indexOf("*") !== -1).forEach(f => {
-			const wFields = dataFields.filter(k => k.match(f.split("*").join(".*")))
-			fields.push(...wFields)
-		})
-
-		fieldsToRemove = inverseFilter ? dataFields.filter(df => fields.includes(df)) : dataFields.filter(df => !fields.includes(df))
-
-		if (fieldsToRemove.length === dataFields.length) throw new Error('Filter Removed all fields')
-
-		fieldsToRemove.forEach(f => {
-			if(f in responseData.data)
-				delete responseData.data[f]
-		})
-		return responseData
-
-	} else {
-		return responseData
+		if (Array.isArray(responseData.data)){
+			responseData.data.forEach( (row: {[index: string]:any}) => {
+				if (inverseFields){
+					Object.keys(row).filter(k => fields.includes(k)).forEach( (x: string) => { delete row[x] })
+				} else {
+					Object.keys(row).filter(k => !fields.includes(k)).forEach( (x: string) => { delete row[x] })
+				}
+			})
+		} else {
+			if (inverseFields){
+				Object.keys(responseData.data).filter(k => fields.includes(k)).forEach( (x: string) => { delete responseData.data[x] })
+			} else {
+				Object.keys(responseData.data).filter(k => !fields.includes(k)).forEach( (x: string) => { delete responseData.data[x] })
+			}
+		}
 	}
+	return responseData
 }
 
 /**
@@ -154,16 +134,13 @@ export function addAdditionalFields(
 	nodeVersion?: number,
 	instanceId?: string,
 ) {
-	// const operation = this.getNodeParameter('operation', index);
-
 	// Add the additional fields
 	const additionalFields = this.getNodeParameter('additionalFields', index);
 
 	if (additionalFields.hasOwnProperty('custom_attributes')){
 		if(typeof additionalFields.custom_attributes !== 'object'){
 			try{
-				// @ts-ignore
-				JSON.parse(additionalFields.custom_attributes)
+				JSON.parse(additionalFields.custom_attributes as string)
 			} catch {
 				throw new NodeOperationError(
 					this.getNode(),
@@ -173,8 +150,7 @@ export function addAdditionalFields(
 					},
 				);
 			}
-			// @ts-ignore
-			additionalFields.custom_attributes = jsonParse(additionalFields.custom_attributes)
+			additionalFields.custom_attributes = jsonParse(additionalFields.custom_attributes as string)
 		}
 	}
 
