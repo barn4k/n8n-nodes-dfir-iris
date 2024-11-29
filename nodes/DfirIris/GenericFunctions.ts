@@ -11,7 +11,9 @@ import type {
 import {
 	NodeApiError,
 	NodeOperationError,
-	jsonParse } from 'n8n-workflow';
+	INodeProperties,
+	jsonParse
+} from 'n8n-workflow';
 
 
 // Interface in n8n
@@ -61,6 +63,83 @@ import {
 // 	force_reply?: boolean;
 // 	selective?: boolean;
 // }
+
+export const returnAllOrLimit: INodeProperties[] = [
+	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to return all results or only up to a given limit',
+	},
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		displayOptions: {
+			show: {
+				returnAll: [false],
+			},
+		},
+		typeOptions: {
+			minValue: 1,
+		},
+		default: 100,
+		description: 'Max number of results to return',
+	},
+];
+
+export const returnRaw: INodeProperties[] = [
+	{
+		displayName: 'Return Raw',
+		name: 'isRaw',
+		type: 'boolean',
+		default: false,
+		description: 'return the raw response',
+	},
+];
+
+export const filterFields: INodeProperties[] = [
+	{
+		displayName: 'Return Fields',
+		name: 'fields',
+		type: 'string',
+		description: 'List of comma-separated fields. add (!) in the beginning to exclude fields (e.g. !alert_id,alert_status). Wilcards also (*) supported',
+		default: '',
+	}
+];
+
+export function fieldsRemover(responseData: any, filterString: string){
+	const inverseFilter = filterString.indexOf("!") === 0 ? true : false
+	if (inverseFilter)
+		filterString = filterString.replace("!", "")
+
+	let fields = filterString ? filterString.split(",") : []
+ 	let fieldsToRemove: string[]
+
+	if (fields && 'data' in responseData){
+		const dataFields = Object.keys(responseData.data)
+
+		// if wildcarded
+		fields.filter(f => f.indexOf("*") !== -1).forEach(f => {
+			const wFields = dataFields.filter(k => k.match(f.split("*").join(".*")))
+			fields.push(...wFields)
+		})
+
+		fieldsToRemove = inverseFilter ? dataFields.filter(df => fields.includes(df)) : dataFields.filter(df => !fields.includes(df))
+
+		if (fieldsToRemove.length === dataFields.length) throw new Error('Filter Removed all fields')
+
+		fieldsToRemove.forEach(f => {
+			if(f in responseData.data)
+				delete responseData.data[f]
+		})
+		return responseData
+
+	} else {
+		return responseData
+	}
+}
 
 /**
  * Add the additional fields to the body

@@ -14,11 +14,15 @@ import {
 	// BINARY_ENCODING
 } from 'n8n-workflow';
 
-// import { appendAttributionOption } from '../../utils/descriptions';
+// import { returnAllOrLimit } from '../../utils/descriptions';
 
 import {
 	addAdditionalFields,
 	apiRequest,
+	fieldsRemover,
+	// returnAllOrLimit,
+	returnRaw,
+	filterFields,
 	// getPropertyName
 } from './GenericFunctions';
 
@@ -156,7 +160,7 @@ export class DfirIris implements INodeType {
 							'create',
 							'update',
 							'delete',
-							'searchInNotes',
+							'search',
 						],
 						resource: ['note'],
 					},
@@ -203,13 +207,8 @@ export class DfirIris implements INodeType {
 				},
 				default: {},
 				options: [
-					{
-						displayName: 'Return Raw',
-						name: 'isRaw',
-						type: 'boolean',
-						default: false,
-						description: 'return the raw response',
-					},
+					...returnRaw,
+					...filterFields,
 				],
 			},
 
@@ -275,6 +274,23 @@ export class DfirIris implements INodeType {
 				description:
 					'Note Group Id',
 			},
+			{
+				displayName: 'Additional Fields',
+				name: 'additionalFields',
+				type: 'collection',
+				placeholder: 'Add Field',
+				displayOptions: {
+					show: {
+						operation: ['create'],
+						resource: ['note'],
+					},
+				},
+				default: {},
+				options: [
+					...returnRaw,
+					...filterFields,
+				],
+			},
 
 			// ----------------------------------
 			//         note:update
@@ -313,29 +329,8 @@ export class DfirIris implements INodeType {
 						default: 0,
 						description: 'Add custom attributes',
 					},
-					// {
-					// 	displayName: 'Show Alert',
-					// 	name: 'show_alert',
-					// 	type: 'boolean',
-					// 	default: false,
-					// 	description:
-					// 		'Whether an alert will be shown by the client instead of a notification at the top of the chat screen',
-					// },
-					// {
-					// 	displayName: 'Text',
-					// 	name: 'text',
-					// 	type: 'string',
-					// 	default: '',
-					// 	description:
-					// 		'Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters.',
-					// },
-					// {
-					// 	displayName: 'URL',
-					// 	name: 'url',
-					// 	type: 'string',
-					// 	default: '',
-					// 	description: "URL that will be opened by the user's client",
-					// },
+					...returnRaw,
+					...filterFields,
 				],
 			},
 
@@ -354,7 +349,24 @@ export class DfirIris implements INodeType {
 						resource: ['note'],
 					},
 				},
+				default: "",
+			},
+			// ...returnAllOrLimit,
+			{
+				displayName: 'Additional Fields',
+				name: 'additionalFields',
+				type: 'collection',
+				placeholder: 'Add Field',
+				displayOptions: {
+					show: {
+						operation: ['search'],
+						resource: ['note'],
+					},
+				},
 				default: {},
+				options: [
+					...filterFields,
+				],
 			},
 		]
 	}
@@ -387,6 +399,8 @@ export class DfirIris implements INodeType {
 				qs = {
 					cid: this.getNodeParameter('cid', i) as number
 				};
+
+				// let paging = false
 
 				if (resource === 'note') {
 					if (operation === 'get') {
@@ -690,6 +704,7 @@ export class DfirIris implements INodeType {
 				// }
 
 				let responseData;
+				let filterString: string
 
 				if (binaryData) {
 					// const binaryPropertyName = this.getNodeParameter('binaryPropertyName', 0);
@@ -732,11 +747,31 @@ export class DfirIris implements INodeType {
 				} else {
 					responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs);
 
-					const additionalFields = this.getNodeParameter('additionalFields', i, undefined);
+					const additionalFields = this.getNodeParameter('additionalFields', i, {});
+					// const returnAll = this.getNodeParameter('returnAll', i, false);
+					// const limit = this.getNodeParameter('limit', i, 100);
 					let isRaw = false
+
+					// if method with paging
+					// if (paging){
+					// 	if (!returnAll){
+					// 		if(limit > 0){
+					// 			responseData.data = responseData.data.splice()
+					// 		}
+					// 	}
+					// }
+
 					if (additionalFields.hasOwnProperty('isRaw'))
 						isRaw = additionalFields.isRaw as boolean
 
+					// field remover
+					if (additionalFields.hasOwnProperty('fields')){
+						filterString = additionalFields.fields as string
+						console.log('filterString', filterString)
+						console.log('responseData[1]', responseData)
+						responseData = fieldsRemover(responseData, filterString)
+						console.log('responseData[2]', responseData)
+					}
 					if (!isRaw)
 						responseData = responseData.data
 				}
