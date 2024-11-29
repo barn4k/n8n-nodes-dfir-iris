@@ -12,10 +12,11 @@ export class DfirIrisApi implements ICredentialType {
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Token',
-			name: 'token',
+			name: 'accessToken',
 			type: 'string',
 			typeOptions: { password: true },
 			default: '',
+			description: 'get it from the Web console',
 		},
 		{
 			displayName: 'Use HTTP',
@@ -34,7 +35,7 @@ export class DfirIrisApi implements ICredentialType {
 		{
 			displayName: 'API Version',
 			name: 'apiVersion',
-			default: '2.0.2',
+			default: '2.0.4',
 			type: 'options',
 			description: 'The API version to use',
 			options: [
@@ -74,7 +75,7 @@ export class DfirIrisApi implements ICredentialType {
 		type: 'generic',
 		properties: {
 			headers: {
-				Authorization: '={{"Bearer " + $credentials.token}}',
+				Authorization: '={{"Bearer " + $credentials.accessToken}}',
 			},
 		},
 	};
@@ -84,7 +85,7 @@ export class DfirIrisApi implements ICredentialType {
 		request: {
 			baseURL: '={{$credentials?.isHttp ? "http://" : "https://" }}{{$credentials?.host}}',
 			url: '/api/ping',
-			skipSslCertificateValidation: '={{$credentials?.isHttp ? true : $credentials?.allowUnauthorizedCerts'
+			skipSslCertificateValidation: '={{$credentials?.isHttp ? true : $credentials?.allowUnauthorizedCerts}}'
 		},
 
 	};

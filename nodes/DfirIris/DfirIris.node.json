@@ -1,6 +1,6 @@
 {
-	"node": "n8n-nodes-base.dfir-iris",
-	"nodeVersion": "2.0.2",
+	"node": "n8n-nodes-dfir-iris",
+	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Communication"],
 	"resources": {

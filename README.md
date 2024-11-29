@@ -45,3 +45,35 @@ Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/
 ## License
 
 [MIT](https://github.com/n8n-io/n8n-nodes-starter/blob/master/LICENSE.md)
+
+
+## use on windows
+
+```shell
+# get list of npm version
+nvm list available
+
+nvm install <versionName>
+
+# get list of installed versions
+nvm ls
+nvm use <versionName>
+
+# check if npm is good
+npm doctor
+
+# update n8n
+npm update -g n8n
+
+
+
+# update node
+npm run build
+npm run dev
+npm link # use once
+
+# set ENVs before use n8n is PS
+$env:N8N_DEV_RELOAD="true"
+$env:N8N_LOG_LEVEL="debug"
+n8n start
+```
