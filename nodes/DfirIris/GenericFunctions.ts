@@ -8,12 +8,13 @@ import type {
 	IWebhookFunctions,
 	JsonObject,
 	INodeProperties,
+	INodePropertyOptions,
 } from 'n8n-workflow';
 import {
 	NodeApiError,
 	NodeOperationError,
 	// INodeProperties,
-	jsonParse
+	// jsonParse
 } from 'n8n-workflow';
 
 
@@ -70,6 +71,23 @@ import {
 // 	selective?: boolean;
 // }
 
+export const addCaseId: INodeProperties[] = [{
+		displayName: 'Case Id',
+		name: 'cid',
+		type: 'number',
+		default: 1,
+		displayOptions: {
+			show: {
+				// operation: [
+				// 	'get',
+				// ],
+				resource: ['note', 'task'],
+			},
+		},
+		required: true,
+		description: 'Case Id',
+}]
+
 export function fieldProperties(fields: string[]){
 	return [
 		{
@@ -99,9 +117,6 @@ export function fieldsRemover(responseData: any, additionalFields: IDataObject){
 	// console.log('inverseFields', inverseFields)
 
 	if (fields && 'data' in responseData){
-		if(fields.includes('*'))
-			return responseData
-
 		if (Array.isArray(responseData.data)){
 			responseData.data.forEach( (row: {[index: string]:any}) => {
 				if (inverseFields){
@@ -136,6 +151,14 @@ export function addAdditionalFields(
 ) {
 	// Add the additional fields
 	const additionalFields = this.getNodeParameter('additionalFields', index);
+	this.logger.debug('additionalFields',additionalFields)
+	// remove custom params
+	delete additionalFields.isRaw
+	delete additionalFields.fields
+	delete additionalFields.inverseFields
+	delete additionalFields.returnAll
+	delete additionalFields.limit
+
 
 	if (additionalFields.hasOwnProperty('custom_attributes')){
 		if(typeof additionalFields.custom_attributes !== 'object'){
@@ -150,7 +173,7 @@ export function addAdditionalFields(
 					},
 				);
 			}
-			additionalFields.custom_attributes = jsonParse(additionalFields.custom_attributes as string)
+			additionalFields.custom_attributes = JSON.parse(additionalFields.custom_attributes as string)
 		}
 	}
 
@@ -307,11 +330,78 @@ export async function apiRequest(
 	}
 
 	try {
-		console.log('options', options)
+		this.logger.debug('options', options)
 		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
+}
+
+
+// custom load options
+export async function getUsers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = 'case/users/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	responseData.data.filter( (x: any) => x.user_active).forEach( (row: any) => {
+		returnData.push({
+			name: `${row.user_name} ( ${row.user_email} )`,
+			value: row.user_id,
+		});
+	})
+	// for (const data of responseData.data) {
+	// 	returnData.push({
+	// 		name: `${data.user_name} ( ${data.user_email} )`,
+	// 		value: data.user_id,
+	// 	});
+	// }
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+export async function getIOCTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = 'manage/ioc-types/list';
+	this.logger.verbose("iris > loadOptions > getIOCTypes called")
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	for (const data of responseData.data) {
+		returnData.push({
+			name: `${data.type_description} ( ${data.type_name} )`,
+			value: data.type_id,
+		});
+	}
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
 }
 
 // export function getImageBySize(photos: IDataObject[], size: string): IDataObject | undefined {

@@ -73,6 +73,7 @@ npm run dev
 npm link # use once
 
 # set ENVs before use n8n is PS
+$env:NODE_TLS_REJECT_UNAUTHORIZED='0'
 $env:N8N_DEV_RELOAD="true"
 $env:N8N_LOG_LEVEL="debug"
 n8n start

@@ -10,27 +10,30 @@ import type {
 
 import {
 	NodeConnectionType,
-	// NodeOperationError,
+	NodeOperationError,
 	// BINARY_ENCODING
 } from 'n8n-workflow';
 
 import {
 	addAdditionalFields,
 	apiRequest,
+	getUsers,
 	fieldsRemover,
 	// returnRaw,
-	fieldProperties,
+	// fieldProperties,
 	// getPropertyName
 } from './GenericFunctions';
 
-import {
-	returnRaw,
-	noteFields,
-	noteFieldsShort,
-	// returnAllOrLimit,
-} from './types';
 
-// import { DfirIrisV2 } from './v2/DfirIrisV2.node';
+// import {
+// 	returnRaw,
+// 	// noteFields,
+// 	// noteFieldsShort,
+// 	// returnAllOrLimit,
+// } from './types';
+
+import { noteFields, noteTypeFields, } from './NoteResource'
+import { taskFields, taskTypeFields, } from './TaskResource'
 
 export class DfirIris implements INodeType {
 	description: INodeTypeDescription = {
@@ -39,7 +42,7 @@ export class DfirIris implements INodeType {
 		icon: 'file:iris.svg',
 		group: ['output'],
 		version: [1, 1.1],
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',
 		description: 'works with DFIR IRIS IRP',
 		defaults: {
 			name: 'DFIR IRIS',
@@ -81,75 +84,22 @@ export class DfirIris implements INodeType {
 						value: 'note',
 					},
 					{
-						name: 'Note Group',
-						value: 'noteGroup',
+						name: 'Task',
+						value: 'task',
 					},
 					// {
-					// 	name: 'Task',
-					// 	value: 'task',
+					// 	name: 'Comment',
+					// 	value: 'comment',
 					// },
 				],
 				default: 'note',
 			},
+			// ----------------------------------
+			//         global params
+			// ----------------------------------
 
-			// ----------------------------------
-			//         note
-			// ----------------------------------
-
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				displayOptions: {
-					show: {
-						resource: ['note'],
-					},
-				},
-				options: [
-					{
-						name: 'Get',
-						value: 'get',
-						description: 'get a note',
-						action: 'Get a note',
-					},
-					{
-						name: 'Get Many',
-						value: 'getMany',
-						description: 'Get multiple notes',
-						action: 'Get multiple notes',
-					},
-					{
-						name: 'Create',
-						value: 'create',
-						description: 'Create new note',
-						action: 'Create new note',
-					},
-					{
-						name: 'Search in Notes',
-						value: 'search',
-						description: 'Search across notes',
-						action: 'Search across notes',
-					},
-					{
-						name: 'Update',
-						value: 'update',
-						description: 'Update a note',
-						action: 'Update a note',
-					},
-					{
-						name: 'Delete',
-						value: 'delete',
-						description: 'Delete a note',
-						action: 'Delete a note',
-					},
-				],
-				default: 'getMany',
-			},
-
-			// ----------------------------------
-			//         case / Id
-			// ----------------------------------
+			...noteFields,
+			...taskFields,
 
 			{
 				displayName: 'Case Id',
@@ -158,15 +108,10 @@ export class DfirIris implements INodeType {
 				default: 1,
 				displayOptions: {
 					show: {
-						operation: [
-							'get',
-							'getMany',
-							'create',
-							'update',
-							'delete',
-							'search',
-						],
-						resource: ['note'],
+						// operation: [
+						// 	'get',
+						// ],
+						resource: ['note', 'task'],
 					},
 				},
 				required: true,
@@ -174,205 +119,15 @@ export class DfirIris implements INodeType {
 					'Case Id',
 			},
 
-			// ----------------------------------
-			//         note:get
-			// ----------------------------------
-
-			{
-				displayName: 'Note Id',
-				name: 'noteId',
-				type: 'number',
-				default: '',
-				displayOptions: {
-					show: {
-						operation: [
-							'get',
-							'update',
-							'delete'
-						],
-						resource: ['note'],
-					},
-				},
-				required: true,
-				description:
-					'Note Id',
-			},
-
-			{
-				displayName: 'Additional Fields',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Add Field',
-				displayOptions: {
-					show: {
-						operation: ['get'],
-						resource: ['note'],
-					},
-				},
-				default: {},
-				options: [
-					...returnRaw,
-					...fieldProperties(noteFields),
-				],
-			},
-
-			// ----------------------------------
-			//         note:create/update
-			// ----------------------------------
-
-			{
-				displayName: 'Note Title',
-				name: 'title',
-				type: 'string',
-				default: 'Unnamed',
-				displayOptions: {
-					show: {
-						operation: [
-							'create',
-							'update',
-						],
-						resource: ['note'],
-					},
-				},
-				required: true,
-				description:
-					'Note Title',
-			},
-			{
-				displayName: 'Note Content',
-				name: 'content',
-				type: 'string',
-				default: 'No Content',
-				displayOptions: {
-					show: {
-						operation: [
-							'create',
-							'update',
-						],
-						resource: ['note'],
-					},
-				},
-				required: true,
-				description:
-					'Note Content',
-			},
-
-			// ----------------------------------
-			//         note:create
-			// ----------------------------------
-
-			{
-				displayName: 'Note Group Id',
-				name: 'directoryId',
-				type: 'number',
-				default: '',
-				displayOptions: {
-					show: {
-						operation: [
-							'create',
-						],
-						resource: ['note'],
-					},
-				},
-				required: true,
-				description:
-					'Note Group Id',
-			},
-			{
-				displayName: 'Additional Fields',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Add Field',
-				displayOptions: {
-					show: {
-						operation: ['create'],
-						resource: ['note'],
-					},
-				},
-				default: {},
-				options: [
-					...returnRaw,
-					...fieldProperties(noteFieldsShort),
-				],
-			},
-
-			// ----------------------------------
-			//         note:update
-			// ----------------------------------
-
-			{
-				displayName: 'Additional Fields',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Add Field',
-				displayOptions: {
-					show: {
-						operation: ['update'],
-						resource: ['note'],
-					},
-				},
-				default: {},
-				options: [
-					{
-						displayName: 'Note Group Id',
-						name: 'parent_id',
-						type: 'number',
-						// typeOptions: {
-						// 	minValue: 0,
-						// },
-						default: 0,
-						description: 'Note Group Id',
-					},
-					{
-						displayName: 'Custom Attributes',
-						name: 'custom_attributes',
-						type: 'json',
-						// typeOptions: {
-						// 	minValue: 0,
-						// },
-						default: 0,
-						description: 'Add custom attributes',
-					},
-					...returnRaw,
-					...fieldProperties(noteFieldsShort),
-				],
-			},
-
-			// ----------------------------------
-			//         note:search
-			// ----------------------------------
-
-			{
-				displayName: 'Search Input',
-				name: 'search',
-				type: 'string',
-				description: 'Use a % as wildcard',
-				displayOptions: {
-					show: {
-						operation: ['search'],
-						resource: ['note'],
-					},
-				},
-				default: "",
-			},
-			{
-				displayName: 'Additional Fields',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Add Field',
-				displayOptions: {
-					show: {
-						operation: ['search'],
-						resource: ['note'],
-					},
-				},
-				default: {},
-				options: [
-					...returnRaw,
-					...fieldProperties(noteFields),
-				],
-			},
+			...noteTypeFields,
+			...taskTypeFields,
 		]
+
+	}
+	methods = {
+		loadOptions: {
+			getUsers,
+		}
 	}
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -405,35 +160,47 @@ export class DfirIris implements INodeType {
 				};
 
 				// let paging = false
+				let endpointBase = ''
+				let isRaw = false
 
 				if (resource === 'note') {
+					endpointBase = 'case/notes'
 					if (operation === 'get') {
 						// ----------------------------------
 						//         note:get
 						// ----------------------------------
 						requestMethod = 'GET'
-						endpoint = 'case/notes/' + this.getNodeParameter('noteId', i) as string;
+						endpoint = `${endpointBase}/` + this.getNodeParameter('noteId', i) as string;
 					} else if (operation === 'getMany') {
 						// -----------------------------------------------
 						//         note:getMany
 						// -----------------------------------------------
 						requestMethod = 'GET'
-						endpoint = 'case/notes/directories/filter';
+						endpoint = `${endpointBase}/directories/filter`;
 					} else if (operation === 'create') {
 						// -----------------------------------------------
 						//         note:create
 						// -----------------------------------------------
 
-						endpoint = 'case/notes/add';
+						endpoint = `${endpointBase}/add`;
 						body.note_title = this.getNodeParameter('title', i) as string;
 						body.note_content = this.getNodeParameter('content', i) as string;
 						body.directory_id = this.getNodeParameter('directoryId', i) as string;
+
+					} else if (operation === 'addNoteGroup') {
+						// -----------------------------------------------
+						//         note:addNoteGroup
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/directories/add`;
+						body.name = this.getNodeParameter('directoryName', i) as string;
+						addAdditionalFields.call(this, body, i)
 					} else if (operation === 'update') {
 						// -----------------------------------------------
 						//         note:update
 						// -----------------------------------------------
 
-						endpoint = 'case/notes/update/' + this.getNodeParameter('noteTd', i) as string;
+						endpoint = `${endpointBase}/update/` + this.getNodeParameter('noteId', i) as string;
 						body.note_title = this.getNodeParameter('title', i) as string;
 						body.note_content = this.getNodeParameter('content', i) as string;
 
@@ -443,251 +210,67 @@ export class DfirIris implements INodeType {
 						//         note:delete
 						// -----------------------------------------------
 
-						endpoint = 'case/notes/delete/' + this.getNodeParameter('noteTd', i) as string;
+						endpoint = `${endpointBase}/delete/` + this.getNodeParameter('noteId', i) as string;
+						isRaw = true
+					} else if (operation === 'deleteNoteGroup') {
+						// -----------------------------------------------
+						//         note:deleteNoteGroup
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/directories/delete/` + this.getNodeParameter('directoryId', i) as string;
+						isRaw = true
 					} else if (operation === 'search') {
 						// -----------------------------------------------
 						//         note:search
 						// -----------------------------------------------
 						requestMethod = 'GET'
-						endpoint = 'case/notes/search';
+						endpoint = `${endpointBase}/search`;
 						qs.search_input = this.getNodeParameter('search', i) as string;
 					}
 				}
-				// else if (resource === 'chat') {
-				// 	if (operation === 'get') {
-				// 		// ----------------------------------
-				// 		//         chat:get
-				// 		// ----------------------------------
+				else if (resource === 'task') {
+					endpointBase = 'case/tasks'
+					if (operation === 'get') {
+						// ----------------------------------
+						//         task:get
+						// ----------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/` + this.getNodeParameter('taskId', i) as string;
+					} else if (operation === 'getMany') {
+						// -----------------------------------------------
+						//         task:getMany
+						// -----------------------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/list`;
+					} else if (operation === 'create') {
+						// -----------------------------------------------
+						//         task:create
+						// -----------------------------------------------
 
-				// 		endpoint = 'getChat';
+						endpoint = `${endpointBase}/add`;
+						body.task_title = this.getNodeParameter('title', i) as string;
+						body.task_assignees_id = [this.getNodeParameter('assignee', i) as number];
+						body.task_status_id = this.getNodeParameter('status', i) as number;
+						addAdditionalFields.call(this, body, i)
+					} else if (operation === 'update') {
+						// -----------------------------------------------
+						//         task:update
+						// -----------------------------------------------
 
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 	} else if (operation === 'administrators') {
-				// 		// ----------------------------------
-				// 		//         chat:administrators
-				// 		// ----------------------------------
+						endpoint = `${endpointBase}/update/` + this.getNodeParameter('taskId', i) as string;
+						body.task_title = this.getNodeParameter('title', i) as string;
+						body.task_assignees_id = [this.getNodeParameter('assignee', i) as number];
+						body.task_status_id = this.getNodeParameter('status', i) as number;
+						addAdditionalFields.call(this, body, i)
+					} else if (operation === 'delete') {
+						// -----------------------------------------------
+						//         task:delete
+						// -----------------------------------------------
 
-				// 		endpoint = 'getChatAdministrators';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 	} else if (operation === 'leave') {
-				// 		// ----------------------------------
-				// 		//         chat:leave
-				// 		// ----------------------------------
-
-				// 		endpoint = 'leaveChat';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 	} else if (operation === 'member') {
-				// 		// ----------------------------------
-				// 		//         chat:member
-				// 		// ----------------------------------
-
-				// 		endpoint = 'getChatMember';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.user_id = this.getNodeParameter('userId', i) as string;
-				// 	} else if (operation === 'setDescription') {
-				// 		// ----------------------------------
-				// 		//         chat:setDescription
-				// 		// ----------------------------------
-
-				// 		endpoint = 'setChatDescription';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.description = this.getNodeParameter('description', i) as string;
-				// 	} else if (operation === 'setTitle') {
-				// 		// ----------------------------------
-				// 		//         chat:setTitle
-				// 		// ----------------------------------
-
-				// 		endpoint = 'setChatTitle';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.title = this.getNodeParameter('title', i) as string;
-				// 	}
-				// 	// } else if (resource === 'bot') {
-				// 	// 	if (operation === 'info') {
-				// 	// 		endpoint = 'getUpdates';
-				// 	// 	}
-				// } else if (resource === 'file') {
-				// 	if (operation === 'get') {
-				// 		// ----------------------------------
-				// 		//         file:get
-				// 		// ----------------------------------
-
-				// 		endpoint = 'getFile';
-
-				// 		body.file_id = this.getNodeParameter('fileId', i) as string;
-				// 	}
-				// } else if (resource === 'message') {
-				// 	if (operation === 'editMessageText') {
-				// 		// ----------------------------------
-				// 		//         message:editMessageText
-				// 		// ----------------------------------
-
-				// 		endpoint = 'editMessageText';
-
-				// 		const messageType = this.getNodeParameter('messageType', i) as string;
-
-				// 		if (messageType === 'inlineMessage') {
-				// 			body.inline_message_id = this.getNodeParameter('inlineMessageId', i) as string;
-				// 		} else {
-				// 			body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 			body.message_id = this.getNodeParameter('messageId', i) as string;
-				// 		}
-
-				// 		body.text = this.getNodeParameter('text', i) as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	} else if (operation === 'deleteMessage') {
-				// 		// ----------------------------------
-				// 		//       message:deleteMessage
-				// 		// ----------------------------------
-
-				// 		endpoint = 'deleteMessage';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.message_id = this.getNodeParameter('messageId', i) as string;
-				// 	} else if (operation === 'pinChatMessage') {
-				// 		// ----------------------------------
-				// 		//        message:pinChatMessage
-				// 		// ----------------------------------
-
-				// 		endpoint = 'pinChatMessage';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.message_id = this.getNodeParameter('messageId', i) as string;
-
-				// 		const { disable_notification } = this.getNodeParameter('additionalFields', i);
-				// 		if (disable_notification) {
-				// 			body.disable_notification = true;
-				// 		}
-				// 	} else if (operation === 'unpinChatMessage') {
-				// 		// ----------------------------------
-				// 		//        message:unpinChatMessage
-				// 		// ----------------------------------
-
-				// 		endpoint = 'unpinChatMessage';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.message_id = this.getNodeParameter('messageId', i) as string;
-				// 	} else if (operation === 'sendAnimation') {
-				// 		// ----------------------------------
-				// 		//         message:sendAnimation
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendAnimation';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.animation = this.getNodeParameter('file', i, '') as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	} else if (operation === 'sendAudio') {
-				// 		// ----------------------------------
-				// 		//         message:sendAudio
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendAudio';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.audio = this.getNodeParameter('file', i, '') as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	} else if (operation === 'sendChatAction') {
-				// 		// ----------------------------------
-				// 		//         message:sendChatAction
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendChatAction';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.action = this.getNodeParameter('action', i) as string;
-				// 	} else if (operation === 'sendDocument') {
-				// 		// ----------------------------------
-				// 		//         message:sendDocument
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendDocument';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.document = this.getNodeParameter('file', i, '') as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	} else if (operation === 'sendLocation') {
-				// 		// ----------------------------------
-				// 		//         message:sendLocation
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendLocation';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.latitude = this.getNodeParameter('latitude', i) as string;
-				// 		body.longitude = this.getNodeParameter('longitude', i) as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	} else if (operation === 'sendMessage') {
-				// 		// ----------------------------------
-				// 		//         message:sendMessage
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendMessage';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.text = this.getNodeParameter('text', i) as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i, nodeVersion, instanceId);
-				// 	} else if (operation === 'sendMediaGroup') {
-				// 		// ----------------------------------
-				// 		//         message:sendMediaGroup
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendMediaGroup';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-
-				// 		const additionalFields = this.getNodeParameter('additionalFields', i);
-				// 		Object.assign(body, additionalFields);
-
-				// 		const mediaItems = this.getNodeParameter('media', i) as IDataObject;
-				// 		body.media = [];
-				// 		for (const mediaItem of mediaItems.media as IDataObject[]) {
-				// 			if (mediaItem.additionalFields !== undefined) {
-				// 				Object.assign(mediaItem, mediaItem.additionalFields);
-				// 				delete mediaItem.additionalFields;
-				// 			}
-				// 			(body.media as IDataObject[]).push(mediaItem);
-				// 		}
-				// 	} else if (operation === 'sendPhoto') {
-				// 		// ----------------------------------
-				// 		//         message:sendPhoto
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendPhoto';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.photo = this.getNodeParameter('file', i, '') as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	} else if (operation === 'sendSticker') {
-				// 		// ----------------------------------
-				// 		//         message:sendSticker
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendSticker';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.sticker = this.getNodeParameter('file', i, '') as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
+						endpoint = `${endpointBase}/delete/` + this.getNodeParameter('taskId', i) as string;
+						isRaw = true
+					}
+				}
 				// 	} else if (operation === 'sendVideo') {
 				// 		// ----------------------------------
 				// 		//         message:sendVideo
@@ -701,11 +284,11 @@ export class DfirIris implements INodeType {
 				// 		// Add additional fields and replyMarkup
 				// 		addAdditionalFields.call(this, body, i);
 				// 	}
-				// } else {
-				// 	throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known!`, {
-				// 		itemIndex: i,
-				// 	});
-				// }
+				else {
+					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known!`, {
+						itemIndex: i,
+					});
+				}
 
 				let responseData;
 				// let filterString: string
@@ -750,23 +333,22 @@ export class DfirIris implements INodeType {
 					// responseData = await apiRequest.call(this, requestMethod, endpoint, {}, qs, { formData });
 				} else {
 					responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs);
+					this.logger.debug('responseData', responseData)
 
 					const additionalFields = this.getNodeParameter('additionalFields', i, {});
-					// const returnAll = this.getNodeParameter('returnAll', i, false);
-					// const limit = this.getNodeParameter('limit', i, 100);
-					let isRaw = false
 
 					if (additionalFields.hasOwnProperty('isRaw'))
 						isRaw = additionalFields.isRaw as boolean
 
 					// field remover
 					if (additionalFields.hasOwnProperty('fields')){
-						// console.log('responseData[1]', responseData)
 						responseData = fieldsRemover(responseData, additionalFields)
-						// console.log('responseData[2]', responseData)
 					}
 					if (!isRaw)
-						responseData = responseData.data
+						if (resource === 'task' && operation === 'getMany')
+							responseData = responseData.data.tasks
+						else
+							responseData = responseData.data
 				}
 
 				// if (resource === 'file' && operation === 'get') {
