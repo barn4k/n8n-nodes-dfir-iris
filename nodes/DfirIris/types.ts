@@ -1,4 +1,4 @@
-import { INodeProperties, INodePropertyOptions, } from 'n8n-workflow';
+import { INodeProperties, } from 'n8n-workflow';
 
 export const returnAllOrLimit: INodeProperties[] = [
 	{
@@ -35,28 +35,28 @@ export const returnRaw: INodeProperties[] = [
 	},
 ];
 
-export const taskStatuses: INodePropertyOptions[] = [
-	{
-		value: 1,
-		name: "To do"
-	},
-	{
-		value: 2,
-		name: "In progress"
-	},
-	{
-		value: 3,
-		name: "On hold"
-	},
-	{
-		value: 4,
-		name: "Done"
-	},
-	{
-		value: 5,
-		name: "Canceled"
-	}
-]
+// export const taskStatuses: INodePropertyOptions[] = [
+// 	{
+// 		value: 1,
+// 		name: "To do"
+// 	},
+// 	{
+// 		value: 2,
+// 		name: "In progress"
+// 	},
+// 	{
+// 		value: 3,
+// 		name: "On hold"
+// 	},
+// 	{
+// 		value: 4,
+// 		name: "Done"
+// 	},
+// 	{
+// 		value: 5,
+// 		name: "Canceled"
+// 	}
+// ]
 
 // export const filterFields: INodeProperties[] = [
 // 	{

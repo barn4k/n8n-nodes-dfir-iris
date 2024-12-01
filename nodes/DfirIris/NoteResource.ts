@@ -1,16 +1,8 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import {
-	returnRaw,
-	// noteFields,
-	// noteFieldsShort,
-	// returnAllOrLimit,
-} from './types';
+import { returnRaw } from './types';
 
-import {
-	fieldProperties,
-	// getPropertyName
-} from './GenericFunctions';
+import { fieldProperties } from './GenericFunctions';
 
 export const noteTypes: string[] = [
 	"directory",
@@ -320,9 +312,6 @@ export const noteTypeFields: INodeProperties[] = [
 				displayName: 'Custom Attributes',
 				name: 'custom_attributes',
 				type: 'json',
-				// typeOptions: {
-				// 	minValue: 0,
-				// },
 				default: 0,
 				description: 'Add custom attributes',
 			},

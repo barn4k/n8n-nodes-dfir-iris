@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { returnRaw, taskStatuses } from './types';
+import { returnRaw } from './types';
 
 import { fieldProperties,  } from './GenericFunctions';
 
@@ -193,7 +193,28 @@ export const taskTypeFields: INodeProperties[] = [
 		name: 'status',
 		type: 'options',
 		default: '',
-		options: taskStatuses,
+		options: [
+			{
+				value: 1,
+				name: "To do"
+			},
+			{
+				value: 2,
+				name: "In progress"
+			},
+			{
+				value: 3,
+				name: "On hold"
+			},
+			{
+				value: 4,
+				name: "Done"
+			},
+			{
+				value: 5,
+				name: "Canceled"
+			}
+		],
 		displayOptions: {
 			show: {
 				operation: [

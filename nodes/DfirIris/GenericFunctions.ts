@@ -113,9 +113,6 @@ export function fieldsRemover(responseData: any, additionalFields: IDataObject){
 	const fields = additionalFields.fields as string[] || []
 	const inverseFields = additionalFields.inverseFields as boolean || false
 
-	// console.log('fields', fields)
-	// console.log('inverseFields', inverseFields)
-
 	if (fields && 'data' in responseData){
 		if (Array.isArray(responseData.data)){
 			responseData.data.forEach( (row: {[index: string]:any}) => {
@@ -354,12 +351,6 @@ export async function getUsers(this: ILoadOptionsFunctions): Promise<INodeProper
 			value: row.user_id,
 		});
 	})
-	// for (const data of responseData.data) {
-	// 	returnData.push({
-	// 		name: `${data.user_name} ( ${data.user_email} )`,
-	// 		value: data.user_id,
-	// 	});
-	// }
 
 	returnData.sort((a, b) => {
 		if (a.name < b.name) {

@@ -34,6 +34,7 @@ import {
 
 import { noteFields, noteTypeFields, } from './NoteResource'
 import { taskFields, taskTypeFields, } from './TaskResource'
+import { commentFields, commentTypeFields, } from './CommentResource'
 
 export class DfirIris implements INodeType {
 	description: INodeTypeDescription = {
@@ -87,10 +88,10 @@ export class DfirIris implements INodeType {
 						name: 'Task',
 						value: 'task',
 					},
-					// {
-					// 	name: 'Comment',
-					// 	value: 'comment',
-					// },
+					{
+						name: 'Comment',
+						value: 'comment',
+					},
 				],
 				default: 'note',
 			},
@@ -100,6 +101,7 @@ export class DfirIris implements INodeType {
 
 			...noteFields,
 			...taskFields,
+			...commentFields,
 
 			{
 				displayName: 'Case Id',
@@ -111,7 +113,7 @@ export class DfirIris implements INodeType {
 						// operation: [
 						// 	'get',
 						// ],
-						resource: ['note', 'task'],
+						resource: ['note', 'task', 'comment'],
 					},
 				},
 				required: true,
@@ -121,6 +123,7 @@ export class DfirIris implements INodeType {
 
 			...noteTypeFields,
 			...taskTypeFields,
+			...commentTypeFields,
 		]
 
 	}
@@ -268,6 +271,42 @@ export class DfirIris implements INodeType {
 						// -----------------------------------------------
 
 						endpoint = `${endpointBase}/delete/` + this.getNodeParameter('taskId', i) as string;
+						isRaw = true
+					}
+				}
+				else if (resource === 'comment') {
+					endpointBase =
+						'case/' +
+						this.getNodeParameter('objectName', i) as string +
+						'/' +
+						this.getNodeParameter('objectId', i) as string;
+					if (operation === 'getMany') {
+						// -----------------------------------------------
+						//         comment:getMany
+						// -----------------------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/comments/list`;
+						addAdditionalFields.call(this, body, i)
+					} else if (operation === 'create') {
+						// -----------------------------------------------
+						//         comment:create
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/comments/add`;
+						addAdditionalFields.call(this, body, i)
+					} else if (operation === 'update') {
+						// -----------------------------------------------
+						//         comment:update
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/comments/` + this.getNodeParameter('commentId', i) as string + '/edit';
+						addAdditionalFields.call(this, body, i)
+					} else if (operation === 'delete') {
+						// -----------------------------------------------
+						//         comment:delete
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/comments/` + this.getNodeParameter('commentId', i) as string + '/delete';
 						isRaw = true
 					}
 				}
