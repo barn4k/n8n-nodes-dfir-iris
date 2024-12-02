@@ -1,10 +1,11 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { returnRaw } from './types';
+import {
+	returnRaw,
+	fieldProperties
+} from '../../helpers/types';
 
-import { fieldProperties,  } from './GenericFunctions';
-
-export const taskTypes: string[] = [
+const fields: string[] = [
 	"task_open_date",
 	"task_userid_close",
 	"task_last_update",
@@ -23,7 +24,7 @@ export const taskTypes: string[] = [
 	"modification_history",
 ]
 
-export const taskTypesShort: string[] = [
+const fieldsShort: string[] = [
 	"id",
 	"task_assignees_id",
 	"task_status_id",
@@ -35,7 +36,7 @@ export const taskTypesShort: string[] = [
 
 const thisRes = 'task'
 
-export const taskFields: INodeProperties[] = [
+export const resource: INodeProperties[] = [
 	{
 		displayName: 'Operation',
 		name: 'operation',
@@ -83,10 +84,10 @@ export const taskFields: INodeProperties[] = [
 
 ]
 
-export const taskTypeFields: INodeProperties[] = [
+export const operations: INodeProperties[] = [
 
 	// ----------------------------------
-	//         task:get
+	//         task:shared
 	// ----------------------------------
 
 	{
@@ -106,44 +107,6 @@ export const taskTypeFields: INodeProperties[] = [
 		},
 		required: true,
 		description: 'Task Id',
-	},
-
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		displayOptions: {
-			show: {
-				operation: ['get'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(taskTypes),
-		],
-	},
-
-	// ----------------------------------
-	//         task:getMany
-	// ----------------------------------
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		displayOptions: {
-			show: {
-				operation: ['getMany'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [
-			...returnRaw,
-		],
 	},
 
 	// ----------------------------------
@@ -228,11 +191,6 @@ export const taskTypeFields: INodeProperties[] = [
 		description:
 			'Task Status',
 	},
-
-	// ----------------------------------
-	//         task:create
-	// ----------------------------------
-
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -240,7 +198,7 @@ export const taskTypeFields: INodeProperties[] = [
 		placeholder: 'Add Field',
 		displayOptions: {
 			show: {
-				operation: ['create'],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
@@ -267,53 +225,68 @@ export const taskTypeFields: INodeProperties[] = [
 				default: 0,
 				description: 'Add custom attributes',
 			},
-			...returnRaw,
-			...fieldProperties(taskTypesShort),
 		],
 	},
 
-
 	// ----------------------------------
-	//         task:update
+	//         task:options
 	// ----------------------------------
 
 	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
+		displayName: 'Options',
+		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: ['update'],
+				operation: [
+					'get',
+				],
 				resource: [thisRes],
 			},
 		},
 		default: {},
 		options: [
-			{
-				displayName: 'Task Description',
-				name: 'description',
-				type: 'string',
-				default: '',
-				description: 'Task Description',
-			},
-			{
-				displayName: 'Task Tags',
-				name: 'tags',
-				type: 'string',
-				default: '',
-				description: 'Task tags as comma separated string',
-			},
-			{
-				displayName: 'Custom Attributes',
-				name: 'custom_attributes',
-				type: 'json',
-				default: 0,
-				description: 'Add custom attributes',
-			},
 			...returnRaw,
-			...fieldProperties(taskTypesShort),
+			...fieldProperties(fields),
 		],
 	},
 
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		displayOptions: {
+			show: {
+				operation: [
+					'create',
+					'update'
+				],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			...returnRaw,
+			...fieldProperties(fieldsShort),
+		],
+	},
+
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		displayOptions: {
+			show: {
+				operation: ['getMany'],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			...returnRaw,
+		],
+	},
 ]

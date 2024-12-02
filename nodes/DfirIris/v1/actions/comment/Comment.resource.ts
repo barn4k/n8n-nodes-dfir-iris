@@ -1,10 +1,11 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { returnRaw } from './types';
+import {
+	returnRaw,
+	fieldProperties
+} from '../../helpers/types';
 
-import { fieldProperties } from './GenericFunctions';
-
-export const commentTypes: string[] = [
+const fields: string[] = [
 	"comment_date",
 	"comment_id",
 	"comment_text",
@@ -16,7 +17,7 @@ export const commentTypes: string[] = [
 
 const thisRes = 'comment'
 
-export const commentFields: INodeProperties[] = [
+export const resource: INodeProperties[] = [
 	{
 		displayName: 'Operation',
 		name: 'operation',
@@ -58,7 +59,7 @@ export const commentFields: INodeProperties[] = [
 
 ]
 
-export const commentTypeFields: INodeProperties[] = [
+export const operations: INodeProperties[] = [
 
 	// ----------------------------------
 	//         comment
@@ -177,15 +178,33 @@ export const commentTypeFields: INodeProperties[] = [
 				default: '',
 				description: 'Comment Text',
 			},
-			...returnRaw,
-			...fieldProperties(commentTypes),
 		],
 	},
 	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
+		displayName: 'Options',
+		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: 'Add Option',
+		displayOptions: {
+			show: {
+				operation: [
+					'create',
+					'update'
+				],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			...returnRaw,
+			...fieldProperties(fields),
+		],
+	},
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
 				operation: [
@@ -196,7 +215,7 @@ export const commentTypeFields: INodeProperties[] = [
 		},
 		default: {},
 		options: [
-			...fieldProperties(commentTypes),
+			...fieldProperties(fields),
 		],
 	},
 ]

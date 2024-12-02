@@ -1,10 +1,11 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { returnRaw } from './types';
+import {
+	returnRaw,
+	fieldProperties
+} from '../../helpers/types';
 
-import { fieldProperties } from './GenericFunctions';
-
-export const noteTypes: string[] = [
+const fields: string[] = [
 	"directory",
 	"note_id",
 	"note_uuid",
@@ -20,7 +21,7 @@ export const noteTypes: string[] = [
 	"comments"
 ]
 
-export const noteTypesShort: string[] = [
+const fieldsShort: string[] = [
 	"note_id",
 	"note_title",
 	"note_content",
@@ -29,7 +30,7 @@ export const noteTypesShort: string[] = [
 
 const thisRes = 'note'
 
-export const noteFields: INodeProperties[] = [
+export const resource: INodeProperties[] = [
 	{
 		displayName: 'Operation',
 		name: 'operation',
@@ -95,7 +96,7 @@ export const noteFields: INodeProperties[] = [
 
 ]
 
-export const noteTypeFields: INodeProperties[] = [
+export const operations: INodeProperties[] = [
 
 	// ----------------------------------
 	//         note:get
@@ -119,44 +120,6 @@ export const noteTypeFields: INodeProperties[] = [
 		required: true,
 		description:
 			'Note Id',
-	},
-
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		displayOptions: {
-			show: {
-				operation: ['get'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(noteTypes),
-		],
-	},
-
-	// ----------------------------------
-	//         note:getMany
-	// ----------------------------------
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		displayOptions: {
-			show: {
-				operation: ['getMany'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [
-			...returnRaw,
-		],
 	},
 
 	// ----------------------------------
@@ -222,23 +185,6 @@ export const noteTypeFields: INodeProperties[] = [
 		description:
 			'Note Group Id',
 	},
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		displayOptions: {
-			show: {
-				operation: ['create'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(noteTypesShort),
-		],
-	},
 
 	// ----------------------------------
 	//         note:addNoteGroup
@@ -280,7 +226,6 @@ export const noteTypeFields: INodeProperties[] = [
 				description:
 					'Parent Note Group Id',
 			},
-			...returnRaw,
 		],
 	},
 
@@ -315,8 +260,6 @@ export const noteTypeFields: INodeProperties[] = [
 				default: 0,
 				description: 'Add custom attributes',
 			},
-			...returnRaw,
-			...fieldProperties(noteTypesShort),
 		],
 	},
 
@@ -337,21 +280,61 @@ export const noteTypeFields: INodeProperties[] = [
 		},
 		default: "",
 	},
+
+	// ----------------------------------
+	//         note:options
+	// ----------------------------------
+
 	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
+		displayName: 'Options',
+		name: 'options',
 		type: 'collection',
-		placeholder: 'Add Field',
+		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: ['search'],
+				operation: ['get'],
 				resource: [thisRes],
 			},
 		},
 		default: {},
 		options: [
 			...returnRaw,
-			...fieldProperties(noteTypes),
+			...fieldProperties(fields),
+		],
+	},
+
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		displayOptions: {
+			show: {
+				operation: ['getMany', 'addNoteGroup'],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			...returnRaw,
+		],
+	},
+
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		displayOptions: {
+			show: {
+				operation: ['create', 'update', 'search'],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			...returnRaw,
+			...fieldProperties(fieldsShort),
 		],
 	},
 ]
