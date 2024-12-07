@@ -257,6 +257,53 @@ export class DfirIrisV1 implements INodeType {
 						isRaw = true
 					}
 				}
+				else if (resource === 'ioc') {
+					endpointBase = 'case/ioc'
+					if (operation === 'get') {
+						// ----------------------------------
+						//         ioc:get
+						// ----------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/` + this.getNodeParameter('iocId', i) as string;
+					} else if (operation === 'getMany') {
+						// -----------------------------------------------
+						//         ioc:getMany
+						// -----------------------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/list`;
+					} else if (operation === 'create') {
+						// -----------------------------------------------
+						//         ioc:create
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/add`;
+						body.ioc_type_id = this.getNodeParameter('type', i) as number;
+						body.ioc_tlp_id = this.getNodeParameter('tlpId', i) as string;
+						body.ioc_value = this.getNodeParameter('value', i) as string;
+						body.ioc_description = this.getNodeParameter('description', i) as string;
+						body.ioc_tags = this.getNodeParameter('tags', i) as string;
+						utils.addAdditionalFields.call(this, body, i)
+					} else if (operation === 'update') {
+						// -----------------------------------------------
+						//         ioc:update
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/update/` + this.getNodeParameter('iocId', i) as string;
+						body.ioc_type_id = this.getNodeParameter('type', i) as number;
+						body.ioc_tlp_id = this.getNodeParameter('tlpId', i) as string;
+						body.ioc_value = this.getNodeParameter('value', i) as string;
+						body.ioc_description = this.getNodeParameter('description', i) as string;
+						body.ioc_tags = this.getNodeParameter('tags', i) as string;
+						utils.addAdditionalFields.call(this, body, i)
+					} else if (operation === 'delete') {
+						// -----------------------------------------------
+						//         ioc:delete
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/delete/` + this.getNodeParameter('iocId', i) as string;
+						isRaw = true
+					}
+				}
 				// 	} else if (operation === 'sendVideo') {
 				// 		// ----------------------------------
 				// 		//         message:sendVideo
@@ -333,6 +380,8 @@ export class DfirIrisV1 implements INodeType {
 					if (!isRaw)
 						if (resource === 'task' && operation === 'getMany')
 							responseData = responseData.data.tasks
+						if (resource === 'ioc' && operation === 'getMany')
+							responseData = responseData.data.ioc
 						else
 							responseData = responseData.data
 				}

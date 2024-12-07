@@ -124,7 +124,7 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description: 'Asset Name',
+		description: 'Asset Type',
 	},
 	{
 		displayName: 'Asset Name',

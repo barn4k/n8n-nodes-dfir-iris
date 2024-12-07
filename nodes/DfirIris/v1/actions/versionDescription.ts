@@ -8,6 +8,8 @@ import * as note from './note/Note.resource'
 import * as task from './task/Task.resource'
 import * as comment from './comment/Comment.resource'
 import * as asset from './asset/Asset.resource'
+import * as ioc from './ioc/IOC.resource'
+import * as datastore from './datastore/Datastore.resource'
 
 export const versionDescription: INodeTypeDescription = {
 	displayName: 'DFIR IRIS',
@@ -44,17 +46,29 @@ export const versionDescription: INodeTypeDescription = {
 					name: 'Asset',
 					value: 'asset',
 				},
-				// {
-				// 	name: 'IOC',
-				// 	value: 'ioc',
-				// },
+				{
+					name: 'IOC',
+					value: 'ioc',
+				},
 				// {
 				// 	name: 'Case',
 				// 	value: 'case',
 				// },
+				{
+					name: 'Datastore',
+					value: 'datastore',
+				},
 				// {
-				// 	name: 'Datastore',
-				// 	value: 'datastore',
+				// 	name: 'Timeline',
+				// 	value: 'timeline',
+				// },
+				// {
+				// 	name: 'Modules',
+				// 	value: 'modules',
+				// },
+				// {
+				// 	name: 'Evidence',
+				// 	value: 'evidence',
 				// },
 				{
 					name: 'Note',
@@ -75,6 +89,8 @@ export const versionDescription: INodeTypeDescription = {
 		...task.resource,
 		...comment.resource,
 		...asset.resource,
+		...ioc.resource,
+		...datastore.resource,
 
 		{
 			displayName: 'Case Id',
@@ -105,5 +121,7 @@ export const versionDescription: INodeTypeDescription = {
 		...task.operations,
 		...comment.operations,
 		...asset.operations,
+		...ioc.operations,
+		...datastore.operations,
 	]
 }
