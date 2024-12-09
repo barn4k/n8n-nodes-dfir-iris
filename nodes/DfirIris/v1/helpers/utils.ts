@@ -45,13 +45,6 @@ export function addAdditionalFields(
 	// Add the additional fields
 	const additionalFields = this.getNodeParameter('additionalFields', index);
 	this.logger.debug('additionalFields',additionalFields)
-	// remove custom params
-	// delete additionalFields.isRaw
-	// delete additionalFields.fields
-	// delete additionalFields.inverseFields
-	// delete additionalFields.returnAll
-	// delete additionalFields.limit
-
 
 	if (additionalFields.hasOwnProperty('custom_attributes')){
 		if(typeof additionalFields.custom_attributes !== 'object'){

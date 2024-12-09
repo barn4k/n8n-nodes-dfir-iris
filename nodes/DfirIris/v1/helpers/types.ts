@@ -1,5 +1,18 @@
 import type { INodeProperties, } from 'n8n-workflow';
 
+export interface IFolder {
+data: {
+	[key: string]: {
+		children?: {
+			[key: string]: IFolder['data']
+		},
+		is_root?: boolean
+		name: string,
+		type: 'directory' | 'file'
+	}
+}
+}
+
 export function fieldProperties(fields: string[]){
 	return [
 		{

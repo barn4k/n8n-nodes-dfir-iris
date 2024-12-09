@@ -11,12 +11,15 @@ import type {
 import {
 	NodeApiError,
 } from 'n8n-workflow';
+import { IFolder } from '../helpers/types';
+
+import type FormData from 'form-data';
 
 export async function apiRequest(
 	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
 	method: IHttpRequestMethods,
 	endpoint: string,
-	body: IDataObject,
+	body: IDataObject | FormData = {},
 	query?: IDataObject,
 	option: IDataObject = {},
 ): Promise<any> {
@@ -25,7 +28,7 @@ export async function apiRequest(
 
 	query = query || {};
 
-	const options: IHttpRequestOptions = {
+	let options: IHttpRequestOptions = {
 		headers: {'content-type': 'application/json; charset=utf-8',},
 		method,
 		url: `${baseUrl}/${endpoint}`,
@@ -36,7 +39,7 @@ export async function apiRequest(
 		ignoreHttpStatusErrors: true,
 	};
 	if (Object.keys(option).length > 0) {
-		Object.assign(options, option);
+		options = Object.assign({}, options, option);
 	}
 
 	if (Object.keys(body).length === 0) {
@@ -48,9 +51,82 @@ export async function apiRequest(
 	}
 
 	try {
+		console.debug('options', options)
 		this.logger.debug('options', options)
-		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', options);
+		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
+	}
+}
+
+export async function apiMultiPartRequest(
+	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
+	method: IHttpRequestMethods,
+	endpoint: string,
+	body: IDataObject | FormData = {},
+	query?: IDataObject,
+	option: IDataObject = {},
+): Promise<any> {
+	const credentials = await this.getCredentials('dfirIrisApi');
+	const baseUrl = (credentials?.isHttp ? "http://" : "https://") + credentials?.host;
+
+	query = query || {};
+
+	console.log('body keys', Object.keys(body))
+
+	let options: IHttpRequestOptions = {
+		headers: {'content-type': 'multipart/form-data; charset=utf-8',},
+		method,
+		body,
+		qs: query,
+		url: `${baseUrl}/${endpoint}`,
+		json: true,
+		skipSslCertificateValidation: credentials.isHttp ? true : credentials.allowUnauthorizedCerts as boolean,
+		ignoreHttpStatusErrors: true,
+	};
+	if (Object.keys(option).length > 0) {
+		options = Object.assign({}, options, option);
+	}
+
+	if (Object.keys(body).length === 0) {
+		delete options.body;
+	}
+
+	if (Object.keys(query).length === 0) {
+		delete options.qs;
+	}
+
+	try {
+		console.debug('options', options)
+		this.logger.debug('options', options)
+		return await this.helpers.httpRequestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
+	} catch (error) {
+		throw new NodeApiError(this.getNode(), error as JsonObject);
+	}
+}
+
+export async function getFolderName(
+	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
+	query: IDataObject,
+	folder: string
+): Promise<any>{
+	const response = await apiRequest.call(this, 'GET', 'datastore/list/tree', {}, query) as IFolder
+	this.logger.debug('getFolderResponse', response)
+	if (folder === 'root')
+		return parseInt(Object.keys(response.data)[0].replace('d-', ''))
+	else {
+		const subs = Object.values(response.data)[0].children as object
+		let returnedFolder: string = ''
+		try {
+			if (folder === 'evidences')
+				returnedFolder = Object.entries(subs).filter(s => s[1].name === 'Evidences')[0][0]
+			else if (folder === 'iocs')
+				returnedFolder = Object.entries(subs).filter(s => s[1].name === 'IOCs')[0][0]
+			else if (folder === 'images')
+				returnedFolder = Object.entries(subs).filter(s => s[1].name === 'Images')[0][0]
+			return parseInt(returnedFolder.replace('d-', ''))
+		} catch (error){
+			throw new NodeApiError(this.getNode(), error as JsonObject);
+		}
 	}
 }

@@ -11,15 +11,23 @@ import type {
 
 import {
 	NodeOperationError,
-	// BINARY_ENCODING
+	BINARY_ENCODING
 } from 'n8n-workflow';
+
+import FormData from 'form-data';
+
+import type { Readable } from 'stream';
 
 import { versionDescription } from './actions/versionDescription';
 // import { router } from './actions/router';
 import { loadOptions } from './methods';
 import { utils } from './helpers'
 
-import { apiRequest } from './transport';
+import {
+	apiRequest,
+	apiMultiPartRequest,
+	getFolderName
+} from './transport';
 
 export class DfirIrisV1 implements INodeType {
 	description: INodeTypeDescription;
@@ -47,9 +55,13 @@ export class DfirIrisV1 implements INodeType {
 		let body: IDataObject;
 		// For Query string
 		let qs: IDataObject;
+		let reqOptions: IDataObject;
 
 		let requestMethod: IHttpRequestMethods;
 		let endpoint: string;
+		let endpointBase: string;
+		let isRaw: boolean
+		let responseData
 
 		const operation = this.getNodeParameter('operation', 0);
 		const resource = this.getNodeParameter('resource', 0);
@@ -67,10 +79,11 @@ export class DfirIrisV1 implements INodeType {
 				qs = {
 					cid: this.getNodeParameter('cid', i) as number
 				};
+				reqOptions = {}
 
 				// let paging = false
-				let endpointBase = ''
-				let isRaw = false
+				endpointBase = ''
+				isRaw = false
 
 				if (resource === 'note') {
 					endpointBase = 'case/notes'
@@ -304,6 +317,130 @@ export class DfirIrisV1 implements INodeType {
 						isRaw = true
 					}
 				}
+				else if (resource === 'datastore') {
+					endpointBase = 'datastore'
+					if (operation === 'getTree') {
+						// ----------------------------------
+						//         datastore:getTree
+						// ----------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/list/tree`
+					} else if (operation === 'uploadFile') {
+						// -----------------------------------------------
+						//         datastore:uploadFile
+						// -----------------------------------------------
+						let folderId: string = this.getNodeParameter('folderId', i, 0) as string;
+						const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
+						let uploadData: Buffer | Readable;
+
+						if (folderLabel)
+							folderId = await getFolderName.call(this, qs, folderLabel) as any
+						this.logger.debug('folderId: '+ folderId)
+						console.log(folderId)
+
+						endpoint = `${endpointBase}/file/add/` + folderId
+						const binaryName = (this.getNodeParameter('filePropertyName', i, '') as string).trim();
+						const binaryData = this.helpers.assertBinaryData(i, binaryName);
+						utils.addAdditionalFields.call(this, body, i)
+
+						if (binaryData.id) {
+							uploadData = await this.helpers.getBinaryStream(binaryData.id);
+						} else {
+							uploadData = Buffer.from(binaryData.data, BINARY_ENCODING);
+						}
+
+						const fileName = (body.file_original_name || binaryData.fileName) as string;
+						if (!fileName)
+							throw new NodeOperationError(this.getNode(), 'No file name given for file upload.');
+
+						const formData = new FormData();
+
+						// const formData = {
+						// 	file_content: {
+						// 		value: uploadData,
+						// 		options: {
+						// 			filename: fileName,
+						// 			contentType: binaryData.mimeType
+						// 		}
+						// 	},
+						// 	file_original_name: fileName
+						// }
+
+						formData.append('file_original_name', fileName)
+						formData.append('file_content', uploadData, {
+							filename: fileName,
+							contentType: binaryData.mimeType
+						});
+
+						const keysToAdd = [
+							'file_description',
+							'file_password',
+							'file_tags',
+							'file_is_evidence',
+							'file_is_ioc',
+						]
+						keysToAdd.forEach( (k: string) => {
+							let _v
+							if (body.hasOwnProperty(k)){
+								_v = body[k]
+								if (typeof _v === 'boolean')
+									_v = _v ? 'Y' : 'N'
+								this.logger.debug(`appending property ${k}: `+_v)
+								formData.append(k, _v);
+							}
+						})
+
+						responseData = await apiMultiPartRequest.call(
+							this,
+							requestMethod,
+							endpoint,
+							formData,
+							qs,
+						);
+
+						// responseData = await apiMultiPartRequest.call(
+						// 	this,
+						// 	requestMethod,
+						// 	endpoint,
+						// 	formData,
+						// 	qs,
+						// );
+						this.logger.debug('responseData')
+						this.logger.debug(responseData)
+
+					} else if (operation === 'create') {
+						// -----------------------------------------------
+						//         datastore:create
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/add`;
+						body.ioc_type_id = this.getNodeParameter('type', i) as number;
+						body.ioc_tlp_id = this.getNodeParameter('tlpId', i) as string;
+						body.ioc_value = this.getNodeParameter('value', i) as string;
+						body.ioc_description = this.getNodeParameter('description', i) as string;
+						body.ioc_tags = this.getNodeParameter('tags', i) as string;
+						utils.addAdditionalFields.call(this, body, i)
+					} else if (operation === 'update') {
+						// -----------------------------------------------
+						//         ioc:update
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/update/` + this.getNodeParameter('iocId', i) as string;
+						body.ioc_type_id = this.getNodeParameter('type', i) as number;
+						body.ioc_tlp_id = this.getNodeParameter('tlpId', i) as string;
+						body.ioc_value = this.getNodeParameter('value', i) as string;
+						body.ioc_description = this.getNodeParameter('description', i) as string;
+						body.ioc_tags = this.getNodeParameter('tags', i) as string;
+						utils.addAdditionalFields.call(this, body, i)
+					} else if (operation === 'delete') {
+						// -----------------------------------------------
+						//         ioc:delete
+						// -----------------------------------------------
+
+						endpoint = `${endpointBase}/delete/` + this.getNodeParameter('iocId', i) as string;
+						isRaw = true
+					}
+				}
 				// 	} else if (operation === 'sendVideo') {
 				// 		// ----------------------------------
 				// 		//         message:sendVideo
@@ -323,7 +460,7 @@ export class DfirIrisV1 implements INodeType {
 					});
 				}
 
-				let responseData;
+
 				// let filterString: string
 
 				if (binaryData) {
@@ -365,8 +502,10 @@ export class DfirIrisV1 implements INodeType {
 
 					// responseData = await apiRequest.call(this, requestMethod, endpoint, {}, qs, { formData });
 				} else {
-					responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs);
-					this.logger.debug('responseData', responseData)
+					// there is a separate method for form-data
+					if (operation !== 'uploadFile')
+						responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs, reqOptions);
+					this.logger.debug('responseData end', responseData)
 
 					const options = this.getNodeParameter('options', i, {});
 

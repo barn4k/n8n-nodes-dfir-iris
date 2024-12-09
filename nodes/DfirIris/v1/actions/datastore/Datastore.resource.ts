@@ -295,13 +295,74 @@ export const operations: INodeProperties[] = [
 		description: 'Name of the binary property which contains the data for the file to be uploaded',
 	},
 	{
+		displayName: 'File Tags',
+		name: 'file_tags',
+		type: 'string',
+		default: '',
+		displayOptions: {
+			show: {
+				operation: ['uploadFile'],
+				resource: [thisRes],
+			},
+		},
+		required: true,
+		description: 'File Tags',
+	},
+	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
 		type: 'collection',
 		placeholder: 'Add Field',
 		displayOptions: {
 			show: {
-				operation: ['uploadFile', 'updateFileInfo'],
+				operation: ['uploadFile'],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			{
+				displayName: 'File Description',
+				name: 'file_description',
+				type: 'string',
+				default: '',
+				description: 'File Description',
+			},
+			{
+				displayName: 'File Password',
+				name: 'file_password',
+				type: 'string',
+				default: '',
+				description: 'File Password',
+			},
+			{
+				displayName: 'File Is Evidence',
+				name: 'file_is_evidence',
+				type: 'boolean',
+				default: true,
+				description: 'Whether file is Evidence',
+			},
+			{
+				displayName: 'File Is IOC',
+				name: 'file_is_ioc',
+				type: 'boolean',
+				default: false,
+				description: 'Whether file is IOC',
+			},
+		],
+	},
+	// ----------------------------------
+	//         datastore:updateFileInfo
+	// ----------------------------------
+
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		displayOptions: {
+			show: {
+				operation: ['updateFileInfo'],
 				resource: [thisRes],
 			},
 		},
@@ -351,8 +412,6 @@ export const operations: INodeProperties[] = [
 			},
 		],
 	},
-
-
 	// ----------------------------------
 	//         datastore:moveFile
 	// ----------------------------------

@@ -76,7 +76,8 @@ npm link # use once
 cd $env:userprofile
 cd .n8n
 $env:NODE_TLS_REJECT_UNAUTHORIZED='0'
-$env:N8N_DEV_RELOAD="true"
 $env:N8N_LOG_LEVEL="debug"
 n8n start
+
+$env:N8N_DEV_RELOAD="true"
 ```
