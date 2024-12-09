@@ -25,7 +25,6 @@ import { utils } from './helpers'
 
 import {
 	apiRequest,
-	apiMultiPartRequest,
 	getFolderName
 } from './transport';
 
@@ -52,20 +51,19 @@ export class DfirIrisV1 implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 
 		// For Post
-		let body: IDataObject;
+		let body: IDataObject | FormData;
 		// For Query string
 		let qs: IDataObject;
-		let reqOptions: IDataObject;
 
 		let requestMethod: IHttpRequestMethods;
 		let endpoint: string;
 		let endpointBase: string;
 		let isRaw: boolean
 		let responseData
+		let isFormData: boolean
 
 		const operation = this.getNodeParameter('operation', 0);
 		const resource = this.getNodeParameter('resource', 0);
-		const binaryData = this.getNodeParameter('binaryData', 0, false);
 
 		// const nodeVersion = this.getNode().typeVersion;
 		// const instanceId = this.getInstanceId();
@@ -79,11 +77,11 @@ export class DfirIrisV1 implements INodeType {
 				qs = {
 					cid: this.getNodeParameter('cid', i) as number
 				};
-				reqOptions = {}
 
 				// let paging = false
 				endpointBase = ''
 				isRaw = false
+				isFormData = false
 
 				if (resource === 'note') {
 					endpointBase = 'case/notes'
@@ -332,6 +330,7 @@ export class DfirIrisV1 implements INodeType {
 						let folderId: string = this.getNodeParameter('folderId', i, 0) as string;
 						const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
 						let uploadData: Buffer | Readable;
+						isFormData = true
 
 						if (folderLabel)
 							folderId = await getFolderName.call(this, qs, folderLabel) as any
@@ -382,7 +381,7 @@ export class DfirIrisV1 implements INodeType {
 						keysToAdd.forEach( (k: string) => {
 							let _v
 							if (body.hasOwnProperty(k)){
-								_v = body[k]
+								_v = (body as IDataObject)[k]
 								if (typeof _v === 'boolean')
 									_v = _v ? 'Y' : 'N'
 								this.logger.debug(`appending property ${k}: `+_v)
@@ -390,23 +389,7 @@ export class DfirIrisV1 implements INodeType {
 							}
 						})
 
-						responseData = await apiMultiPartRequest.call(
-							this,
-							requestMethod,
-							endpoint,
-							formData,
-							qs,
-						);
-
-						// responseData = await apiMultiPartRequest.call(
-						// 	this,
-						// 	requestMethod,
-						// 	endpoint,
-						// 	formData,
-						// 	qs,
-						// );
-						this.logger.debug('responseData')
-						this.logger.debug(responseData)
+						body = formData
 
 					} else if (operation === 'create') {
 						// -----------------------------------------------
@@ -441,132 +424,42 @@ export class DfirIrisV1 implements INodeType {
 						isRaw = true
 					}
 				}
-				// 	} else if (operation === 'sendVideo') {
-				// 		// ----------------------------------
-				// 		//         message:sendVideo
-				// 		// ----------------------------------
-
-				// 		endpoint = 'sendVideo';
-
-				// 		body.chat_id = this.getNodeParameter('chatId', i) as string;
-				// 		body.video = this.getNodeParameter('file', i, '') as string;
-
-				// 		// Add additional fields and replyMarkup
-				// 		addAdditionalFields.call(this, body, i);
-				// 	}
 				else {
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known!`, {
 						itemIndex: i,
 					});
 				}
 
+				// if (operation !== 'uploadFile')
+					// responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs, reqOptions);
+				responseData = await apiRequest.call(
+					this,
+					requestMethod,
+					endpoint,
+					body,
+					qs,
+					{},
+					isFormData
+				);
+				this.logger.debug('responseData end', responseData)
 
-				// let filterString: string
+				const options = this.getNodeParameter('options', i, {});
 
-				if (binaryData) {
-					// const binaryPropertyName = this.getNodeParameter('binaryPropertyName', 0);
-					// const itemBinaryData = items[i].binary![binaryPropertyName];
-					// const propertyName = getPropertyName(operation);
-					// const fileName = this.getNodeParameter('additionalFields.fileName', 0, '') as string;
+				if (options.hasOwnProperty('isRaw'))
+					isRaw = options.isRaw as boolean
 
-					// const filename = fileName || itemBinaryData.fileName?.toString();
-
-					// if (!fileName && !itemBinaryData.fileName) {
-					// 	throw new NodeOperationError(
-					// 		this.getNode(),
-					// 		`File name is needed to ${operation}. Make sure the property that holds the binary data
-					// 	has the file name property set or set it manually in the node using the File Name parameter under
-					// 	Additional Fields.`,
-					// 	);
-					// }
-
-					// body.disable_notification = body.disable_notification?.toString() || 'false';
-
-					// let uploadData: Buffer | Readable;
-					// if (itemBinaryData.id) {
-					// 	uploadData = await this.helpers.getBinaryStream(itemBinaryData.id);
-					// } else {
-					// 	uploadData = Buffer.from(itemBinaryData.data, BINARY_ENCODING);
-					// }
-
-					// const formData = {
-					// 	...body,
-					// 	[propertyName]: {
-					// 		value: uploadData,
-					// 		options: {
-					// 			filename,
-					// 			contentType: itemBinaryData.mimeType,
-					// 		},
-					// 	},
-					// };
-
-					// responseData = await apiRequest.call(this, requestMethod, endpoint, {}, qs, { formData });
-				} else {
-					// there is a separate method for form-data
-					if (operation !== 'uploadFile')
-						responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs, reqOptions);
-					this.logger.debug('responseData end', responseData)
-
-					const options = this.getNodeParameter('options', i, {});
-
-					if (options.hasOwnProperty('isRaw'))
-						isRaw = options.isRaw as boolean
-
-					// field remover
-					if (options.hasOwnProperty('fields')){
-						responseData = utils.fieldsRemover(responseData, options)
-					}
-					if (!isRaw)
-						if (resource === 'task' && operation === 'getMany')
-							responseData = responseData.data.tasks
-						if (resource === 'ioc' && operation === 'getMany')
-							responseData = responseData.data.ioc
-						else
-							responseData = responseData.data
+				// field remover
+				if (options.hasOwnProperty('fields')){
+					responseData = utils.fieldsRemover(responseData, options)
 				}
-
-				// if (resource === 'file' && operation === 'get') {
-				// 	if (this.getNodeParameter('download', i, false)) {
-				// 		const filePath = responseData.result.file_path;
-
-				// 		const credentials = await this.getCredentials('telegramApi');
-				// 		const file = await apiRequest.call(
-				// 			this,
-				// 			'GET',
-				// 			'',
-				// 			{},
-				// 			{},
-				// 			{
-				// 				json: false,
-				// 				encoding: null,
-				// 				uri: `${credentials.baseUrl}/file/bot${credentials.accessToken}/${filePath}`,
-				// 				resolveWithFullResponse: true,
-				// 				useStream: true,
-				// 			},
-				// 		);
-
-				// 		const fileName = filePath.split('/').pop();
-
-				// 		const data = await this.helpers.prepareBinaryData(
-				// 			file.body as Buffer,
-				// 			fileName as string,
-				// 		);
-
-				// 		returnData.push({
-				// 			json: responseData,
-				// 			binary: { data },
-				// 			pairedItem: { item: i },
-				// 		});
-				// 		continue;
-				// 	}
-				// } else if (resource === 'chat' && operation === 'administrators') {
-				// 	const executionData = this.helpers.constructExecutionMetaData(
-				// 		this.helpers.returnJsonArray(responseData.result as IDataObject[]),
-				// 		{ itemData: { item: i } },
-				// 	);
-				// 	returnData.push(...executionData);
-				// 	continue;
-				// }
+				if (!isRaw){
+					if (resource === 'task' && operation === 'getMany')
+						responseData = responseData.data.tasks
+					if (resource === 'ioc' && operation === 'getMany')
+						responseData = responseData.data.ioc
+					else
+						responseData = responseData.data
+				}
 
 				const executionData = this.helpers.constructExecutionMetaData(
 					this.helpers.returnJsonArray(responseData as IDataObject[]),

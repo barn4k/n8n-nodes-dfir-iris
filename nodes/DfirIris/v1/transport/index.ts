@@ -22,64 +22,23 @@ export async function apiRequest(
 	body: IDataObject | FormData = {},
 	query?: IDataObject,
 	option: IDataObject = {},
+	isFormData: boolean = false
 ): Promise<any> {
 	const credentials = await this.getCredentials('dfirIrisApi');
 	const baseUrl = (credentials?.isHttp ? "http://" : "https://") + credentials?.host;
+	let headers = {'content-type': 'application/json; charset=utf-8',}
+
+	if (isFormData)
+		headers = {'content-type': 'multipart/form-data; charset=utf-8',}
 
 	query = query || {};
 
 	let options: IHttpRequestOptions = {
-		headers: {'content-type': 'application/json; charset=utf-8',},
+		headers: headers,
 		method,
 		url: `${baseUrl}/${endpoint}`,
 		body,
 		qs: query,
-		json: true,
-		skipSslCertificateValidation: credentials.isHttp ? true : credentials.allowUnauthorizedCerts as boolean,
-		ignoreHttpStatusErrors: true,
-	};
-	if (Object.keys(option).length > 0) {
-		options = Object.assign({}, options, option);
-	}
-
-	if (Object.keys(body).length === 0) {
-		delete options.body;
-	}
-
-	if (Object.keys(query).length === 0) {
-		delete options.qs;
-	}
-
-	try {
-		console.debug('options', options)
-		this.logger.debug('options', options)
-		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
-	} catch (error) {
-		throw new NodeApiError(this.getNode(), error as JsonObject);
-	}
-}
-
-export async function apiMultiPartRequest(
-	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
-	method: IHttpRequestMethods,
-	endpoint: string,
-	body: IDataObject | FormData = {},
-	query?: IDataObject,
-	option: IDataObject = {},
-): Promise<any> {
-	const credentials = await this.getCredentials('dfirIrisApi');
-	const baseUrl = (credentials?.isHttp ? "http://" : "https://") + credentials?.host;
-
-	query = query || {};
-
-	console.log('body keys', Object.keys(body))
-
-	let options: IHttpRequestOptions = {
-		headers: {'content-type': 'multipart/form-data; charset=utf-8',},
-		method,
-		body,
-		qs: query,
-		url: `${baseUrl}/${endpoint}`,
 		json: true,
 		skipSslCertificateValidation: credentials.isHttp ? true : credentials.allowUnauthorizedCerts as boolean,
 		ignoreHttpStatusErrors: true,
