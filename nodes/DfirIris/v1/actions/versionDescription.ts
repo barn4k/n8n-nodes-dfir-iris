@@ -1,14 +1,13 @@
 import {
 	NodeConnectionType,
 	type INodeTypeDescription,
-	// BINARY_ENCODING
 } from 'n8n-workflow';
 
-import * as note from './note/Note.resource'
-import * as task from './task/Task.resource'
-import * as comment from './comment/Comment.resource'
-import * as asset from './asset/Asset.resource'
-import * as ioc from './ioc/IOC.resource'
+// import * as note from './note/Note.resource'
+// import * as task from './task/Task.resource'
+// import * as comment from './comment/Comment.resource'
+// import * as asset from './asset/Asset.resource'
+// import * as ioc from './ioc/IOC.resource'
 import * as datastore from './datastore/Datastore.resource'
 
 export const versionDescription: INodeTypeDescription = {
@@ -85,43 +84,11 @@ export const versionDescription: INodeTypeDescription = {
 			],
 			default: 'note',
 		},
-		...note.resource,
-		...task.resource,
-		...comment.resource,
-		...asset.resource,
-		...ioc.resource,
+		// ...note.resource,
+		// ...task.resource,
+		// ...comment.resource,
+		// ...asset.resource,
+		// ...ioc.resource,
 		...datastore.resource,
-
-		{
-			displayName: 'Case Id',
-			name: 'cid',
-			type: 'number',
-			default: 1,
-			displayOptions: {
-				show: {
-					// operation: [
-					// 	'get',
-					// ],
-					// resource: [
-					// 	'note',
-					// 	'task',
-					// 	'comment',
-					// 	'asset',
-					// 	'alert',
-					// 	'alert',
-					// 	],
-				},
-			},
-			required: true,
-			description:
-				'Case Id',
-		},
-
-		...note.operations,
-		...task.operations,
-		...comment.operations,
-		...asset.operations,
-		...ioc.operations,
-		...datastore.operations,
 	]
 }

@@ -13,6 +13,33 @@ data: {
 }
 }
 
+export const cidDescription :INodeProperties[] = [
+	{
+		displayName: 'Case Id',
+		name: 'cid',
+		type: 'number',
+		default: 1,
+		displayOptions: {
+			show: {
+				// operation: [
+				// 	'get',
+				// ],
+				// resource: [
+				// 	'note',
+				// 	'task',
+				// 	'comment',
+				// 	'asset',
+				// 	'alert',
+				// 	'alert',
+				// 	],
+			},
+		},
+		required: true,
+		description:
+			'Case Id',
+	}
+]
+
 export function fieldProperties(fields: string[]){
 	return [
 		{
