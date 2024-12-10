@@ -282,7 +282,7 @@ export const operations: INodeProperties[] = [
 	},
 	{
 		displayName: 'Binary Property Name',
-		name: 'filePropertyName',
+		name: 'binaryName',
 		type: 'string',
 		default: 'data',
 		displayOptions: {
@@ -369,42 +369,49 @@ export const operations: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'File Name',
+				displayName: 'Set new File Name',
 				name: 'file_original_name',
 				type: 'string',
 				default: '',
 				description: 'Set the file name',
 			},
 			{
-				displayName: 'File Description',
+				displayName: 'Set new File Content',
+				name: 'binaryName',
+				type: 'string',
+				default: 'data',
+				description: 'Name of the binary property which contains the data for the file to be uploaded',
+			},
+			{
+				displayName: 'Set new Description',
 				name: 'file_description',
 				type: 'string',
 				default: '',
 				description: 'File Description',
 			},
 			{
-				displayName: 'File Password',
+				displayName: 'Set new Password',
 				name: 'file_password',
 				type: 'string',
 				default: '',
 				description: 'File Password',
 			},
 			{
-				displayName: 'File Tags',
+				displayName: 'Set new Tags',
 				name: 'file_tags',
 				type: 'string',
 				default: '',
 				description: 'File Password',
 			},
 			{
-				displayName: 'File Is Evidence',
+				displayName: 'Set File as Evidence',
 				name: 'file_is_evidence',
 				type: 'boolean',
 				default: true,
 				description: 'Whether file is Evidence',
 			},
 			{
-				displayName: 'File Is IOC',
+				displayName: 'Set File as IOC',
 				name: 'file_is_ioc',
 				type: 'boolean',
 				default: false,
@@ -413,9 +420,45 @@ export const operations: INodeProperties[] = [
 		],
 	},
 	// ----------------------------------
-	//         datastore:moveFile
+	//         datastore:downloadFile
 	// ----------------------------------
 
+	{
+		displayName: 'Put Output File in Field',
+		name: 'binaryName',
+		type: 'string',
+		default: 'data',
+		displayOptions: {
+			show: {
+				operation: ['downloadFile'],
+				resource: [thisRes],
+			},
+		},
+		required: true,
+		description: 'The name of the output binary field to put the file in',
+	},
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		displayOptions: {
+			show: {
+				operation: ['downloadFile'],
+				resource: [thisRes],
+			},
+		},
+		default: {},
+		options: [
+			{
+				displayName: 'Set new File Name',
+				name: 'fileName',
+				type: 'string',
+				default: '',
+				description: 'Set the new file name',
+			},
+		],
+	},
 	// ----------------------------------
 	//         datastore:addFolder
 	// ----------------------------------

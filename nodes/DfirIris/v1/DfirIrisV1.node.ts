@@ -6,6 +6,7 @@ import type {
 	INodeTypeDescription,
 	INodeTypeBaseDescription,
 	IHttpRequestMethods,
+	NodeExecutionWithMetadata,
 } from 'n8n-workflow';
 // import { VersionedNodeType } from 'n8n-workflow';
 
@@ -61,6 +62,7 @@ export class DfirIrisV1 implements INodeType {
 		let isRaw: boolean
 		let responseData
 		let isFormData: boolean
+		let reqOptions: IDataObject
 
 		const operation = this.getNodeParameter('operation', 0);
 		const resource = this.getNodeParameter('resource', 0);
@@ -77,6 +79,7 @@ export class DfirIrisV1 implements INodeType {
 				qs = {
 					cid: this.getNodeParameter('cid', i) as number
 				};
+				reqOptions = {}
 
 				// let paging = false
 				endpointBase = ''
@@ -334,11 +337,9 @@ export class DfirIrisV1 implements INodeType {
 
 						if (folderLabel)
 							folderId = await getFolderName.call(this, qs, folderLabel) as any
-						this.logger.debug('folderId: '+ folderId)
-						console.log(folderId)
 
 						endpoint = `${endpointBase}/file/add/` + folderId
-						const binaryName = (this.getNodeParameter('filePropertyName', i, '') as string).trim();
+						const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
 						const binaryData = this.helpers.assertBinaryData(i, binaryName);
 						utils.addAdditionalFields.call(this, body, i)
 
@@ -390,18 +391,82 @@ export class DfirIrisV1 implements INodeType {
 						})
 
 						body = formData
-
-					} else if (operation === 'create') {
+					} else if (operation === 'getFileInfo') {
 						// -----------------------------------------------
-						//         datastore:create
+						//         datastore:getFileInfo
 						// -----------------------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/file/info/` + (this.getNodeParameter('fileId', i) as string);
 
-						endpoint = `${endpointBase}/add`;
-						body.ioc_type_id = this.getNodeParameter('type', i) as number;
-						body.ioc_tlp_id = this.getNodeParameter('tlpId', i) as string;
-						body.ioc_value = this.getNodeParameter('value', i) as string;
-						body.ioc_description = this.getNodeParameter('description', i) as string;
-						body.ioc_tags = this.getNodeParameter('tags', i) as string;
+					} else if (operation === 'updateFileInfo') {
+							// -----------------------------------------------
+							//         datastore:updateFileInfo
+							// -----------------------------------------------
+							let uploadData: Buffer | Readable;
+							const formData = new FormData();
+							isFormData = true
+
+							endpoint = `${endpointBase}/update/` + this.getNodeParameter('fileId', i, 0)
+							utils.addAdditionalFields.call(this, body, i)
+
+							if (body.hasOwnProperty('binaryName')){
+								const binaryName = (body.binaryName as string).trim();
+								const binaryData = this.helpers.assertBinaryData(i, binaryName);
+
+								if (binaryData.id) {
+									uploadData = await this.helpers.getBinaryStream(binaryData.id);
+								} else {
+									uploadData = Buffer.from(binaryData.data, BINARY_ENCODING);
+								}
+
+								const fileName = (body.file_original_name || binaryData.fileName) as string;
+								if (!fileName)
+									throw new NodeOperationError(this.getNode(), 'No file name given for file upload.');
+
+								formData.append('file_original_name', fileName)
+								formData.append('file_content', uploadData, {
+								filename: fileName,
+								contentType: binaryData.mimeType
+							});
+							}
+
+							const keysToAdd = [
+								'file_description',
+								'file_password',
+								'file_tags',
+								'file_is_evidence',
+								'file_is_ioc',
+							]
+							keysToAdd.forEach( (k: string) => {
+								let _v
+								if (body.hasOwnProperty(k)){
+									_v = (body as IDataObject)[k]
+									if (typeof _v === 'boolean')
+										_v = _v ? 'Y' : 'N'
+									this.logger.debug(`appending property ${k}: `+_v)
+									formData.append(k, _v);
+								}
+							})
+
+							body = formData
+					} else if (operation === 'deleteFile') {
+						// -----------------------------------------------
+						//         datastore:deleteFile
+						// -----------------------------------------------
+						endpoint = `${endpointBase}/file/delete/` + (this.getNodeParameter('fileId', i) as string);
+
+					} else if (operation === 'downloadFile') {
+						// -----------------------------------------------
+						//         datastore:downloadFile
+						// -----------------------------------------------
+						requestMethod = 'GET'
+						endpoint = `${endpointBase}/file/view/` + (this.getNodeParameter('fileId', i) as string);
+						reqOptions = {
+							useStream: true,
+							returnFullResponse: true,
+							encoding: 'arraybuffer',
+							json: false,
+						}
 						utils.addAdditionalFields.call(this, body, i)
 					} else if (operation === 'update') {
 						// -----------------------------------------------
@@ -438,33 +503,56 @@ export class DfirIrisV1 implements INodeType {
 					endpoint,
 					body,
 					qs,
-					{},
+					reqOptions,
 					isFormData
 				);
 				this.logger.debug('responseData end', responseData)
+				console.debug('responseData end', responseData)
 
 				const options = this.getNodeParameter('options', i, {});
+				let executionData: NodeExecutionWithMetadata[]
 
-				if (options.hasOwnProperty('isRaw'))
-					isRaw = options.isRaw as boolean
+				if (operation === 'downloadFile'){
+					const mimeType = responseData.headers?.['content-type'] ?? undefined
+					const fileName = (body as any).fileName || responseData.headers?.['content-disposition'].split('; ').filter( (d: string) => d.indexOf('filename')>=0)[0].replace('filename=', '')
+					let item = this.getInputData()[i]
+					const newItem: INodeExecutionData = {
+						json: item.json,
+						binary: {},
+					};
 
-				// field remover
-				if (options.hasOwnProperty('fields')){
-					responseData = utils.fieldsRemover(responseData, options)
+					item = newItem;
+					const dataPropertyNameDownload = this.getNodeParameter('binaryName',i, 'data') as string;
+					item.binary![dataPropertyNameDownload] = await this.helpers.prepareBinaryData(
+						responseData.body as Buffer,
+						fileName as string,
+						mimeType as string,
+					);
+
+					executionData = this.helpers.constructExecutionMetaData([item], { itemData: { item: i } });
+
+				} else {
+					if (options.hasOwnProperty('isRaw'))
+						isRaw = options.isRaw as boolean
+
+					// field remover
+					if (options.hasOwnProperty('fields')){
+						responseData = utils.fieldsRemover(responseData, options)
+					}
+					if (!isRaw){
+						if (resource === 'task' && operation === 'getMany')
+							responseData = responseData.data.tasks
+						if (resource === 'ioc' && operation === 'getMany')
+							responseData = responseData.data.ioc
+						else
+							responseData = responseData.data
+					}
+
+					executionData = this.helpers.constructExecutionMetaData(
+						this.helpers.returnJsonArray(responseData as IDataObject[]),
+						{ itemData: { item: i } },
+					);
 				}
-				if (!isRaw){
-					if (resource === 'task' && operation === 'getMany')
-						responseData = responseData.data.tasks
-					if (resource === 'ioc' && operation === 'getMany')
-						responseData = responseData.data.ioc
-					else
-						responseData = responseData.data
-				}
-
-				const executionData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray(responseData as IDataObject[]),
-					{ itemData: { item: i } },
-				);
 				returnData.push(...executionData);
 			} catch (error) {
 				if (this.continueOnFail()) {
