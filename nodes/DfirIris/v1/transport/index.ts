@@ -58,7 +58,8 @@ export async function apiRequest(
 	try {
 		console.debug('options', options)
 		this.logger.debug('options', options)
-		return await this.helpers.httpRequestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
+		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
+		// return await this.helpers.httpRequestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}

@@ -65,7 +65,7 @@ npm doctor
 # update n8n
 npm update -g n8n
 
-
+npm update --save
 
 # update node
 npm run build
@@ -73,10 +73,9 @@ npm run dev
 npm link # use once
 
 # set ENVs before use n8n is PS
-cd $env:userprofile
-cd .n8n
-$env:NODE_TLS_REJECT_UNAUTHORIZED='0'
+cd $env:userprofile/.n8n
 $env:N8N_LOG_LEVEL="debug"
+$env:NODE_TLS_REJECT_UNAUTHORIZED='0'
 n8n start
 
 $env:N8N_DEV_RELOAD="true"

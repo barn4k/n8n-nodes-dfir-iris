@@ -468,6 +468,12 @@ export class DfirIrisV1 implements INodeType {
 							json: false,
 						}
 						utils.addAdditionalFields.call(this, body, i)
+					} else if (operation === 'moveFile') {
+						// -----------------------------------------------
+						//         datastore:deleteFile
+						// -----------------------------------------------
+						endpoint = `${endpointBase}/file/delete/` + (this.getNodeParameter('fileId', i) as string);
+
 					} else if (operation === 'update') {
 						// -----------------------------------------------
 						//         ioc:update
@@ -495,8 +501,6 @@ export class DfirIrisV1 implements INodeType {
 					});
 				}
 
-				// if (operation !== 'uploadFile')
-					// responseData = await apiRequest.call(this, requestMethod, endpoint, body, qs, reqOptions);
 				responseData = await apiRequest.call(
 					this,
 					requestMethod,
