@@ -43,8 +43,8 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				default:
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);
 			}
-			console.debug('returnData')
-			console.debug(returnData)
+			console.debug('returnData');
+			console.debug(returnData);
 		} catch (error) {
 			if (this.continueOnFail()) {
 				if (resource === 'datastore' && operation === 'downloadFile') {

@@ -1,11 +1,14 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import * as getTree from './getTree.operation'
-import * as uploadFile from './uploadFile.operation'
+import * as getTree from './getTree.operation';
+import * as uploadFile from './uploadFile.operation';
+// import * as updateFileInfo from './updateFileInfo.operation'
+// import * as getFileInfo from './getFileInfo.operation'
 
-import { cidDescription } from '../../helpers/types'
+import { cidDescription } from '../../helpers/types';
 
-export { getTree, uploadFile }
+export { getTree, uploadFile };
+// export { getTree, uploadFile, getFileInfo, updateFileInfo }
 
 // const fieldsFile: string[] = [
 // 	"file_size",
@@ -36,7 +39,7 @@ export { getTree, uploadFile }
 // 	"registry"
 // ]
 
-export const endpoint = 'datastore'
+export const endpoint = 'datastore';
 
 export const resource: INodeProperties[] = [
 	{
@@ -56,7 +59,6 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Get Datastore Tree',
 				value: 'getTree',
-				description: `Get Datastore Tree`,
 				action: `Get Datastore Tree`,
 			},
 
@@ -66,37 +68,32 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Upload File',
 				value: 'uploadFile',
-				description: `Add new File`,
+				description: 'Add new File',
 				action: `Add new File`,
 			},
 			{
 				name: 'Get File Info',
 				value: 'getFileInfo',
-				description: `Update File Info`,
-				action: `Update File Info`,
+				action: `Get File Info`,
 			},
 			{
 				name: 'Update File Info',
 				value: 'updateFileInfo',
-				description: `Update File Info`,
 				action: `Update File Info`,
 			},
 			{
 				name: 'Download File',
 				value: 'downloadFile',
-				description: `Download File`,
 				action: `Download File`,
 			},
 			{
 				name: 'Delete File',
 				value: 'deleteFile',
-				description: `Delete File`,
 				action: `Delete File`,
 			},
 			{
 				name: 'Move File',
 				value: 'moveFile',
-				description: `Move File`,
 				action: `Move File`,
 			},
 
@@ -107,25 +104,21 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Add Folder',
 				value: 'addFolder',
-				description: `Add Folder`,
 				action: `Add Folder`,
 			},
 			{
 				name: 'Rename Folder',
 				value: 'renameFolder',
-				description: `Rename Folder`,
 				action: `Rename Folder`,
 			},
 			{
 				name: 'Move Folder',
 				value: 'moveFolder',
-				description: `Move Folder`,
 				action: `Move Folder`,
 			},
 			{
 				name: 'Delete Folder',
 				value: 'deleteFolder',
-				description: `Delete Folder`,
 				action: `Delete Folder`,
 			},
 		],
@@ -134,13 +127,11 @@ export const resource: INodeProperties[] = [
 	...cidDescription,
 	...getTree.description,
 	...uploadFile.description,
-]
+	// ...getFileInfo.description,
+	// ...updateFileInfo.description,
+];
 
 // export const operations: INodeProperties[] = [
-
-// 	// ----------------------------------
-// 	//         datastore:getTree
-// 	// ----------------------------------
 
 // 	// ----------------------------------
 // 	//         datastore:general
@@ -154,7 +145,7 @@ export const resource: INodeProperties[] = [
 // 		displayOptions: {
 // 			show: {
 // 				operation: [
-// 					'getFileInfo',
+// 'getFileInfo',
 // 					'updateFileInfo',
 // 					'deleteFile',
 // 					'downloadFile',

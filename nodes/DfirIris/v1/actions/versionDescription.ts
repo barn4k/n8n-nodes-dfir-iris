@@ -1,14 +1,11 @@
-import {
-	NodeConnectionType,
-	type INodeTypeDescription,
-} from 'n8n-workflow';
+import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
 
 // import * as note from './note/Note.resource'
 // import * as task from './task/Task.resource'
 // import * as comment from './comment/Comment.resource'
 // import * as asset from './asset/Asset.resource'
 // import * as ioc from './ioc/IOC.resource'
-import * as datastore from './datastore/Datastore.resource'
+import * as datastore from './datastore/Datastore.resource';
 
 export const versionDescription: INodeTypeDescription = {
 	displayName: 'DFIR IRIS',
@@ -41,14 +38,14 @@ export const versionDescription: INodeTypeDescription = {
 				// 	name: 'Alert',
 				// 	value: 'alert',
 				// },
-				{
-					name: 'Asset',
-					value: 'asset',
-				},
-				{
-					name: 'IOC',
-					value: 'ioc',
-				},
+				// {
+				// 	name: 'Asset',
+				// 	value: 'asset',
+				// },
+				// {
+				// 	name: 'IOC',
+				// 	value: 'ioc',
+				// },
 				// {
 				// 	name: 'Case',
 				// 	value: 'case',
@@ -69,20 +66,20 @@ export const versionDescription: INodeTypeDescription = {
 				// 	name: 'Evidence',
 				// 	value: 'evidence',
 				// },
-				{
-					name: 'Note',
-					value: 'note',
-				},
-				{
-					name: 'Task',
-					value: 'task',
-				},
-				{
-					name: 'Comment',
-					value: 'comment',
-				},
+				// {
+				// 	name: 'Note',
+				// 	value: 'note',
+				// },
+				// {
+				// 	name: 'Task',
+				// 	value: 'task',
+				// },
+				// {
+				// 	name: 'Comment',
+				// 	value: 'comment',
+				// },
 			],
-			default: 'note',
+			default: 'datastore',
 		},
 		// ...note.resource,
 		// ...task.resource,
@@ -90,5 +87,5 @@ export const versionDescription: INodeTypeDescription = {
 		// ...asset.resource,
 		// ...ioc.resource,
 		...datastore.resource,
-	]
-}
+	],
+};

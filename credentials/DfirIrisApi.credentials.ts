@@ -23,7 +23,7 @@ export class DfirIrisApi implements ICredentialType {
 			name: 'isHttp',
 			type: 'boolean',
 			default: false,
-			description: "Whether to use HTTP instead of HTTPS"
+			description: 'Whether to use HTTP instead of HTTPS',
 		},
 		{
 			displayName: 'Host',
@@ -42,14 +42,12 @@ export class DfirIrisApi implements ICredentialType {
 				{
 					name: 'v2.0.2',
 					value: '2.0.2',
-					description:
-						'API for DFIR IRIS v2.3.x',
+					description: 'API for DFIR IRIS v2.3.x',
 				},
 				{
 					name: 'v2.0.4',
 					value: '2.0.4',
-					description:
-						'API for DFIR IRIS v2.4.x',
+					description: 'API for DFIR IRIS v2.4.x',
 				},
 			],
 		},
@@ -85,9 +83,8 @@ export class DfirIrisApi implements ICredentialType {
 		request: {
 			baseURL: '={{$credentials?.isHttp ? "http://" : "https://" }}{{$credentials?.host}}',
 			url: '/api/ping',
-			skipSslCertificateValidation: '={{$credentials?.isHttp ? true : $credentials?.allowUnauthorizedCerts}}'
+			skipSslCertificateValidation:
+				'={{$credentials?.isHttp ? true : $credentials?.allowUnauthorizedCerts}}',
 		},
-
 	};
 }
-

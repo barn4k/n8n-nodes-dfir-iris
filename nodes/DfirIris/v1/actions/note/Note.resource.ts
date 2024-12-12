@@ -1,34 +1,26 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import {
-	returnRaw,
-	fieldProperties
-} from '../../helpers/types';
+import { returnRaw, fieldProperties } from '../../helpers/types';
 
 const fields: string[] = [
-	"directory",
-	"note_id",
-	"note_uuid",
-	"note_title",
-	"note_content",
-	"note_user",
-	"note_creationdate",
-	"note_lastupdate",
-	"note_case_id",
-	"custom_attributes",
-	"directory_id",
-	"modification_history",
-	"comments"
-]
+	'directory',
+	'note_id',
+	'note_uuid',
+	'note_title',
+	'note_content',
+	'note_user',
+	'note_creationdate',
+	'note_lastupdate',
+	'note_case_id',
+	'custom_attributes',
+	'directory_id',
+	'modification_history',
+	'comments',
+];
 
-const fieldsShort: string[] = [
-	"note_id",
-	"note_title",
-	"note_content",
-	"custom_attributes",
-]
+const fieldsShort: string[] = ['note_id', 'note_title', 'note_content', 'custom_attributes'];
 
-const thisRes = 'note'
+const thisRes = 'note';
 
 export const resource: INodeProperties[] = [
 	{
@@ -57,7 +49,7 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Get',
 				value: 'get',
-				description: 'get a note',
+				description: 'Get a note',
 				action: 'Get a note',
 			},
 			{
@@ -93,33 +85,25 @@ export const resource: INodeProperties[] = [
 		],
 		default: 'get',
 	},
-
-]
+];
 
 export const operations: INodeProperties[] = [
-
 	// ----------------------------------
 	//         note:get
 	// ----------------------------------
 
 	{
-		displayName: 'Note Id',
+		displayName: 'Note ID',
 		name: 'noteId',
 		type: 'number',
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'get',
-					'update',
-					'delete'
-				],
+				operation: ['get', 'update', 'delete'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Note Id',
 	},
 
 	// ----------------------------------
@@ -133,16 +117,11 @@ export const operations: INodeProperties[] = [
 		default: 'Unnamed',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Note Title',
 	},
 	{
 		displayName: 'Note Content',
@@ -151,16 +130,11 @@ export const operations: INodeProperties[] = [
 		default: 'No Content',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Note Content',
 	},
 
 	// ----------------------------------
@@ -168,22 +142,17 @@ export const operations: INodeProperties[] = [
 	// ----------------------------------
 
 	{
-		displayName: 'Note Group Id',
+		displayName: 'Note Group ID',
 		name: 'directoryId',
 		type: 'number',
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'deleteNoteGroup'
-				],
+				operation: ['create', 'deleteNoteGroup'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Note Group Id',
 	},
 
 	// ----------------------------------
@@ -202,8 +171,7 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description:
-			'Note Group Id',
+		description: 'Note Group ID',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -219,12 +187,10 @@ export const operations: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Parent Note Group Id',
+				displayName: 'Parent Note Group ID',
 				name: 'parent_id',
 				type: 'number',
 				default: '',
-				description:
-					'Parent Note Group Id',
 			},
 		],
 	},
@@ -247,11 +213,10 @@ export const operations: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Note Group Id',
+				displayName: 'Note Group ID',
 				name: 'directory_id',
 				type: 'number',
 				default: 0,
-				description: 'Note Group Id',
 			},
 			{
 				displayName: 'Custom Attributes',
@@ -278,7 +243,7 @@ export const operations: INodeProperties[] = [
 				resource: [thisRes],
 			},
 		},
-		default: "",
+		default: '',
 	},
 
 	// ----------------------------------
@@ -297,10 +262,7 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fields),
-		],
+		options: [...returnRaw, ...fieldProperties(fields)],
 	},
 
 	{
@@ -315,9 +277,7 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-		],
+		options: [...returnRaw],
 	},
 
 	{
@@ -332,9 +292,6 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fieldsShort),
-		],
+		options: [...returnRaw, ...fieldProperties(fieldsShort)],
 	},
-]
+];

@@ -1,13 +1,8 @@
-import type {
-	ILoadOptionsFunctions,
-	INodePropertyOptions,
-} from 'n8n-workflow';
+import type { ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
 
-import {
-	NodeOperationError,
-} from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
-import { apiRequest } from '../transport/index'
+import { apiRequest } from '../transport/index';
 
 export async function getUsers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'case/users/list';
@@ -18,12 +13,14 @@ export async function getUsers(this: ILoadOptionsFunctions): Promise<INodeProper
 	}
 
 	const returnData: INodePropertyOptions[] = [];
-	responseData.data.filter( (x: any) => x.user_active).forEach( (row: any) => {
-		returnData.push({
-			name: `${row.user_name} ( ${row.user_email} )`,
-			value: row.user_id,
+	responseData.data
+		.filter((x: any) => x.user_active)
+		.forEach((row: any) => {
+			returnData.push({
+				name: `${row.user_name} ( ${row.user_email} )`,
+				value: row.user_id,
+			});
 		});
-	})
 
 	returnData.sort((a, b) => {
 		if (a.name < b.name) {
@@ -47,12 +44,12 @@ export async function getAssetTypes(this: ILoadOptionsFunctions): Promise<INodeP
 	}
 
 	const returnData: INodePropertyOptions[] = [];
-	responseData.data.forEach( (row: any) => {
+	responseData.data.forEach((row: any) => {
 		returnData.push({
 			name: row.asset_name,
 			value: row.asset_id,
 		});
-	})
+	});
 
 	returnData.sort((a, b) => {
 		if (a.name < b.name) {

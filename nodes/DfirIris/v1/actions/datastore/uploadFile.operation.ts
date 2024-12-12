@@ -5,53 +5,50 @@ import type {
 	INodeProperties,
 } from 'n8n-workflow';
 
-import {
-	NodeOperationError,
-	BINARY_ENCODING,
-	updateDisplayOptions
-} from 'n8n-workflow';
+import { NodeOperationError, BINARY_ENCODING, updateDisplayOptions } from 'n8n-workflow';
+
+import FormData from 'form-data';
 
 import type { Readable } from 'stream';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './Datastore.resource';
 import { apiRequest, getFolderName } from '../../transport';
-import { utils } from '../../helpers'
-import { returnRaw, fieldProperties } from '../../helpers/types';
+import { utils } from '../../helpers';
+import { types } from '../../helpers';
 
 const returnFields: string[] = [
-	"file_size",
-	"file_is_ioc",
-	"file_sha256",
-	"file_is_evidence",
-	"file_uuid",
-	"file_case_id",
-	"file_date_added",
-	"file_parent_id",
-	"added_by_user_id",
-	"file_original_name",
-	"file_tags",
-	"modification_history",
-	"file_id",
-	"file_description",
-	"file_password"
-]
+	'file_size',
+	'file_is_ioc',
+	'file_sha256',
+	'file_is_evidence',
+	'file_uuid',
+	'file_case_id',
+	'file_date_added',
+	'file_parent_id',
+	'added_by_user_id',
+	'file_original_name',
+	'file_tags',
+	'modification_history',
+	'file_id',
+	'file_description',
+	'file_password',
+];
 
 const properties: INodeProperties[] = [
 	// boolean block
 	{
-		displayName: 'Use Folder Id',
+		displayName: 'Use Folder ID',
 		name: 'useFolderUI',
 		type: 'boolean',
 		default: false,
-		description: 'Use Folder Id',
 	},
 
 	{
-		displayName: 'Folder Id',
+		displayName: 'Folder ID',
 		name: 'folderId',
 		type: 'number',
 		default: '',
-		description: 'Folder Id as number',
+		description: 'Folder ID as number',
 		displayOptions: {
 			show: {
 				useFolderUI: [true],
@@ -66,20 +63,20 @@ const properties: INodeProperties[] = [
 		noDataExpression: true,
 		options: [
 			{
-				value: "root",
-				name: "Root of the case"
+				value: 'root',
+				name: 'Root of the Case',
 			},
 			{
-				value: "evidences",
-				name: "Evidences"
+				value: 'evidences',
+				name: 'Evidences',
 			},
 			{
-				value: "iocs",
-				name: "IOCs"
+				value: 'iocs',
+				name: 'IOCs',
 			},
 			{
-				value: "images",
-				name: "Images"
+				value: 'images',
+				name: 'Images',
 			},
 		],
 		default: 'evidences',
@@ -100,14 +97,6 @@ const properties: INodeProperties[] = [
 		description: 'Name of the binary property which contains the data for the file to be uploaded',
 	},
 	{
-		displayName: 'File Tags',
-		name: 'file_tags',
-		type: 'string',
-		default: '',
-		required: true,
-		description: 'File Tags',
-	},
-	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
 		type: 'collection',
@@ -119,14 +108,20 @@ const properties: INodeProperties[] = [
 				name: 'file_description',
 				type: 'string',
 				default: '',
-				description: 'File Description',
+			},
+			{
+				displayName: 'File Tags',
+				name: 'file_tags',
+				type: 'string',
+				default: '',
+				required: true,
 			},
 			{
 				displayName: 'File Password',
 				name: 'file_password',
 				type: 'string',
+				typeOptions: { password: true },
 				default: '',
-				description: 'File Password',
 			},
 			{
 				displayName: 'File Is Evidence',
@@ -150,10 +145,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(returnFields),
-		],
+		options: [...types.returnRaw, ...types.fieldProperties(returnFields)],
 	},
 ];
 
@@ -168,8 +160,8 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let body: IDataObject | FormData = {}
-	let response: INodeExecutionData[]
+	let body: IDataObject | FormData = {};
+	let response: INodeExecutionData[];
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
@@ -177,12 +169,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
 	let uploadData: Buffer | Readable;
 
-	if (folderLabel)
-		folderId = await getFolderName.call(this, query, folderLabel) as any
+	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
 
 	const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
 	const binaryData = this.helpers.assertBinaryData(i, binaryName);
-	utils.addAdditionalFields.call(this, body, i)
+	utils.addAdditionalFields.call(this, body, i);
 
 	if (binaryData.id) {
 		uploadData = await this.helpers.getBinaryStream(binaryData.id);
@@ -190,30 +181,41 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		uploadData = Buffer.from(binaryData.data, BINARY_ENCODING);
 	}
 
-	// uploadData = await this.helpers.getBinaryDataBuffer(i, 'binaryName');
-
-	const fileName = (body.file_original_name || binaryData.fileName) as string;
+	const fileName = binaryData.fileName as string;
 	if (!fileName)
 		throw new NodeOperationError(this.getNode(), 'No file name given for file upload.');
 
+	// TODO: fix later formdata
 	// const formData = new FormData();
+
+	if (body.hasOwnProperty('file_is_ioc')) body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
+	if (body.hasOwnProperty('file_is_evidence'))
+		body.file_is_evidence = body.file_is_evidence ? 'y' : 'n';
+	if (!body.hasOwnProperty('file_description')) body.file_description = '';
+	if (!body.hasOwnProperty('file_tags')) body.file_tags = '';
 
 	const formData = {
 		file_content: {
 			value: uploadData,
 			options: {
 				filename: fileName,
-				contentType: binaryData.mimeType
-			}
+				contentType: binaryData.mimeType,
+			},
 		},
-		file_original_name: fileName
-	}
+		file_original_name: fileName,
+		...body,
+	};
 
 	// formData.append('file_original_name', fileName)
 	// console.debug('appended file_original_name')
+	// console.debug('--- fileName: ', fileName)
 
-	// formData.append('file_content', uploadData, fileName);
+	// // formData.append('file_content', uploadData, fileName);
 	// console.debug('appended file_content')
+	// console.debug('--- uploadData: ', uploadData)
+	// console.debug('--- options: ', {filename: fileName,contentType: binaryData.mimeType})
+	// formData.append('file_content', (uploadData as Buffer), fileName);
+
 	// formData.append('file_content', uploadData, {
 	// 	filename: fileName,
 	// 	contentType: binaryData.mimeType
@@ -244,7 +246,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		formData,
 		query,
 		{},
-		true
+		true,
 	);
 
 	const executionData = this.helpers.constructExecutionMetaData(

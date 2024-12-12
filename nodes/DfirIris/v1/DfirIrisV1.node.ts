@@ -10,7 +10,7 @@ import type {
 } from 'n8n-workflow';
 // import { VersionedNodeType } from 'n8n-workflow';
 
-import { router } from './actions/router'
+import { router } from './actions/router';
 
 // import {
 // 	NodeOperationError,
@@ -49,9 +49,9 @@ export class DfirIrisV1 implements INodeType {
 	// 	return await router.call(this);
 	// }
 
-async execute(this: IExecuteFunctions) {
-	return await router.call(this);
-}
+	async execute(this: IExecuteFunctions) {
+		return await router.call(this);
+	}
 
 	// async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	// 	const items = this.getInputData();

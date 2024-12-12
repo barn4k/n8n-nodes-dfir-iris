@@ -1,9 +1,8 @@
 import type { AllEntities } from 'n8n-workflow';
 
 type NodeMap = {
-	datastore:
-	| 'uploadFile'
-	| 'getTree' // checked
+	datastore: 'uploadFile' | 'getTree'; // checked
+	// | 'getFileInfo'
 	// | 'updateFileInfo'
 	// | 'downloadFile'
 	// | 'deleteFile';

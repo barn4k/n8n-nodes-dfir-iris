@@ -1,35 +1,32 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import {
-	returnRaw,
-	fieldProperties
-} from '../../helpers/types';
+import { returnRaw, fieldProperties } from '../../helpers/types';
 
 const fields: string[] = [
-	"ioc_description",
-	"ioc_value",
-	"ioc_type",
-	"ioc_tags",
-	"ioc_uuid",
-	"ioc_enrichment",
-	"ioc_id",
-	"ioc_tlp_id",
-	"user_id",
-	"custom_attributes",
-	"ioc_type_id",
-	"ioc_misp"
-]
+	'ioc_description',
+	'ioc_value',
+	'ioc_type',
+	'ioc_tags',
+	'ioc_uuid',
+	'ioc_enrichment',
+	'ioc_id',
+	'ioc_tlp_id',
+	'user_id',
+	'custom_attributes',
+	'ioc_type_id',
+	'ioc_misp',
+];
 
 const fieldsShort = [
-	"ioc_type_id",
-	"ioc_tlp_id",
-	"ioc_value",
-	"ioc_description",
-	"ioc_tags",
-	"custom_attributes"
-]
+	'ioc_type_id',
+	'ioc_tlp_id',
+	'ioc_value',
+	'ioc_description',
+	'ioc_tags',
+	'custom_attributes',
+];
 
-const thisRes = 'ioc'
+const thisRes = 'ioc';
 
 export const resource: INodeProperties[] = [
 	{
@@ -76,32 +73,25 @@ export const resource: INodeProperties[] = [
 		],
 		default: 'get',
 	},
-
-]
+];
 
 export const operations: INodeProperties[] = [
-
 	// ----------------------------------
 	//         ioc:get
 	// ----------------------------------
 
 	{
-		displayName: 'IOC Id',
+		displayName: 'IOC ID',
 		name: 'iocId',
 		type: 'number',
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'get',
-					'update',
-					'delete'
-				],
+				operation: ['get', 'update', 'delete'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description: 'IOC Id',
 	},
 
 	// ----------------------------------
@@ -109,24 +99,21 @@ export const operations: INodeProperties[] = [
 	// ----------------------------------
 
 	{
-		displayName: 'IOC Type',
+		displayName: 'IOC Type Name or ID',
 		name: 'type',
 		type: 'options',
+		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
-			loadOptionsMethod: 'getIOCTypes'
+			loadOptionsMethod: 'getIOCTypes',
 		},
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description: 'IOC Type',
 	},
 	{
 		displayName: 'IOC Description',
@@ -135,16 +122,11 @@ export const operations: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'IOC Description',
 	},
 	{
 		displayName: 'IOC Value',
@@ -155,41 +137,32 @@ export const operations: INodeProperties[] = [
 		// ignoreValidationDuringExecution: true,
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'IOC Value',
 	},
 	{
 		displayName: 'IOC TLP',
 		name: 'tlpId',
 		type: 'options',
 		options: [
-			{value: 1, name: "Red"},
-			{value: 2, name: "Amber"},
-			{value: 3, name: "Green"},
-			{value: 4, name: "Clear"},
-			{value: 5, name: "Amber strict"},
+			{ value: 1, name: 'Red' },
+			{ value: 2, name: 'Amber' },
+			{ value: 3, name: 'Green' },
+			{ value: 4, name: 'Clear' },
+			{ value: 5, name: 'Amber Strict' },
 		],
-		default: '',
+		default: 1,
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'IOC Name',
+		description: 'IOC Name',
 	},
 	{
 		displayName: 'IOC Tags',
@@ -200,16 +173,12 @@ export const operations: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'IOC Tags, comma separated',
+		description: 'IOC Tags, comma-separated',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -245,18 +214,12 @@ export const operations: INodeProperties[] = [
 		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update'
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fields),
-		],
+		options: [...returnRaw, ...fieldProperties(fields)],
 	},
 
 	{
@@ -271,9 +234,6 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fieldsShort),
-		],
+		options: [...returnRaw, ...fieldProperties(fieldsShort)],
 	},
-]
+];

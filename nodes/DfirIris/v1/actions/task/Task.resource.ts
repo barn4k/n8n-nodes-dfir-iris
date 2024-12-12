@@ -1,40 +1,37 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import {
-	returnRaw,
-	fieldProperties
-} from '../../helpers/types';
+import { returnRaw, fieldProperties } from '../../helpers/types';
 
 const fields: string[] = [
-	"task_open_date",
-	"task_userid_close",
-	"task_last_update",
-	"task_userid_update",
-	"task_assignees",
-	"task_title",
-	"task_uuid",
-	"task_tags",
-	"id",
-	"task_description",
-	"task_userid_open",
-	"custom_attributes",
-	"task_status_id",
-	"task_close_date",
-	"task_case_id",
-	"modification_history",
-]
+	'task_open_date',
+	'task_userid_close',
+	'task_last_update',
+	'task_userid_update',
+	'task_assignees',
+	'task_title',
+	'task_uuid',
+	'task_tags',
+	'id',
+	'task_description',
+	'task_userid_open',
+	'custom_attributes',
+	'task_status_id',
+	'task_close_date',
+	'task_case_id',
+	'modification_history',
+];
 
 const fieldsShort: string[] = [
-	"id",
-	"task_assignees_id",
-	"task_status_id",
-	"task_title",
-	"task_description",
-	"task_tags",
-	"custom_attributes",
-]
+	'id',
+	'task_assignees_id',
+	'task_status_id',
+	'task_title',
+	'task_description',
+	'task_tags',
+	'custom_attributes',
+];
 
-const thisRes = 'task'
+const thisRes = 'task';
 
 export const resource: INodeProperties[] = [
 	{
@@ -63,7 +60,7 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Get',
 				value: 'get',
-				description: 'get a task',
+				description: 'Get a task',
 				action: 'Get a task',
 			},
 			{
@@ -81,32 +78,25 @@ export const resource: INodeProperties[] = [
 		],
 		default: 'get',
 	},
-
-]
+];
 
 export const operations: INodeProperties[] = [
-
 	// ----------------------------------
 	//         task:shared
 	// ----------------------------------
 
 	{
-		displayName: 'Task Id',
+		displayName: 'Task ID',
 		name: 'taskId',
 		type: 'number',
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'get',
-					'update',
-					'delete'
-				],
+				operation: ['get', 'update', 'delete'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description: 'Task Id',
 	},
 
 	// ----------------------------------
@@ -120,18 +110,14 @@ export const operations: INodeProperties[] = [
 		default: 'Unnamed',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description: 'Task Title',
 	},
 	{
-		displayName: 'Task Assignee',
+		displayName: 'Task Assignee Name or ID',
 		name: 'assignee',
 		type: 'options',
 		typeOptions: {
@@ -140,56 +126,47 @@ export const operations: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'To whom assign a task',
+		description: 'To whom assign a task. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Task Status',
 		name: 'status',
 		type: 'options',
-		default: '',
+		default: 1,
 		options: [
 			{
 				value: 1,
-				name: "To do"
+				name: 'To Do',
 			},
 			{
 				value: 2,
-				name: "In progress"
+				name: 'In Progress',
 			},
 			{
 				value: 3,
-				name: "On hold"
+				name: 'On Hold',
 			},
 			{
 				value: 4,
-				name: "Done"
+				name: 'Done',
 			},
 			{
 				value: 5,
-				name: "Canceled"
-			}
+				name: 'Canceled',
+			},
 		],
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Task Status',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -209,14 +186,13 @@ export const operations: INodeProperties[] = [
 				name: 'task_description',
 				type: 'string',
 				default: '',
-				description: 'Task Description',
 			},
 			{
 				displayName: 'Task Tags',
 				name: 'task_tags',
 				type: 'string',
 				default: '',
-				description: 'Task tags as comma separated string',
+				description: 'Task tags as comma-separated string',
 			},
 			{
 				displayName: 'Custom Attributes',
@@ -239,17 +215,12 @@ export const operations: INodeProperties[] = [
 		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: [
-					'get',
-				],
+				operation: ['get'],
 				resource: [thisRes],
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fields),
-		],
+		options: [...returnRaw, ...fieldProperties(fields)],
 	},
 
 	{
@@ -259,18 +230,12 @@ export const operations: INodeProperties[] = [
 		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update'
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fieldsShort),
-		],
+		options: [...returnRaw, ...fieldProperties(fieldsShort)],
 	},
 
 	{
@@ -285,8 +250,6 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-		],
+		options: [...returnRaw],
 	},
-]
+];

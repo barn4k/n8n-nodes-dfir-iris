@@ -1,21 +1,18 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import {
-	returnRaw,
-	fieldProperties
-} from '../../helpers/types';
+import { returnRaw, fieldProperties } from '../../helpers/types';
 
 const fields: string[] = [
-	"comment_date",
-	"comment_id",
-	"comment_text",
-	"comment_update_date",
-	"comment_uuid",
-	"name",
-	"user",
-]
+	'comment_date',
+	'comment_id',
+	'comment_text',
+	'comment_update_date',
+	'comment_uuid',
+	'name',
+	'user',
+];
 
-const thisRes = 'comment'
+const thisRes = 'comment';
 
 export const resource: INodeProperties[] = [
 	{
@@ -56,11 +53,9 @@ export const resource: INodeProperties[] = [
 		],
 		default: 'getMany',
 	},
-
-]
+];
 
 export const operations: INodeProperties[] = [
-
 	// ----------------------------------
 	//         comment
 	// ----------------------------------
@@ -69,31 +64,31 @@ export const operations: INodeProperties[] = [
 		displayName: 'Object Name',
 		name: 'objectName',
 		type: 'options',
-		default: '',
+		default: 'assets',
 		options: [
 			{
 				name: 'Assets',
-				value: 'assets'
+				value: 'assets',
 			},
 			{
 				name: 'Evidences',
-				value: 'evidences'
+				value: 'evidences',
 			},
 			{
 				name: 'Events',
-				value: 'events'
+				value: 'events',
 			},
 			{
 				name: 'IOC',
-				value: 'ioc'
+				value: 'ioc',
 			},
 			{
 				name: 'Notes',
-				value: 'notes'
+				value: 'notes',
 			},
 			{
 				name: 'Tasks',
-				value: 'tasks'
+				value: 'tasks',
 			},
 		],
 		displayOptions: {
@@ -102,11 +97,10 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description:
-			'Add a new comment to a case object',
+		description: 'Add a new comment to a case object',
 	},
 	{
-		displayName: 'Object Id',
+		displayName: 'Object ID',
 		name: 'objectId',
 		type: 'number',
 		default: 0,
@@ -116,26 +110,21 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description:
-			'Case object Id',
+		description: 'Case object ID',
 	},
 	{
-		displayName: 'Comment Id',
+		displayName: 'Comment ID',
 		name: 'commentId',
 		type: 'number',
 		default: 0,
 		displayOptions: {
 			show: {
-				operation: [
-					'update',
-					'delete',
-				],
+				operation: ['update', 'delete'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Case comment Id',
+		description: 'Case comment ID',
 	},
 	{
 		displayName: 'Comment Text',
@@ -144,16 +133,12 @@ export const operations: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update',
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		required: true,
-		description:
-			'Case comment Id',
+		description: 'Case comment ID',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -162,10 +147,7 @@ export const operations: INodeProperties[] = [
 		placeholder: 'Add Field',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update'
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
@@ -176,7 +158,6 @@ export const operations: INodeProperties[] = [
 				name: 'comment_text',
 				type: 'string',
 				default: '',
-				description: 'Comment Text',
 			},
 		],
 	},
@@ -187,18 +168,12 @@ export const operations: INodeProperties[] = [
 		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: [
-					'create',
-					'update'
-				],
+				operation: ['create', 'update'],
 				resource: [thisRes],
 			},
 		},
 		default: {},
-		options: [
-			...returnRaw,
-			...fieldProperties(fields),
-		],
+		options: [...returnRaw, ...fieldProperties(fields)],
 	},
 	{
 		displayName: 'Options',
@@ -207,15 +182,11 @@ export const operations: INodeProperties[] = [
 		placeholder: 'Add Option',
 		displayOptions: {
 			show: {
-				operation: [
-					'getMany'
-				],
+				operation: ['getMany'],
 				resource: [thisRes],
 			},
 		},
 		default: {},
-		options: [
-			...fieldProperties(fields),
-		],
+		options: [...fieldProperties(fields)],
 	},
-]
+];

@@ -1,21 +1,21 @@
-import type { INodeProperties, } from 'n8n-workflow';
+import type { INodeProperties } from 'n8n-workflow';
 
 export interface IFolder {
-data: {
-	[key: string]: {
-		children?: {
-			[key: string]: IFolder['data']
-		},
-		is_root?: boolean
-		name: string,
-		type: 'directory' | 'file'
-	}
-}
+	data: {
+		[key: string]: {
+			children?: {
+				[key: string]: IFolder['data'];
+			};
+			is_root?: boolean;
+			name: string;
+			type: 'directory' | 'file';
+		};
+	};
 }
 
-export const cidDescription :INodeProperties[] = [
+export const cidDescription: INodeProperties[] = [
 	{
-		displayName: 'Case Id',
+		displayName: 'Case ID',
 		name: 'cid',
 		type: 'number',
 		default: 1,
@@ -35,18 +35,18 @@ export const cidDescription :INodeProperties[] = [
 			},
 		},
 		required: true,
-		description:
-			'Case Id',
-	}
-]
+	},
+];
 
-export function fieldProperties(fields: string[]){
+export function fieldProperties(fields: string[]) {
 	return [
 		{
 			displayName: 'Return Fields',
 			name: 'fields',
 			type: 'multiOptions',
-			options: fields.map( (f) => { return {name: f, value: f} } ),
+			options: fields.map((f) => {
+				return { name: f, value: f };
+			}),
 			default: [],
 			description: 'Fields to be included',
 		},
@@ -54,11 +54,13 @@ export function fieldProperties(fields: string[]){
 			displayName: 'Exclude',
 			name: 'inverseFields',
 			type: 'boolean',
-			options: fields.map( (f) => { return {name: f, value: f} } ),
+			options: fields.map((f) => {
+				return { name: f, value: f };
+			}),
 			default: false,
-			description: 'if the selected fields should be excluded instead',
+			description: 'If the selected fields should be excluded instead',
 		},
-	] as INodeProperties[]
+	] as INodeProperties[];
 }
 
 export const returnAllOrLimit: INodeProperties[] = [
@@ -81,7 +83,7 @@ export const returnAllOrLimit: INodeProperties[] = [
 		typeOptions: {
 			minValue: 1,
 		},
-		default: 100,
+		default: 50,
 		description: 'Max number of results to return',
 	},
 ];
@@ -92,6 +94,6 @@ export const returnRaw: INodeProperties[] = [
 		name: 'isRaw',
 		type: 'boolean',
 		default: false,
-		description: 'return the raw response',
+		description: 'Return the raw response',
 	},
 ];

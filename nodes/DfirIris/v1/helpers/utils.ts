@@ -1,32 +1,45 @@
-import type {
-	IDataObject,
-	IExecuteFunctions,
-} from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 
-import { 	NodeOperationError } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
 
-export function fieldsRemover(responseData: any, options: IDataObject){
-	const fields = options.fields as string[] || []
-	const inverseFields = options.inverseFields as boolean || false
+export function fieldsRemover(responseData: any, options: IDataObject) {
+	const fields = (options.fields as string[]) || [];
+	const inverseFields = (options.inverseFields as boolean) || false;
 
-	if (fields && 'data' in responseData){
-		if (Array.isArray(responseData.data)){
-			responseData.data.forEach( (row: {[index: string]:any}) => {
-				if (inverseFields){
-					Object.keys(row).filter(k => fields.includes(k)).forEach( (x: string) => { delete row[x] })
+	if (fields && 'data' in responseData) {
+		if (Array.isArray(responseData.data)) {
+			responseData.data.forEach((row: { [index: string]: any }) => {
+				if (inverseFields) {
+					Object.keys(row)
+						.filter((k) => fields.includes(k))
+						.forEach((x: string) => {
+							delete row[x];
+						});
 				} else {
-					Object.keys(row).filter(k => !fields.includes(k)).forEach( (x: string) => { delete row[x] })
+					Object.keys(row)
+						.filter((k) => !fields.includes(k))
+						.forEach((x: string) => {
+							delete row[x];
+						});
 				}
-			})
+			});
 		} else {
-			if (inverseFields){
-				Object.keys(responseData.data).filter(k => fields.includes(k)).forEach( (x: string) => { delete responseData.data[x] })
+			if (inverseFields) {
+				Object.keys(responseData.data)
+					.filter((k) => fields.includes(k))
+					.forEach((x: string) => {
+						delete responseData.data[x];
+					});
 			} else {
-				Object.keys(responseData.data).filter(k => !fields.includes(k)).forEach( (x: string) => { delete responseData.data[x] })
+				Object.keys(responseData.data)
+					.filter((k) => !fields.includes(k))
+					.forEach((x: string) => {
+						delete responseData.data[x];
+					});
 			}
 		}
 	}
-	return responseData
+	return responseData;
 }
 
 /**
@@ -44,25 +57,20 @@ export function addAdditionalFields(
 ) {
 	// Add the additional fields
 	const additionalFields = this.getNodeParameter('additionalFields', index);
-	this.logger.debug('additionalFields',additionalFields)
+	this.logger.debug('additionalFields', additionalFields);
 
-	if (additionalFields.hasOwnProperty('custom_attributes')){
-		if(typeof additionalFields.custom_attributes !== 'object'){
-			try{
-				JSON.parse(additionalFields.custom_attributes as string)
+	if (additionalFields.hasOwnProperty('custom_attributes')) {
+		if (typeof additionalFields.custom_attributes !== 'object') {
+			try {
+				JSON.parse(additionalFields.custom_attributes as string);
 			} catch {
-				throw new NodeOperationError(
-					this.getNode(),
-					'JSON parameter needs to be valid JSON',
-					{
-						itemIndex: index,
-					},
-				);
+				throw new NodeOperationError(this.getNode(), 'JSON parameter needs to be valid JSON', {
+					itemIndex: index,
+				});
 			}
-			additionalFields.custom_attributes = JSON.parse(additionalFields.custom_attributes as string)
+			additionalFields.custom_attributes = JSON.parse(additionalFields.custom_attributes as string);
 		}
 	}
 
 	Object.assign(body, additionalFields);
-
 }
