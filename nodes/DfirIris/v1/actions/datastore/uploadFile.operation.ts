@@ -32,7 +32,7 @@ const returnFields: string[] = [
 	'file_id',
 	'file_description',
 	'file_password',
-];
+].sort();
 
 const properties: INodeProperties[] = [
 	// boolean block
@@ -114,7 +114,6 @@ const properties: INodeProperties[] = [
 				name: 'file_tags',
 				type: 'string',
 				default: '',
-				required: true,
 			},
 			{
 				displayName: 'File Password',
@@ -188,11 +187,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	// TODO: fix later formdata
 	// const formData = new FormData();
 
-	if (body.hasOwnProperty('file_is_ioc')) body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
+	if (body.hasOwnProperty('file_is_ioc'))
+		body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
 	if (body.hasOwnProperty('file_is_evidence'))
 		body.file_is_evidence = body.file_is_evidence ? 'y' : 'n';
-	if (!body.hasOwnProperty('file_description')) body.file_description = '';
-	if (!body.hasOwnProperty('file_tags')) body.file_tags = '';
+	if (!body.hasOwnProperty('file_description'))
+		body.file_description = '';
+	if (!body.hasOwnProperty('file_tags'))
+		body.file_tags = '';
 
 	const formData = {
 		file_content: {
@@ -248,6 +250,16 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		{},
 		true,
 	);
+
+	const options = this.getNodeParameter('options', i, {});
+	const isRaw = options.isRaw as boolean || false
+
+	// field remover
+	if (options.hasOwnProperty('fields'))
+		response = utils.fieldsRemover(response, options)
+
+	if (!isRaw)
+		response = (response as any).data
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(response as IDataObject[]),

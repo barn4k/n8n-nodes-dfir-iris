@@ -2,13 +2,12 @@ import type { INodeProperties } from 'n8n-workflow';
 
 import * as getTree from './getTree.operation';
 import * as uploadFile from './uploadFile.operation';
-// import * as updateFileInfo from './updateFileInfo.operation'
-// import * as getFileInfo from './getFileInfo.operation'
+import * as updateFileInfo from './updateFileInfo.operation'
+import * as getFileInfo from './getFileInfo.operation'
 
 import { cidDescription } from '../../helpers/types';
 
-export { getTree, uploadFile };
-// export { getTree, uploadFile, getFileInfo, updateFileInfo }
+export { getTree, uploadFile, getFileInfo, updateFileInfo }
 
 // const fieldsFile: string[] = [
 // 	"file_size",
@@ -127,8 +126,8 @@ export const resource: INodeProperties[] = [
 	...cidDescription,
 	...getTree.description,
 	...uploadFile.description,
-	// ...getFileInfo.description,
-	// ...updateFileInfo.description,
+	...getFileInfo.description,
+	...updateFileInfo.description,
 ];
 
 // export const operations: INodeProperties[] = [

@@ -2,13 +2,13 @@ import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
 
 import { NodeOperationError } from 'n8n-workflow';
 
-export function fieldsRemover(responseData: any, options: IDataObject) {
+export function fieldsRemover(responseData: any, options: IDataObject, prop: string = 'data') {
 	const fields = (options.fields as string[]) || [];
 	const inverseFields = (options.inverseFields as boolean) || false;
 
-	if (fields && 'data' in responseData) {
+	if (fields && prop in responseData) {
 		if (Array.isArray(responseData.data)) {
-			responseData.data.forEach((row: { [index: string]: any }) => {
+			responseData[prop].forEach((row: { [index: string]: any }) => {
 				if (inverseFields) {
 					Object.keys(row)
 						.filter((k) => fields.includes(k))
@@ -25,20 +25,21 @@ export function fieldsRemover(responseData: any, options: IDataObject) {
 			});
 		} else {
 			if (inverseFields) {
-				Object.keys(responseData.data)
+				Object.keys(responseData[prop])
 					.filter((k) => fields.includes(k))
 					.forEach((x: string) => {
-						delete responseData.data[x];
+						delete responseData[prop][x];
 					});
 			} else {
-				Object.keys(responseData.data)
+				Object.keys(responseData[prop])
 					.filter((k) => !fields.includes(k))
 					.forEach((x: string) => {
-						delete responseData.data[x];
+						delete responseData[prop][x];
 					});
 			}
 		}
 	}
+
 	return responseData;
 }
 
