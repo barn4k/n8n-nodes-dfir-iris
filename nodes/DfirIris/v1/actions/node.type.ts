@@ -6,7 +6,7 @@ type NodeMap = {
 	| 'getTree' // checked
 	| 'getFileInfo' // checked
 	| 'updateFileInfo' // checked
-	// | 'downloadFile'
+	| 'downloadFile'
 	// | 'deleteFile';
 	// file:
 	// 	| 'copy'

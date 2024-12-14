@@ -4,10 +4,11 @@ import * as getTree from './getTree.operation';
 import * as uploadFile from './uploadFile.operation';
 import * as updateFileInfo from './updateFileInfo.operation'
 import * as getFileInfo from './getFileInfo.operation'
+import * as downloadFile from './downloadFile.operation'
 
 import { cidDescription } from '../../helpers/types';
 
-export { getTree, uploadFile, getFileInfo, updateFileInfo }
+export { getTree, uploadFile, getFileInfo, updateFileInfo, downloadFile }
 
 // const fieldsFile: string[] = [
 // 	"file_size",
@@ -128,6 +129,7 @@ export const resource: INodeProperties[] = [
 	...uploadFile.description,
 	...getFileInfo.description,
 	...updateFileInfo.description,
+	...downloadFile.description,
 ];
 
 // export const operations: INodeProperties[] = [
