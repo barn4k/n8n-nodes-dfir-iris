@@ -5,10 +5,11 @@ import * as uploadFile from './uploadFile.operation';
 import * as updateFileInfo from './updateFileInfo.operation'
 import * as getFileInfo from './getFileInfo.operation'
 import * as downloadFile from './downloadFile.operation'
+import * as moveFile from './moveFile.operation'
 
 import { cidDescription } from '../../helpers/types';
 
-export { getTree, uploadFile, getFileInfo, updateFileInfo, downloadFile }
+export { getTree, uploadFile, getFileInfo, updateFileInfo, downloadFile, moveFile }
 
 // const fieldsFile: string[] = [
 // 	"file_size",
@@ -130,6 +131,7 @@ export const resource: INodeProperties[] = [
 	...getFileInfo.description,
 	...updateFileInfo.description,
 	...downloadFile.description,
+	...moveFile.description,
 ];
 
 // export const operations: INodeProperties[] = [
