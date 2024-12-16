@@ -7,89 +7,98 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFolder.resource'
 import { apiRequest, getFolderName } from '../../transport';
 import { utils, types } from '../../helpers';
 
+const fields = [
+	"case",
+	"path_case_id",
+	"path_id",
+	"path_is_root",
+	"path_name",
+	"path_parent_id",
+	"path_uuid",
+	"registry"
+]
 
 const properties: INodeProperties[] = [
-		// boolean block
 	{
-		displayName: 'Use Folder Id',
-		name: 'useFolderUI',
-		type: 'boolean',
-		default: false,
-		// required: true,
-		description: 'Use Folder Id',
-	},
-
-	{
-		displayName: 'Move to Folder Id',
+		displayName: 'Folder Id',
 		name: 'folderId',
-		type: 'number',
-		default: '',
-		displayOptions: {
-			show: {
-				useFolderUI: [true],
-			},
-		},
-		description: 'Folder Id as number',
-	},
-
-	{
-		displayName: 'Move to Default Folder',
-		name: 'folderLabel',
-		type: 'options',
-		noDataExpression: true,
-		options: [
-			{
-				value: "root",
-				name: "Root of the case"
-			},
-			{
-				value: "evidences",
-				name: "Evidences"
-			},
-			{
-				value: "iocs",
-				name: "IOCs"
-			},
-			{
-				value: "images",
-				name: "Images"
-			},
-		],
-		default: 'evidences',
-		displayOptions: {
-			show: {
-				useFolderUI: [false],
-			},
-		},
-		description: 'Use Predefined Folder',
-	},
-	// end of block
-	{
-		displayName: 'File Id',
-		name: 'fileId',
 		type: 'number',
 		default: '',
 		required: true,
 		description: 'File Id',
 	},
+	// boolean block
+	{
+		displayName: 'Use Folder ID',
+		name: 'useFolderUI',
+		type: 'boolean',
+		default: false,
+	},
+
+	{
+		displayName: 'Folder ID',
+		name: 'destFolderId',
+		type: 'number',
+		default: '',
+		description: 'Folder ID as number',
+		displayOptions: {
+			show: {
+				useFolderUI: [true],
+			},
+		},
+	},
+
+	{
+		displayName: 'Default Folder',
+		name: 'destFolderLabel',
+		type: 'options',
+		noDataExpression: true,
+		options: [
+			{
+				value: 'root',
+				name: 'Root of the Case',
+			},
+			{
+				value: 'evidences',
+				name: 'Evidences',
+			},
+			{
+				value: 'iocs',
+				name: 'IOCs',
+			},
+			{
+				value: 'images',
+				name: 'Images',
+			},
+		],
+		default: 'evidences',
+		description: 'Use Predefined Folder',
+		displayOptions: {
+			show: {
+				useFolderUI: [false],
+			},
+		},
+	},
+	// end of block
+
 	{
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
-		operation: ['moveFile'],
+		resource: ['datastoreFolder'],
+		operation: ['moveFolder'],
 	},
 };
 
@@ -100,8 +109,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[]
 	let body: IDataObject = {}
 
-	let folderId: string = this.getNodeParameter('folderId', i, 0) as string;
-	const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
+	let folderId: string = this.getNodeParameter('destFolderId', i, 0) as string;
+	const folderLabel: string = this.getNodeParameter('destFolderLabel', i, '') as string;
 	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
 
 	body['destination-node'] = folderId
@@ -109,7 +118,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/file/move/` + (this.getNodeParameter('fileId', i) as string),
+		`${endpoint}/folder/move/` + (this.getNodeParameter('folderId', i) as string),
 		body,
 		query,
 	);
@@ -121,8 +130,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	if (options.hasOwnProperty('fields'))
 		response = utils.fieldsRemover(response, options)
 	if (!isRaw)
-		// @ts-ignore
-		response = {status: "success"}
+		response = (response as any).data
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(response as IDataObject[]),

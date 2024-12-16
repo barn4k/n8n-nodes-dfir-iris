@@ -15,7 +15,7 @@ import FormData from 'form-data'
 
 import type { Readable } from 'stream';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFile.resource'
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
@@ -119,7 +119,7 @@ const properties: INodeProperties[] = [
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
+		resource: ['datastoreFile'],
 		operation: ['updateFileInfo'],
 	},
 };

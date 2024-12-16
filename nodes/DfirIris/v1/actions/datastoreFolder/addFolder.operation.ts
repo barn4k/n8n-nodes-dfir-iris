@@ -7,29 +7,18 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFolder.resource'
 import { apiRequest, getFolderName } from '../../transport';
-import { utils, types } from '../../helpers';
-
-const fields = [
-	"case",
-	"path_case_id",
-	"path_id",
-	"path_is_root",
-	"path_name",
-	"path_parent_id",
-	"path_uuid",
-	"registry"
-]
+import { types, utils } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Folder Id',
-		name: 'folderId',
-		type: 'number',
+		displayName: 'Folder Name',
+		name: 'folderName',
+		type: 'string',
 		default: '',
 		required: true,
-		description: 'File Id',
+		description: 'New Folder Name',
 	},
 	// boolean block
 	{
@@ -40,7 +29,7 @@ const properties: INodeProperties[] = [
 	},
 
 	{
-		displayName: 'Folder ID',
+		displayName: 'Parent Folder ID',
 		name: 'destFolderId',
 		type: 'number',
 		default: '',
@@ -53,7 +42,7 @@ const properties: INodeProperties[] = [
 	},
 
 	{
-		displayName: 'Default Folder',
+		displayName: 'Parent Folder',
 		name: 'destFolderLabel',
 		type: 'options',
 		noDataExpression: true,
@@ -84,21 +73,22 @@ const properties: INodeProperties[] = [
 		},
 	},
 	// end of block
-
 	{
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(fields)],
+		options: [
+			...types.returnRaw,
+		],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
-		operation: ['moveFolder'],
+		resource: ['datastoreFolder'],
+		operation: ['addFolder'],
 	},
 };
 
@@ -113,12 +103,13 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const folderLabel: string = this.getNodeParameter('destFolderLabel', i, '') as string;
 	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
 
-	body['destination-node'] = folderId
+	body.parent_node = folderId
+	body.folder_name = this.getNodeParameter('folderName', i, 0) as string;
 
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/folder/move/` + (this.getNodeParameter('folderId', i) as string),
+		`${endpoint}/folder/add`,
 		body,
 		query,
 	);

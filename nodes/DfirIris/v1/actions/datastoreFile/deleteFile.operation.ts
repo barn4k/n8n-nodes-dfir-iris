@@ -7,33 +7,34 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFile.resource'
 import { apiRequest } from '../../transport';
+import { utils, types } from '../../helpers';
 
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Folder Id',
-		name: 'folderId',
+		displayName: 'File Id',
+		name: 'fileId',
 		type: 'number',
 		default: '',
 		required: true,
 		description: 'File Id',
 	},
 	{
-		displayName: 'New Folder Name',
-		name: 'folderName',
-		type: 'string',
-		default: '',
-		required: true,
-		description: 'New Folder Name',
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		options: [...types.returnRaw],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
-		operation: ['renameFolder'],
+		resource: ['datastoreFile'],
+		operation: ['deleteFile'],
 	},
 };
 
@@ -44,16 +45,23 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[]
 	let body: IDataObject = {}
 
-	body.parent_node = this.getNodeParameter('folderId', i) as string
-	body.folder_name = this.getNodeParameter('folderName', i, 0) as string;
-
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/folder/rename/` + (this.getNodeParameter('folderId', i) as string),
+		`${endpoint}/file/delete/` + (this.getNodeParameter('fileId', i) as string),
 		body,
 		query,
 	);
+
+	const options = this.getNodeParameter('options', i, {});
+	const isRaw = options.isRaw as boolean || false
+
+	// field remover
+	if (options.hasOwnProperty('fields'))
+		response = utils.fieldsRemover(response, options)
+	if (!isRaw)
+		// @ts-ignore
+		response = {status: "success"}
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(response as IDataObject[]),

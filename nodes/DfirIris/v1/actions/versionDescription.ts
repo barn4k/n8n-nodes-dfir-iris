@@ -5,7 +5,10 @@ import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
 // import * as comment from './comment/Comment.resource'
 // import * as asset from './asset/Asset.resource'
 // import * as ioc from './ioc/IOC.resource'
-import * as datastore from './datastore/Datastore.resource';
+import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
+
+import { cidDescription } from '../helpers/types';
 
 export const versionDescription: INodeTypeDescription = {
 	displayName: 'DFIR IRIS',
@@ -51,8 +54,12 @@ export const versionDescription: INodeTypeDescription = {
 				// 	value: 'case',
 				// },
 				{
-					name: 'Datastore',
-					value: 'datastore',
+					name: 'Datastore File',
+					value: 'datastoreFile',
+				},
+				{
+					name: 'Datastore Folder',
+					value: 'datastoreFolder',
 				},
 				// {
 				// 	name: 'Timeline',
@@ -79,13 +86,15 @@ export const versionDescription: INodeTypeDescription = {
 				// 	value: 'comment',
 				// },
 			],
-			default: 'datastore',
+			default: 'datastoreFolder',
 		},
+		...cidDescription,
 		// ...note.resource,
 		// ...task.resource,
 		// ...comment.resource,
 		// ...asset.resource,
 		// ...ioc.resource,
-		...datastore.resource,
+		...datastoreFile.resource,
+		...datastoreFolder.resource,
 	],
 };

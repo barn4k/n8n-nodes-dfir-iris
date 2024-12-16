@@ -7,32 +7,15 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFolder.resource'
 import { apiRequest } from '../../transport';
-import { types, utils } from '../../helpers';
+import { utils, types } from '../../helpers';
 
-const returnFields: string[] = [
-	"file_size",
-	"file_is_ioc",
-	"file_sha256",
-	"file_is_evidence",
-	"file_uuid",
-	"file_case_id",
-	"file_date_added",
-	"file_parent_id",
-	"added_by_user_id",
-	"file_original_name",
-	"file_tags",
-	"modification_history",
-	"file_id",
-	"file_description",
-	"file_password"
-].sort();
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'File Id',
-		name: 'fileId',
+		displayName: 'Folder Id',
+		name: 'folderId',
 		type: 'number',
 		default: '',
 		required: true,
@@ -44,17 +27,14 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...types.returnRaw,
-			...types.fieldProperties(returnFields)
-		],
+		options: [...types.returnRaw],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
-		operation: ['getFileInfo'],
+		resource: ['datastoreFolder'],
+		operation: ['deleteFolder'],
 	},
 };
 
@@ -63,12 +43,13 @@ export const description = updateDisplayOptions(displayOptions, properties);
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response: INodeExecutionData[]
+	let body: IDataObject = {}
 
 	response = await apiRequest.call(
 		this,
-		'GET',
-		`${endpoint}/file/info/` + (this.getNodeParameter('fileId', i) as string),
-		{},
+		'POST',
+		`${endpoint}/folder/delete/` + (this.getNodeParameter('folderId', i) as string),
+		body,
 		query,
 	);
 
@@ -79,7 +60,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	if (options.hasOwnProperty('fields'))
 		response = utils.fieldsRemover(response, options)
 	if (!isRaw)
-		response = (response as any).data
+		// @ts-ignore
+		response = {status: "success"}
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(response as IDataObject[]),

@@ -8,7 +8,7 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource';
+import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
 import { utils } from '../../helpers';
 
@@ -49,7 +49,7 @@ const properties: INodeProperties[] = [
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
+		resource: ['datastoreFile'],
 		operation: ['downloadFile'],
 	},
 };

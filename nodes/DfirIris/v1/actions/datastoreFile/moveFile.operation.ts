@@ -7,88 +7,89 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFile.resource'
 import { apiRequest, getFolderName } from '../../transport';
-import { types, utils } from '../../helpers';
+import { utils, types } from '../../helpers';
+
 
 const properties: INodeProperties[] = [
+		// boolean block
 	{
-		displayName: 'Folder Name',
-		name: 'folderName',
-		type: 'string',
-		default: '',
-		required: true,
-		description: 'New Folder Name',
-	},
-	// boolean block
-	{
-		displayName: 'Use Folder ID',
+		displayName: 'Use Folder Id',
 		name: 'useFolderUI',
 		type: 'boolean',
 		default: false,
+		// required: true,
+		description: 'Use Folder Id',
 	},
 
 	{
-		displayName: 'Parent Folder ID',
-		name: 'destFolderId',
+		displayName: 'Move to Folder Id',
+		name: 'folderId',
 		type: 'number',
 		default: '',
-		description: 'Folder ID as number',
 		displayOptions: {
 			show: {
 				useFolderUI: [true],
 			},
 		},
+		description: 'Folder Id as number',
 	},
 
 	{
-		displayName: 'Parent Folder',
-		name: 'destFolderLabel',
+		displayName: 'Move to Default Folder',
+		name: 'folderLabel',
 		type: 'options',
 		noDataExpression: true,
 		options: [
 			{
-				value: 'root',
-				name: 'Root of the Case',
+				value: "root",
+				name: "Root of the case"
 			},
 			{
-				value: 'evidences',
-				name: 'Evidences',
+				value: "evidences",
+				name: "Evidences"
 			},
 			{
-				value: 'iocs',
-				name: 'IOCs',
+				value: "iocs",
+				name: "IOCs"
 			},
 			{
-				value: 'images',
-				name: 'Images',
+				value: "images",
+				name: "Images"
 			},
 		],
 		default: 'evidences',
-		description: 'Use Predefined Folder',
 		displayOptions: {
 			show: {
 				useFolderUI: [false],
 			},
 		},
+		description: 'Use Predefined Folder',
 	},
 	// end of block
+	{
+		displayName: 'File Id',
+		name: 'fileId',
+		type: 'number',
+		default: '',
+		required: true,
+		description: 'File Id',
+	},
 	{
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...types.returnRaw,
-		],
+		options: [...types.returnRaw],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
-		operation: ['addFolder'],
+		resource: ['datastoreFile'],
+		operation: ['moveFile'],
 	},
 };
 
@@ -99,17 +100,16 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[]
 	let body: IDataObject = {}
 
-	let folderId: string = this.getNodeParameter('destFolderId', i, 0) as string;
-	const folderLabel: string = this.getNodeParameter('destFolderLabel', i, '') as string;
+	let folderId: string = this.getNodeParameter('folderId', i, 0) as string;
+	const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
 	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
 
-	body.parent_node = folderId
-	body.folder_name = this.getNodeParameter('folderName', i, 0) as string;
+	body['destination-node'] = folderId
 
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/folder/add`,
+		`${endpoint}/file/move/` + (this.getNodeParameter('fileId', i) as string),
 		body,
 		query,
 	);
@@ -121,7 +121,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	if (options.hasOwnProperty('fields'))
 		response = utils.fieldsRemover(response, options)
 	if (!isRaw)
-		response = (response as any).data
+		// @ts-ignore
+		response = {status: "success"}
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(response as IDataObject[]),

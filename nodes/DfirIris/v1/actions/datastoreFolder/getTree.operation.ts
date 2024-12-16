@@ -7,20 +7,11 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Datastore.resource'
+import { endpoint } from './DatastoreFolder.resource';
 import { apiRequest } from '../../transport';
-import { utils, types } from '../../helpers';
-
+import { types } from '../../helpers';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'File Id',
-		name: 'fileId',
-		type: 'number',
-		default: '',
-		required: true,
-		description: 'File Id',
-	},
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -33,8 +24,8 @@ const properties: INodeProperties[] = [
 
 const displayOptions = {
 	show: {
-		resource: ['datastore'],
-		operation: ['deleteFile'],
+		resource: ['datastoreFolder'],
+		operation: ['getTree'],
 	},
 };
 
@@ -42,26 +33,14 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
-	let body: IDataObject = {}
+	let response: INodeExecutionData[];
 
-	response = await apiRequest.call(
-		this,
-		'POST',
-		`${endpoint}/file/delete/` + (this.getNodeParameter('fileId', i) as string),
-		body,
-		query,
-	);
+	response = await apiRequest.call(this, 'GET', `${endpoint}/list/tree`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
+	const isRaw = (options.isRaw as boolean) || false;
 
-	// field remover
-	if (options.hasOwnProperty('fields'))
-		response = utils.fieldsRemover(response, options)
-	if (!isRaw)
-		// @ts-ignore
-		response = {status: "success"}
+	if (!isRaw) response = (response as any).data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(response as IDataObject[]),

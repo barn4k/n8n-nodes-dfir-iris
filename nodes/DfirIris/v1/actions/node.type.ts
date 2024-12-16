@@ -1,18 +1,19 @@
 import type { AllEntities } from 'n8n-workflow';
 
 type NodeMap = {
-	datastore:
+	datastoreFile:
 	| 'uploadFile'
-	| 'getTree'
 	| 'getFileInfo'
 	| 'updateFileInfo'
 	| 'downloadFile'
 	| 'moveFile'
-	| 'deleteFile'
+	| 'deleteFile';
+	datastoreFolder:
+	| 'getTree'
 	| 'addFolder'
 	| 'moveFolder'
 	| 'renameFolder'
-	| 'deleteFolder' // +
+	| 'deleteFolder'; // +
 	// file:
 	// 	| 'copy'
 	// 	| 'createFromText'

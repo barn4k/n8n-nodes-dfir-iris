@@ -3,7 +3,8 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import type { DfirIrisType } from './node.type';
 
-import * as datastore from './datastore/Datastore.resource';
+import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 // import * as file from './file/File.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -21,8 +22,11 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 	for (let i = 0; i < items.length; i++) {
 		try {
 			switch (dfirIris.resource) {
-				case 'datastore':
-					returnData.push(...(await datastore[dfirIris.operation].execute.call(this, i)));
+				case 'datastoreFile':
+					returnData.push(...(await datastoreFile[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'datastoreFolder':
+					returnData.push(...(await datastoreFolder[dfirIris.operation].execute.call(this, i)));
 					break;
 				// case 'file':
 				// 	returnData.push(...(await file[googleDrive.operation].execute.call(this, i, items[i])));
@@ -40,7 +44,7 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 			console.debug(returnData);
 		} catch (error) {
 			if (this.continueOnFail()) {
-				if (resource === 'datastore' && operation === 'downloadFile') {
+				if (resource === 'datastoreFile' && operation === 'downloadFile') {
 					items[i].json = { error: error.message };
 				} else {
 					returnData.push({ json: { error: error.message } });
