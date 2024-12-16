@@ -2,13 +2,17 @@ import type { AllEntities } from 'n8n-workflow';
 
 type NodeMap = {
 	datastore:
-	| 'uploadFile' // checked
-	| 'getTree' // checked
-	| 'getFileInfo' // checked
-	| 'updateFileInfo' // checked
-	| 'downloadFile' // checked
+	| 'uploadFile'
+	| 'getTree'
+	| 'getFileInfo'
+	| 'updateFileInfo'
+	| 'downloadFile'
 	| 'moveFile'
-	// | 'deleteFile';
+	| 'deleteFile'
+	| 'addFolder'
+	| 'moveFolder'
+	| 'renameFolder'
+	| 'deleteFolder' // +
 	// file:
 	// 	| 'copy'
 	// 	| 'createFromText'
