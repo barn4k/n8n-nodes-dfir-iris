@@ -8,66 +8,11 @@ import type {
 import { updateDisplayOptions } from 'n8n-workflow';
 
 import { endpoint } from './DatastoreFile.resource'
-import { apiRequest, getFolderName } from '../../transport';
+import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
 
 
 const properties: INodeProperties[] = [
-		// boolean block
-	{
-		displayName: 'Use Folder Id',
-		name: 'useFolderUI',
-		type: 'boolean',
-		default: false,
-		// required: true,
-		description: 'Use Folder Id',
-	},
-
-	{
-		displayName: 'Move to Folder Id',
-		name: 'folderId',
-		type: 'number',
-		default: '',
-		displayOptions: {
-			show: {
-				useFolderUI: [true],
-			},
-		},
-		description: 'Folder Id as number',
-	},
-
-	{
-		displayName: 'Move to Default Folder',
-		name: 'folderLabel',
-		type: 'options',
-		noDataExpression: true,
-		options: [
-			{
-				value: "root",
-				name: "Root of the case"
-			},
-			{
-				value: "evidences",
-				name: "Evidences"
-			},
-			{
-				value: "iocs",
-				name: "IOCs"
-			},
-			{
-				value: "images",
-				name: "Images"
-			},
-		],
-		default: 'evidences',
-		displayOptions: {
-			show: {
-				useFolderUI: [false],
-			},
-		},
-		description: 'Use Predefined Folder',
-	},
-	// end of block
 	{
 		displayName: 'File Id',
 		name: 'fileId',
@@ -75,6 +20,18 @@ const properties: INodeProperties[] = [
 		default: '',
 		required: true,
 		description: 'File Id',
+	},
+	{
+		displayName: 'Destination Folder Name or ID',
+		name: 'folderId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getFolders',
+		},
+		options: [],
+		default: '',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'Options',
@@ -100,11 +57,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[]
 	let body: IDataObject = {}
 
-	let folderId: string = this.getNodeParameter('folderId', i, 0) as string;
-	const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
-	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
-
-	body['destination-node'] = folderId
+	body['destination-node'] = this.getNodeParameter('folderId', i, 0) as string;
 
 	response = await apiRequest.call(
 		this,

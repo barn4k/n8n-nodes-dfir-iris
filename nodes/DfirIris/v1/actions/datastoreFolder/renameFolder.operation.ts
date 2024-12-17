@@ -13,12 +13,16 @@ import { apiRequest } from '../../transport';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Folder Id',
+		displayName: 'Folder Name or ID',
 		name: 'folderId',
-		type: 'number',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getFolders',
+		},
+		options: [],
 		default: '',
-		required: true,
-		description: 'File Id',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'New Folder Name',

@@ -8,7 +8,7 @@ import type {
 import { updateDisplayOptions } from 'n8n-workflow';
 
 import { endpoint } from './DatastoreFolder.resource'
-import { apiRequest, getFolderName } from '../../transport';
+import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
 
 const fields = [
@@ -24,67 +24,29 @@ const fields = [
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Folder Id',
+		displayName: 'Folder Name or ID',
 		name: 'folderId',
-		type: 'number',
-		default: '',
-		required: true,
-		description: 'File Id',
-	},
-	// boolean block
-	{
-		displayName: 'Use Folder ID',
-		name: 'useFolderUI',
-		type: 'boolean',
-		default: false,
-	},
-
-	{
-		displayName: 'Folder ID',
-		name: 'destFolderId',
-		type: 'number',
-		default: '',
-		description: 'Folder ID as number',
-		displayOptions: {
-			show: {
-				useFolderUI: [true],
-			},
-		},
-	},
-
-	{
-		displayName: 'Default Folder',
-		name: 'destFolderLabel',
 		type: 'options',
-		noDataExpression: true,
-		options: [
-			{
-				value: 'root',
-				name: 'Root of the Case',
-			},
-			{
-				value: 'evidences',
-				name: 'Evidences',
-			},
-			{
-				value: 'iocs',
-				name: 'IOCs',
-			},
-			{
-				value: 'images',
-				name: 'Images',
-			},
-		],
-		default: 'evidences',
-		description: 'Use Predefined Folder',
-		displayOptions: {
-			show: {
-				useFolderUI: [false],
-			},
+		typeOptions: {
+			loadOptionsMethod: 'getFolders',
 		},
+		options: [],
+		default: '',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
-	// end of block
-
+	{
+		displayName: 'Destination Folder Name or ID',
+		name: 'destFolderId',
+		type: 'options',
+		typeOptions: {
+			loadOptionsMethod: 'getFolders',
+		},
+		options: [],
+		default: '',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	},
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -109,11 +71,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[]
 	let body: IDataObject = {}
 
-	let folderId: string = this.getNodeParameter('destFolderId', i, 0) as string;
-	const folderLabel: string = this.getNodeParameter('destFolderLabel', i, '') as string;
-	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
-
-	body['destination-node'] = folderId
+	body['destination-node'] = this.getNodeParameter('destFolderId', i, 0) as string;
 
 	response = await apiRequest.call(
 		this,

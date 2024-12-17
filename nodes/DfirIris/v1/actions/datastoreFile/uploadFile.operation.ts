@@ -12,7 +12,7 @@ import FormData from 'form-data';
 import type { Readable } from 'stream';
 
 import { endpoint } from './DatastoreFile.resource';
-import { apiRequest, getFolderName } from '../../transport';
+import { apiRequest } from '../../transport';
 import { utils } from '../../helpers';
 import { types } from '../../helpers';
 
@@ -35,59 +35,18 @@ const returnFields: string[] = [
 ].sort();
 
 const properties: INodeProperties[] = [
-	// boolean block
 	{
-		displayName: 'Use Folder ID',
-		name: 'useFolderUI',
-		type: 'boolean',
-		default: false,
-	},
-
-	{
-		displayName: 'Folder ID',
+		displayName: 'Destination Folder Name or ID',
 		name: 'folderId',
-		type: 'number',
-		default: '',
-		description: 'Folder ID as number',
-		displayOptions: {
-			show: {
-				useFolderUI: [true],
-			},
-		},
-	},
-
-	{
-		displayName: 'Default Folder',
-		name: 'folderLabel',
 		type: 'options',
-		noDataExpression: true,
-		options: [
-			{
-				value: 'root',
-				name: 'Root of the Case',
-			},
-			{
-				value: 'evidences',
-				name: 'Evidences',
-			},
-			{
-				value: 'iocs',
-				name: 'IOCs',
-			},
-			{
-				value: 'images',
-				name: 'Images',
-			},
-		],
-		default: 'evidences',
-		description: 'Use Predefined Folder',
-		displayOptions: {
-			show: {
-				useFolderUI: [false],
-			},
+		typeOptions: {
+			loadOptionsMethod: 'getFolders',
 		},
+		options: [],
+		default: '',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
-	// end of block
 	{
 		displayName: 'Binary Property Name',
 		name: 'binaryName',
@@ -164,11 +123,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
-	let folderId: string = this.getNodeParameter('folderId', i, 0) as string;
-	const folderLabel: string = this.getNodeParameter('folderLabel', i, '') as string;
 	let uploadData: Buffer | Readable;
-
-	if (folderLabel) folderId = (await getFolderName.call(this, query, folderLabel)) as any;
 
 	const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
 	const binaryData = this.helpers.assertBinaryData(i, binaryName);
@@ -244,7 +199,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/file/add/` + folderId,
+		`${endpoint}/file/add/` + this.getNodeParameter('folderId', i, 0) as string,
 		formData,
 		query,
 		{},
