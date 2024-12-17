@@ -9,8 +9,6 @@ import * as deleteFolder from './deleteFolder.operation'
 
 export { getTree, addFolder, moveFolder, renameFolder, deleteFolder }
 
-// import { cidDescription } from '../../helpers/types';
-
 export const endpoint = 'datastore';
 
 export const resource: INodeProperties[] = [
@@ -54,7 +52,6 @@ export const resource: INodeProperties[] = [
 		],
 		default: 'getTree',
 	},
-	// ...cidDescription,
 	...getTree.description,
 
 	...addFolder.description,

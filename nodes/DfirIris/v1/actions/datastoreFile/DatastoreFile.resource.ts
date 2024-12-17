@@ -9,8 +9,6 @@ import * as deleteFile from './deleteFile.operation'
 
 export { uploadFile, getFileInfo, updateFileInfo, downloadFile, moveFile, deleteFile }
 
-// import { cidDescription } from '../../helpers/types';
-
 export const endpoint = 'datastore';
 
 export const resource: INodeProperties[] = [
@@ -59,7 +57,6 @@ export const resource: INodeProperties[] = [
 		],
 		default: 'uploadFile',
 	},
-	// ...cidDescription,
 	...uploadFile.description,
 	...getFileInfo.description,
 	...updateFileInfo.description,

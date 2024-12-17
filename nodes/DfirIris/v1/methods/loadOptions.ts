@@ -140,23 +140,5 @@ export async function getFolders(this: ILoadOptionsFunctions): Promise<INodeProp
 
 	const returnData: INodePropertyOptions[] = utils.getFolderNested([], response.data)
 
-	// const returnData: INodePropertyOptions[] = [];
-	// for (const data of responseData) {
-	// 	returnData.push({
-	// 		name: `${data.type_description} ( ${data.type_name} )`,
-	// 		value: data.type_id,
-	// 	});
-	// }
-
-	// returnData.sort((a, b) => {
-	// 	if (a.name < b.name) {
-	// 		return -1;
-	// 	}
-	// 	if (a.name > b.name) {
-	// 		return 1;
-	// 	}
-	// 	return 0;
-	// });
-
 	return returnData;
 }
