@@ -7,31 +7,43 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './DatastoreFile.resource'
+import { endpoint } from './Asset.resource'
 import { apiRequest } from '../../transport';
-import { utils, types } from '../../helpers';
+import { types, utils } from '../../helpers';
 
+const fields: string[] = [
+	'asset_enrichment',
+	'asset_type',
+	'asset_type_id',
+	'case_id',
+	'asset_description',
+	'asset_id',
+	'analysis_status_id',
+	'custom_attributes',
+	'asset_info',
+	'user_id',
+	'date_added',
+	'date_update',
+	'asset_name',
+	'asset_ip',
+	'asset_tags',
+	'asset_compromise_status_id',
+	'asset_uuid',
+	'asset_domain',
+	'linked_ioc',
+].sort();
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'File Id',
-		name: 'fileId',
-		type: 'number',
+		displayName: 'Asset Name or ID',
+		name: 'assetId',
+		type: 'options',
+		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		typeOptions: {
+			loadOptionsMethod: 'getAssets',
+		},
 		default: '',
 		required: true,
-		description: 'File Id',
-	},
-	{
-		displayName: 'Destination Folder Name or ID',
-		name: 'folderId',
-		type: 'options',
-		typeOptions: {
-			loadOptionsMethod: 'getFolders',
-		},
-		options: [],
-		default: '',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'Options',
@@ -39,14 +51,17 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw],
+		options: [
+			...types.returnRaw,
+			...types.fieldProperties(fields)
+		],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastoreFile'],
-		operation: ['moveFile'],
+		resource: ['asset'],
+		operation: ['get'],
 	},
 };
 
@@ -55,15 +70,12 @@ export const description = updateDisplayOptions(displayOptions, properties);
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response: INodeExecutionData[]
-	let body: IDataObject = {}
-
-	body['destination-node'] = this.getNodeParameter('folderId', i, 0) as string;
 
 	response = await apiRequest.call(
 		this,
-		'POST',
-		`${endpoint}/file/move/` + (this.getNodeParameter('fileId', i) as string),
-		body,
+		'GET',
+		`${endpoint}/` + this.getNodeParameter('assetId', i) as string,
+		{},
 		query,
 	);
 
@@ -73,9 +85,9 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified = utils.fieldsRemover(responseModified, options)
+		responseModified.data = utils.fieldsRemover(responseModified.data, options)
 	if (!isRaw)
-		responseModified = {status: "success"}
+		responseModified = responseModified.data
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

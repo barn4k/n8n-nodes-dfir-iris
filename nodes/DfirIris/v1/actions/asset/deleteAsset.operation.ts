@@ -7,31 +7,21 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './DatastoreFile.resource'
+import { endpoint } from './Asset.resource'
 import { apiRequest } from '../../transport';
-import { utils, types } from '../../helpers';
-
+import { types } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'File Id',
-		name: 'fileId',
-		type: 'number',
+		displayName: 'Asset Name or ID',
+		name: 'assetId',
+		type: 'options',
+		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		typeOptions: {
+			loadOptionsMethod: 'getAssets',
+		},
 		default: '',
 		required: true,
-		description: 'File Id',
-	},
-	{
-		displayName: 'Destination Folder Name or ID',
-		name: 'folderId',
-		type: 'options',
-		typeOptions: {
-			loadOptionsMethod: 'getFolders',
-		},
-		options: [],
-		default: '',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	},
 	{
 		displayName: 'Options',
@@ -39,14 +29,16 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw],
+		options: [
+			...types.returnRaw,
+		],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['datastoreFile'],
-		operation: ['moveFile'],
+		resource: ['asset'],
+		operation: ['delete'],
 	},
 };
 
@@ -55,15 +47,12 @@ export const description = updateDisplayOptions(displayOptions, properties);
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response: INodeExecutionData[]
-	let body: IDataObject = {}
-
-	body['destination-node'] = this.getNodeParameter('folderId', i, 0) as string;
 
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/file/move/` + (this.getNodeParameter('fileId', i) as string),
-		body,
+		`${endpoint}/delete/` + this.getNodeParameter('assetId', i) as string,
+		{},
 		query,
 	);
 
@@ -71,9 +60,6 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const isRaw = options.isRaw as boolean || false
 	let responseModified = response as any
 
-	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified = utils.fieldsRemover(responseModified, options)
 	if (!isRaw)
 		responseModified = {status: "success"}
 

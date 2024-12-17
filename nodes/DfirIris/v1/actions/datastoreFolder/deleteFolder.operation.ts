@@ -59,16 +59,16 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = options.isRaw as boolean || false
+	let responseModified = response as any
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		response = utils.fieldsRemover(response, options)
+		responseModified = utils.fieldsRemover(responseModified, options)
 	if (!isRaw)
-		// @ts-ignore
-		response = {status: "success"}
+		responseModified = {status: "success"}
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(response as IDataObject[]),
+		this.helpers.returnJsonArray(responseModified as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

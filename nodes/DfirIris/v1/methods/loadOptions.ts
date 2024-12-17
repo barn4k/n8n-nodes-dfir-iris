@@ -36,6 +36,39 @@ export async function getUsers(this: ILoadOptionsFunctions): Promise<INodeProper
 	return returnData;
 }
 
+export async function getAssets(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this,
+		'GET',
+		'case/assets/list',
+		{},
+		query
+	);
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = response.data.assets.map( (asset: any) =>  {
+		return {
+			name: `${asset.asset_name} | ${asset.asset_type}`,
+			value: asset.asset_id
+		}
+	})
+	
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
 export async function getAssetTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'manage/asset-type/list';
 

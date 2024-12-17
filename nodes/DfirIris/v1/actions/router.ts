@@ -5,6 +5,7 @@ import type { DfirIrisType } from './node.type';
 
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
+import * as asset from './asset/Asset.resource';
 // import * as file from './file/File.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -28,14 +29,11 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'datastoreFolder':
 					returnData.push(...(await datastoreFolder[dfirIris.operation].execute.call(this, i)));
 					break;
+					case 'asset':
+						returnData.push(...(await asset[dfirIris.operation].execute.call(this, i)));
+						break;
 				// case 'file':
 				// 	returnData.push(...(await file[googleDrive.operation].execute.call(this, i, items[i])));
-				// 	break;
-				// case 'fileFolder':
-				// 	returnData.push(...(await fileFolder[googleDrive.operation].execute.call(this, i)));
-				// 	break;
-				// case 'folder':
-				// 	returnData.push(...(await folder[googleDrive.operation].execute.call(this, i)));
 				// 	break;
 				default:
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);

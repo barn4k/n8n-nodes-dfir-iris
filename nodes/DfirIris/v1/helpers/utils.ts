@@ -4,13 +4,54 @@ import { NodeOperationError } from 'n8n-workflow';
 import type { IFolder, IFolderSub } from './../helpers/types';
 
 
-export function fieldsRemover(responseData: any, options: IDataObject, prop: string = 'data') {
+// export function fieldsRemover(responseData: any, options: IDataObject, prop: string = 'data') {
+// 	const fields = (options.fields as string[]) || [];
+// 	const inverseFields = (options.inverseFields as boolean) || false;
+
+// 	if (fields && prop in responseData) {
+// 		if (Array.isArray(responseData[prop])) {
+// 			responseData[prop].forEach((row: { [index: string]: any }) => {
+// 				if (inverseFields) {
+// 					Object.keys(row)
+// 						.filter((k) => fields.includes(k))
+// 						.forEach((x: string) => {
+// 							delete row[x];
+// 						});
+// 				} else {
+// 					Object.keys(row)
+// 						.filter((k) => !fields.includes(k))
+// 						.forEach((x: string) => {
+// 							delete row[x];
+// 						});
+// 				}
+// 			});
+// 		} else {
+// 			if (inverseFields) {
+// 				Object.keys(responseData[prop])
+// 					.filter((k) => fields.includes(k))
+// 					.forEach((x: string) => {
+// 						delete responseData[prop][x];
+// 					});
+// 			} else {
+// 				Object.keys(responseData[prop])
+// 					.filter((k) => !fields.includes(k))
+// 					.forEach((x: string) => {
+// 						delete responseData[prop][x];
+// 					});
+// 			}
+// 		}
+// 	}
+
+// 	return responseData;
+// }
+
+export function fieldsRemover(responseRoot: any, options: IDataObject) {
 	const fields = (options.fields as string[]) || [];
 	const inverseFields = (options.inverseFields as boolean) || false;
 
-	if (fields && prop in responseData) {
-		if (Array.isArray(responseData.data)) {
-			responseData[prop].forEach((row: { [index: string]: any }) => {
+	if (fields.length > 0) {
+		if (Array.isArray(responseRoot)) {
+			responseRoot.forEach((row: { [index: string]: any }) => {
 				if (inverseFields) {
 					Object.keys(row)
 						.filter((k) => fields.includes(k))
@@ -27,22 +68,22 @@ export function fieldsRemover(responseData: any, options: IDataObject, prop: str
 			});
 		} else {
 			if (inverseFields) {
-				Object.keys(responseData[prop])
+				Object.keys(responseRoot)
 					.filter((k) => fields.includes(k))
 					.forEach((x: string) => {
-						delete responseData[prop][x];
+						delete responseRoot[x];
 					});
 			} else {
-				Object.keys(responseData[prop])
+				Object.keys(responseRoot)
 					.filter((k) => !fields.includes(k))
 					.forEach((x: string) => {
-						delete responseData[prop][x];
+						delete responseRoot[x];
 					});
 			}
 		}
 	}
 
-	return responseData;
+	return responseRoot;
 }
 
 /**

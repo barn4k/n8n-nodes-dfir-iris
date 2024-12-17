@@ -14,6 +14,12 @@ type NodeMap = {
 	| 'moveFolder'
 	| 'renameFolder'
 	| 'deleteFolder'; // +
+	asset:
+	| 'create'
+	| 'deleteAsset'
+	| 'get'
+	| 'getAll'
+	| 'update'
 	// file:
 	// 	| 'copy'
 	// 	| 'createFromText'
