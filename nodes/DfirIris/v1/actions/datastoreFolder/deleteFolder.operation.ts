@@ -7,10 +7,9 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './DatastoreFolder.resource'
+import { endpoint } from './DatastoreFolder.resource';
 import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
-
 
 const properties: INodeProperties[] = [
 	{
@@ -46,8 +45,8 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
-	let body: IDataObject = {}
+	let response: INodeExecutionData[];
+	let body: IDataObject = {};
 
 	response = await apiRequest.call(
 		this,
@@ -58,14 +57,13 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
-	let responseModified = response as any
+	const isRaw = (options.isRaw as boolean) || false;
+	let responseModified = response as any;
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified = utils.fieldsRemover(responseModified, options)
-	if (!isRaw)
-		responseModified = {status: "success"}
+		responseModified = utils.fieldsRemover(responseModified, options);
+	if (!isRaw) responseModified = { status: 'success' };
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

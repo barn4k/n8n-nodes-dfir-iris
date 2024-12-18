@@ -2,12 +2,12 @@ import type { INodeProperties } from 'n8n-workflow';
 
 import * as getTree from './getTree.operation';
 
-import * as addFolder from './addFolder.operation'
-import * as moveFolder from './moveFolder.operation'
-import * as renameFolder from './renameFolder.operation'
-import * as deleteFolder from './deleteFolder.operation'
+import * as addFolder from './addFolder.operation';
+import * as moveFolder from './moveFolder.operation';
+import * as renameFolder from './renameFolder.operation';
+import * as deleteFolder from './deleteFolder.operation';
 
-export { getTree, addFolder, moveFolder, renameFolder, deleteFolder }
+export { getTree, addFolder, moveFolder, renameFolder, deleteFolder };
 
 export const endpoint = 'datastore';
 
@@ -24,20 +24,19 @@ export const resource: INodeProperties[] = [
 		},
 		options: [
 			{
-				name: 'Get Datastore Tree',
-				value: 'getTree',
-				action: `Get Datastore Tree`,
-			},
-
-			{
 				name: 'Add Folder',
 				value: 'addFolder',
 				action: `Add Folder`,
 			},
 			{
-				name: 'Rename Folder',
-				value: 'renameFolder',
-				action: `Rename Folder`,
+				name: 'Delete Folder',
+				value: 'deleteFolder',
+				action: `Delete Folder and all child items`,
+			},
+			{
+				name: 'Get Datastore Tree',
+				value: 'getTree',
+				action: `Get Datastore Tree`,
 			},
 			{
 				name: 'Move Folder',
@@ -45,9 +44,9 @@ export const resource: INodeProperties[] = [
 				action: `Move Folder`,
 			},
 			{
-				name: 'Delete Folder',
-				value: 'deleteFolder',
-				action: `Delete Folder and all child items`,
+				name: 'Rename Folder',
+				value: 'renameFolder',
+				action: `Rename Folder`,
 			},
 		],
 		default: 'getTree',

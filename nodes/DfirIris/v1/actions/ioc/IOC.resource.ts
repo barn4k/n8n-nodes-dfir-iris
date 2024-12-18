@@ -102,7 +102,8 @@ export const operations: INodeProperties[] = [
 		displayName: 'IOC Type Name or ID',
 		name: 'type',
 		type: 'options',
-		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
 			loadOptionsMethod: 'getIOCTypes',
 		},

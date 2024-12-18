@@ -7,7 +7,7 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Asset.resource'
+import { endpoint } from './Asset.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
@@ -40,10 +40,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...types.returnRaw,
-			...types.fieldProperties(fields)
-		],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 
@@ -58,25 +55,18 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
+	let response: INodeExecutionData[];
 
-	response = await apiRequest.call(
-		this,
-		'GET',
-		`${endpoint}/list`,
-		{},
-		query,
-	);
+	response = await apiRequest.call(this, 'GET', `${endpoint}/list`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
-	let responseModified = response as any
+	const isRaw = (options.isRaw as boolean) || false;
+	let responseModified = response as any;
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified.data.assets = utils.fieldsRemover(responseModified.data.assets, options)
-	if (!isRaw)
-		responseModified = responseModified.data.assets
+		responseModified.data.assets = utils.fieldsRemover(responseModified.data.assets, options);
+	if (!isRaw) responseModified = responseModified.data.assets;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

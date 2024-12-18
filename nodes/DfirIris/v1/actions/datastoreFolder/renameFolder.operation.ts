@@ -7,9 +7,8 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './DatastoreFolder.resource'
+import { endpoint } from './DatastoreFolder.resource';
 import { apiRequest } from '../../transport';
-
 
 const properties: INodeProperties[] = [
 	{
@@ -30,7 +29,6 @@ const properties: INodeProperties[] = [
 		type: 'string',
 		default: '',
 		required: true,
-		description: 'New Folder Name',
 	},
 ];
 
@@ -45,10 +43,10 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
-	let body: IDataObject = {}
+	let response: INodeExecutionData[];
+	let body: IDataObject = {};
 
-	body.parent_node = this.getNodeParameter('folderId', i) as string
+	body.parent_node = this.getNodeParameter('folderId', i) as string;
 	body.folder_name = this.getNodeParameter('folderName', i, 0) as string;
 
 	response = await apiRequest.call(

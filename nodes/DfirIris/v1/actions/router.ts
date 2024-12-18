@@ -29,9 +29,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'datastoreFolder':
 					returnData.push(...(await datastoreFolder[dfirIris.operation].execute.call(this, i)));
 					break;
-					case 'asset':
-						returnData.push(...(await asset[dfirIris.operation].execute.call(this, i)));
-						break;
+				case 'asset':
+					returnData.push(...(await asset[dfirIris.operation].execute.call(this, i)));
+					break;
 				// case 'file':
 				// 	returnData.push(...(await file[googleDrive.operation].execute.call(this, i, items[i])));
 				// 	break;

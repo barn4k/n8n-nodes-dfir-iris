@@ -33,13 +33,13 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
+	let response: INodeExecutionData[];
 
 	response = await apiRequest.call(this, 'GET', `${endpoint}/list/tree`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any
+	let responseModified = response as any;
 
 	if (!isRaw) responseModified = responseModified.data;
 

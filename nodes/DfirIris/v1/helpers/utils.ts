@@ -3,7 +3,6 @@ import type { IDataObject, IExecuteFunctions, INodePropertyOptions } from 'n8n-w
 import { NodeOperationError } from 'n8n-workflow';
 import type { IFolder, IFolderSub } from './../helpers/types';
 
-
 // export function fieldsRemover(responseData: any, options: IDataObject, prop: string = 'data') {
 // 	const fields = (options.fields as string[]) || [];
 // 	const inverseFields = (options.inverseFields as boolean) || false;
@@ -135,15 +134,19 @@ export function addAdditionalFields(
 // }
 
 // with folder names
-export function getFolderNested(data: INodePropertyOptions[], root: IFolder['data'], prefix: string = ''){
-	const rootObj = Object.entries(root).filter( (e: [string, IFolderSub]) => e[0].startsWith('d-'))
+export function getFolderNested(
+	data: INodePropertyOptions[],
+	root: IFolder['data'],
+	prefix: string = '',
+) {
+	const rootObj = Object.entries(root).filter((e: [string, IFolderSub]) => e[0].startsWith('d-'));
 	if (rootObj.length >= 0)
-		rootObj.forEach( (e: [string, IFolderSub]) => {
+		rootObj.forEach((e: [string, IFolderSub]) => {
 			data.push({
 				name: `${prefix}${e[1].name}`,
-				value: e[0].replace('d-', '')
-			})
-			return getFolderNested(data, e[1].children || {}, `${prefix}${e[1].name} - `)
-		})
-	return data
+				value: e[0].replace('d-', ''),
+			});
+			return getFolderNested(data, e[1].children || {}, `${prefix}${e[1].name} - `);
+		});
+	return data;
 }

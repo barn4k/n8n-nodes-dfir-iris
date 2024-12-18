@@ -3,7 +3,7 @@ import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
 // import * as note from './note/Note.resource'
 // import * as task from './task/Task.resource'
 // import * as comment from './comment/Comment.resource'
-import * as asset from './asset/Asset.resource'
+import * as asset from './asset/Asset.resource';
 // import * as ioc from './ioc/IOC.resource'
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
@@ -23,7 +23,7 @@ export const versionDescription: INodeTypeDescription = {
 	},
 	// usableAsTool: true,
 	inputs: [NodeConnectionType.Main],
-	outputs: [NodeConnectionType.Main],
+	outputs: ['main'],
 	credentials: [
 		{
 			name: 'dfirIrisApi',

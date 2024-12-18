@@ -14,12 +14,11 @@ import { utils } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'File Id',
+		displayName: 'File ID',
 		name: 'fileId',
 		type: 'number',
 		default: '',
 		required: true,
-		description: 'File Id',
 	},
 	{
 		displayName: 'Put Output File in Field',
@@ -37,7 +36,7 @@ const properties: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Set new File Name',
+				displayName: 'Set New File Name',
 				name: 'fileName',
 				type: 'string',
 				default: '',
@@ -80,11 +79,16 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	);
 
 	const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
-	const mimeType = (response.headers as IDataObject)?.['content-type'] ?? undefined
-	const fileName = (body as any).fileName ?? response.contentDisposition?.filename ?? response.headers?.['content-disposition'].split('; ').filter(
-		(d: string) => d.indexOf('filename')>=0)[0].replace('filename=', '')
+	const mimeType = (response.headers as IDataObject)?.['content-type'] ?? undefined;
+	const fileName =
+		(body as any).fileName ??
+		response.contentDisposition?.filename ??
+		response.headers?.['content-disposition']
+			.split('; ')
+			.filter((d: string) => d.indexOf('filename') >= 0)[0]
+			.replace('filename=', '');
 
-	let item = this.getInputData()[i]
+	let item = this.getInputData()[i];
 	const newItem: INodeExecutionData = {
 		json: item.json,
 		binary: {},

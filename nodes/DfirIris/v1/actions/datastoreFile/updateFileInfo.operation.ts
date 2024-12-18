@@ -5,46 +5,41 @@ import type {
 	INodeProperties,
 } from 'n8n-workflow';
 
-import {
-	NodeOperationError,
-	BINARY_ENCODING,
-	updateDisplayOptions
-} from 'n8n-workflow';
+import { NodeOperationError, BINARY_ENCODING, updateDisplayOptions } from 'n8n-workflow';
 
-import FormData from 'form-data'
+import FormData from 'form-data';
 
 import type { Readable } from 'stream';
 
-import { endpoint } from './DatastoreFile.resource'
+import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
 const returnFields: string[] = [
-	"file_size",
-	"file_is_ioc",
-	"file_sha256",
-	"file_is_evidence",
-	"file_uuid",
-	"file_case_id",
-	"file_date_added",
-	"file_parent_id",
-	"added_by_user_id",
-	"file_original_name",
-	"file_tags",
-	"modification_history",
-	"file_id",
-	"file_description",
-	"file_password"
+	'file_size',
+	'file_is_ioc',
+	'file_sha256',
+	'file_is_evidence',
+	'file_uuid',
+	'file_case_id',
+	'file_date_added',
+	'file_parent_id',
+	'added_by_user_id',
+	'file_original_name',
+	'file_tags',
+	'modification_history',
+	'file_id',
+	'file_description',
+	'file_password',
 ].sort();
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'File Id',
+		displayName: 'File ID',
 		name: 'fileId',
 		type: 'number',
 		default: '',
 		required: true,
-		description: 'File Id',
 	},
 	{
 		displayName: 'Additional Fields',
@@ -53,41 +48,6 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			{
-				displayName: 'Set new File Name',
-				name: 'file_original_name',
-				type: 'string',
-				default: '',
-				description: 'Set the file name',
-			},
-			{
-				displayName: 'Set new File Content',
-				name: 'binaryName',
-				type: 'string',
-				default: 'data',
-				description: 'Name of the binary property which contains the data for the file to be uploaded',
-			},
-			{
-				displayName: 'Set new Description',
-				name: 'file_description',
-				type: 'string',
-				default: '',
-				description: 'File Description',
-			},
-			{
-				displayName: 'Set new Password',
-				name: 'file_password',
-				type: 'string',
-				default: '',
-				description: 'File Password',
-			},
-			{
-				displayName: 'Set new Tags',
-				name: 'file_tags',
-				type: 'string',
-				default: '',
-				description: 'File Password',
-			},
 			{
 				displayName: 'Set File as Evidence',
 				name: 'file_is_evidence',
@@ -102,6 +62,43 @@ const properties: INodeProperties[] = [
 				default: false,
 				description: 'Whether file is IOC',
 			},
+			{
+				displayName: 'Set New Description',
+				name: 'file_description',
+				type: 'string',
+				default: '',
+				description: 'File Description',
+			},
+			{
+				displayName: 'Set New File Content',
+				name: 'binaryName',
+				type: 'string',
+				default: 'data',
+				description:
+					'Name of the binary property which contains the data for the file to be uploaded',
+			},
+			{
+				displayName: 'Set New File Name',
+				name: 'file_original_name',
+				type: 'string',
+				default: '',
+				description: 'Set the file name',
+			},
+			{
+				displayName: 'Set New Password',
+				name: 'file_password',
+				type: 'string',
+				typeOptions: { password: true },
+				default: '',
+				description: 'File Password',
+			},
+			{
+				displayName: 'Set New Tags',
+				name: 'file_tags',
+				type: 'string',
+				default: '',
+				description: 'File Password',
+			},
 		],
 	},
 	{
@@ -110,10 +107,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...types.returnRaw,
-			...types.fieldProperties(returnFields),
-		],
+		options: [...types.returnRaw, ...types.fieldProperties(returnFields)],
 	},
 ];
 
@@ -128,15 +122,15 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let body: IDataObject | FormData = {}
-	let response: INodeExecutionData[]
+	let body: IDataObject | FormData = {};
+	let response: INodeExecutionData[];
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
 	let uploadData: Buffer | Readable;
-	utils.addAdditionalFields.call(this, body, i)
+	utils.addAdditionalFields.call(this, body, i);
 
-	if (body.hasOwnProperty('binaryName')){
+	if (body.hasOwnProperty('binaryName')) {
 		const binaryName = (body.binaryName as string).trim();
 		const binaryData = this.helpers.assertBinaryData(i, binaryName);
 
@@ -156,7 +150,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 				filename: fileName,
 				contentType: binaryData.mimeType,
 			},
-		}
+		};
 	}
 
 	response = await apiRequest.call(
@@ -166,18 +160,17 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		body,
 		query,
 		{},
-		true
+		true,
 	);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
-	let responseModified = response as any
+	const isRaw = (options.isRaw as boolean) || false;
+	let responseModified = response as any;
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options)
-	if (!isRaw)
-		responseModified = responseModified.data
+		responseModified.data = utils.fieldsRemover(responseModified.data, options);
+	if (!isRaw) responseModified = responseModified.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

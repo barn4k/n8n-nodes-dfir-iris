@@ -6,7 +6,7 @@ import * as get from './get.operation';
 import * as getAll from './getAll.operation';
 import * as update from './update.operation';
 
-export { create, deleteAsset, get, getAll, update }
+export { create, deleteAsset, get, getAll, update };
 
 // const fields: string[] = [
 // 	'asset_enrichment',
@@ -51,10 +51,10 @@ export const resource: INodeProperties[] = [
 				action: 'Add new asset',
 			},
 			{
-				name: 'Update',
-				value: 'update',
-				description: 'Update an asset',
-				action: 'Update an asset',
+				name: 'Delete',
+				value: 'delete',
+				description: 'Delete an asset',
+				action: 'Delete an asset',
 			},
 			{
 				name: 'Get',
@@ -69,10 +69,10 @@ export const resource: INodeProperties[] = [
 				action: 'Get multiple assets',
 			},
 			{
-				name: 'Delete',
-				value: 'delete',
-				description: 'Delete an asset',
-				action: 'Delete an asset',
+				name: 'Update',
+				value: 'update',
+				description: 'Update an asset',
+				action: 'Update an asset',
 			},
 		],
 		default: 'get',

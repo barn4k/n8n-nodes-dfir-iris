@@ -69,19 +69,6 @@ const properties: INodeProperties[] = [
 				default: '',
 			},
 			{
-				displayName: 'File Tags',
-				name: 'file_tags',
-				type: 'string',
-				default: '',
-			},
-			{
-				displayName: 'File Password',
-				name: 'file_password',
-				type: 'string',
-				typeOptions: { password: true },
-				default: '',
-			},
-			{
 				displayName: 'File Is Evidence',
 				name: 'file_is_evidence',
 				type: 'boolean',
@@ -94,6 +81,19 @@ const properties: INodeProperties[] = [
 				type: 'boolean',
 				default: false,
 				description: 'Whether file is IOC',
+			},
+			{
+				displayName: 'File Password',
+				name: 'file_password',
+				type: 'string',
+				typeOptions: { password: true },
+				default: '',
+			},
+			{
+				displayName: 'File Tags',
+				name: 'file_tags',
+				type: 'string',
+				default: '',
 			},
 		],
 	},
@@ -119,7 +119,7 @@ export const description = updateDisplayOptions(displayOptions, properties);
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let body: IDataObject | FormData = {};
-	let response: INodeExecutionData[]
+	let response: INodeExecutionData[];
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
@@ -142,14 +142,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	// TODO: fix later formdata
 	// const formData = new FormData();
 
-	if (body.hasOwnProperty('file_is_ioc'))
-		body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
+	if (body.hasOwnProperty('file_is_ioc')) body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
 	if (body.hasOwnProperty('file_is_evidence'))
 		body.file_is_evidence = body.file_is_evidence ? 'y' : 'n';
-	if (!body.hasOwnProperty('file_description'))
-		body.file_description = '';
-	if (!body.hasOwnProperty('file_tags'))
-		body.file_tags = '';
+	if (!body.hasOwnProperty('file_description')) body.file_description = '';
+	if (!body.hasOwnProperty('file_tags')) body.file_tags = '';
 
 	const formData = {
 		file_content: {
@@ -199,7 +196,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/file/add/` + this.getNodeParameter('folderId', i, 0) as string,
+		(`${endpoint}/file/add/` + this.getNodeParameter('folderId', i, 0)) as string,
 		formData,
 		query,
 		{},
@@ -207,14 +204,13 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
-	let responseModified = response as any
+	const isRaw = (options.isRaw as boolean) || false;
+	let responseModified = response as any;
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options)
-	if (!isRaw)
-		responseModified = responseModified.data
+		responseModified.data = utils.fieldsRemover(responseModified.data, options);
+	if (!isRaw) responseModified = responseModified.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

@@ -7,7 +7,7 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Asset.resource'
+import { endpoint } from './Asset.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
@@ -38,7 +38,8 @@ const properties: INodeProperties[] = [
 		displayName: 'Asset Name or ID',
 		name: 'assetId',
 		type: 'options',
-		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
 			loadOptionsMethod: 'getAssets',
 		},
@@ -51,10 +52,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...types.returnRaw,
-			...types.fieldProperties(fields)
-		],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 
@@ -69,25 +67,24 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
+	let response: INodeExecutionData[];
 
 	response = await apiRequest.call(
 		this,
 		'GET',
-		`${endpoint}/` + this.getNodeParameter('assetId', i) as string,
+		(`${endpoint}/` + this.getNodeParameter('assetId', i)) as string,
 		{},
 		query,
 	);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
-	let responseModified = response as any
+	const isRaw = (options.isRaw as boolean) || false;
+	let responseModified = response as any;
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options)
-	if (!isRaw)
-		responseModified = responseModified.data
+		responseModified.data = utils.fieldsRemover(responseModified.data, options);
+	if (!isRaw) responseModified = responseModified.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

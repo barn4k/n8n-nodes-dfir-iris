@@ -131,7 +131,8 @@ export const operations: INodeProperties[] = [
 			},
 		},
 		required: true,
-		description: 'To whom assign a task. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description:
+			'To whom assign a task. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Task Status',

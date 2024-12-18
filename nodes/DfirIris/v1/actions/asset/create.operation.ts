@@ -7,7 +7,7 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Asset.resource'
+import { endpoint } from './Asset.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
@@ -45,7 +45,8 @@ const properties: INodeProperties[] = [
 		displayName: 'Asset Type Name or ID',
 		name: 'assetType',
 		type: 'options',
-		description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
 			loadOptionsMethod: 'getAssetTypes',
 		},
@@ -114,7 +115,8 @@ const properties: INodeProperties[] = [
 					loadOptionsMethod: 'getIOCs',
 				},
 				default: [],
-				description: 'Related IOCs. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+				description:
+					'Related IOCs. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 			},
 			{
 				displayName: 'Asset Tags',
@@ -145,10 +147,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [
-			...types.returnRaw,
-			...types.fieldProperties(fields)
-		],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 
@@ -163,30 +162,23 @@ export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[]
-	let body: IDataObject = {}
+	let response: INodeExecutionData[];
+	let body: IDataObject = {};
 
 	body.asset_type_id = this.getNodeParameter('assetType', i) as number;
 	body.asset_name = this.getNodeParameter('assetName', i) as string;
-	utils.addAdditionalFields.call(this, body, i)
+	utils.addAdditionalFields.call(this, body, i);
 
-	response = await apiRequest.call(
-		this,
-		'POST',
-		`${endpoint}/add`,
-		body,
-		query,
-	);
+	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);
 
 	const options = this.getNodeParameter('options', i, {});
-	const isRaw = options.isRaw as boolean || false
-	let responseModified = response as any
+	const isRaw = (options.isRaw as boolean) || false;
+	let responseModified = response as any;
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options)
-	if (!isRaw)
-		responseModified = responseModified.data
+		responseModified.data = utils.fieldsRemover(responseModified.data, options);
+	if (!isRaw) responseModified = responseModified.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),
