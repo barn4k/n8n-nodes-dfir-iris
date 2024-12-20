@@ -37,7 +37,7 @@ const properties: INodeProperties[] = [
 const displayOptions = {
 	show: {
 		resource: ['asset'],
-		operation: ['delete'],
+		operation: ['deleteAsset'],
 	},
 };
 

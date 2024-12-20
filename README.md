@@ -59,6 +59,9 @@ nvm install <versionName>
 nvm ls
 nvm use <versionName>
 
+# install pnpm
+npm install -g pnpm
+
 # check if npm is good
 npm doctor
 
@@ -72,8 +75,12 @@ npm run build
 npm run dev
 npm link # use once
 
+# via pnpm
+pnpm build
+pnpm dev
+
 # set ENVs before use n8n is PS
-cd $env:userprofile/.n8n
+# cd $env:userprofile/.n8n
 $env:N8N_LOG_LEVEL="debug"
 $env:NODE_TLS_REJECT_UNAUTHORIZED='0'
 n8n start

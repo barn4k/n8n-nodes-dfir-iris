@@ -15,6 +15,82 @@ export interface IFolderSub {
 	type: 'directory' | 'file';
 }
 
+export const taskFields = [
+	'task_open_date',
+	'task_userid_close',
+	'task_last_update',
+	'task_userid_update',
+	'task_assignees',
+	'task_title',
+	'task_uuid',
+	'task_tags',
+	'task_id',
+	'task_description',
+	'task_userid_open',
+	'custom_attributes',
+	'task_status_id',
+	'task_close_date',
+	'task_case_id',
+	'modification_history',
+	'status_name',
+	'status_bscolor',
+].sort();
+
+export const iocFields = [
+	'ioc_description',
+	'ioc_value',
+	'ioc_type',
+	'ioc_tags',
+	'ioc_uuid',
+	'ioc_enrichment',
+	'ioc_id',
+	'ioc_tlp_id',
+	'user_id',
+	'custom_attributes',
+	'ioc_type_id',
+	'ioc_misp',
+].sort();
+
+export const assetFields = [
+	'asset_enrichment',
+	'asset_type',
+	'asset_type_id',
+	'case_id',
+	'asset_description',
+	'asset_id',
+	'analysis_status_id',
+	'custom_attributes',
+	'asset_info',
+	'user_id',
+	'date_added',
+	'date_update',
+	'asset_name',
+	'asset_ip',
+	'asset_tags',
+	'asset_compromise_status_id',
+	'asset_uuid',
+	'asset_domain',
+	'linked_ioc',
+].sort();
+
+export const datastoreFileFields: string[] = [
+	'file_size',
+	'file_is_ioc',
+	'file_sha256',
+	'file_is_evidence',
+	'file_uuid',
+	'file_case_id',
+	'file_date_added',
+	'file_parent_id',
+	'added_by_user_id',
+	'file_original_name',
+	'file_tags',
+	'modification_history',
+	'file_id',
+	'file_description',
+	'file_password',
+].sort();
+
 export const cidDescription: INodeProperties[] = [
 	{
 		displayName: 'Case ID',
@@ -60,7 +136,7 @@ export function fieldProperties(fields: string[]) {
 				return { name: f, value: f };
 			}),
 			default: false,
-			description: 'If the selected fields should be excluded instead',
+			description: 'Whether the selected fields should be excluded instead',
 		},
 	] as INodeProperties[];
 }
@@ -96,6 +172,6 @@ export const returnRaw: INodeProperties[] = [
 		name: 'isRaw',
 		type: 'boolean',
 		default: false,
-		description: 'Return the raw response',
+		description: 'Whether to return the raw response',
 	},
 ];

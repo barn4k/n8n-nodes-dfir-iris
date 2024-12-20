@@ -7,19 +7,19 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Asset.resource';
+import { endpoint } from './Task.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Asset Name or ID',
-		name: 'assetId',
+		displayName: 'Task Name or ID',
+		name: 'id',
 		type: 'options',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
-			loadOptionsMethod: 'getAssets',
+			loadOptionsMethod: 'getTasks',
 		},
 		default: '',
 		required: true,
@@ -30,13 +30,13 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.assetFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.taskFields)],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['asset'],
+		resource: ['task'],
 		operation: ['get'],
 	},
 };
@@ -50,7 +50,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'GET',
-		(`${endpoint}/` + this.getNodeParameter('assetId', i)) as string,
+		(`${endpoint}/` + this.getNodeParameter('id', i)) as string,
 		{},
 		query,
 	);

@@ -7,37 +7,25 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Asset.resource';
+import { endpoint } from './IOC.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Asset Name or ID',
-		name: 'assetId',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: {
-			loadOptionsMethod: 'getAssets',
-		},
-		default: '',
-		required: true,
-	},
 	{
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.assetFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.iocFields)],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['asset'],
-		operation: ['get'],
+		resource: ['ioc'],
+		operation: ['getAll'],
 	},
 };
 
@@ -47,13 +35,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response: INodeExecutionData[];
 
-	response = await apiRequest.call(
-		this,
-		'GET',
-		(`${endpoint}/` + this.getNodeParameter('assetId', i)) as string,
-		{},
-		query,
-	);
+	response = await apiRequest.call(this, 'GET', `${endpoint}/list`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
@@ -61,8 +43,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	// field remover
 	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+		responseModified.data.ioc = utils.fieldsRemover(responseModified.data.ioc, options);
+	if (!isRaw) responseModified = responseModified.data.ioc;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

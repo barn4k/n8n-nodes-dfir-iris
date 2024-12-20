@@ -6,7 +6,8 @@ import type { DfirIrisType } from './node.type';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as asset from './asset/Asset.resource';
-// import * as file from './file/File.resource';
+import * as ioc from './ioc/IOC.resource';
+import * as task from './task/Task.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	const items = this.getInputData();
@@ -31,6 +32,12 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 					break;
 				case 'asset':
 					returnData.push(...(await asset[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'ioc':
+					returnData.push(...(await ioc[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'task':
+					returnData.push(...(await task[dfirIris.operation].execute.call(this, i)));
 					break;
 				// case 'file':
 				// 	returnData.push(...(await file[googleDrive.operation].execute.call(this, i, items[i])));

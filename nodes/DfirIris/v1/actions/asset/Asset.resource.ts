@@ -8,28 +8,6 @@ import * as update from './update.operation';
 
 export { create, deleteAsset, get, getAll, update };
 
-// const fields: string[] = [
-// 	'asset_enrichment',
-// 	'asset_type',
-// 	'asset_type_id',
-// 	'case_id',
-// 	'asset_description',
-// 	'asset_id',
-// 	'analysis_status_id',
-// 	'custom_attributes',
-// 	'asset_info',
-// 	'user_id',
-// 	'date_added',
-// 	'date_update',
-// 	'asset_name',
-// 	'asset_ip',
-// 	'asset_tags',
-// 	'asset_compromise_status_id',
-// 	'asset_uuid',
-// 	'asset_domain',
-// 	'linked_ioc',
-// ];
-
 export const endpoint = 'case/assets';
 
 export const resource: INodeProperties[] = [
@@ -52,7 +30,7 @@ export const resource: INodeProperties[] = [
 			},
 			{
 				name: 'Delete',
-				value: 'delete',
+				value: 'deleteAsset',
 				description: 'Delete an asset',
 				action: 'Delete an asset',
 			},
@@ -75,7 +53,7 @@ export const resource: INodeProperties[] = [
 				action: 'Update an asset',
 			},
 		],
-		default: 'get',
+		default: 'getAll',
 	},
 	...create.description,
 	...deleteAsset.description,

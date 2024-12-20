@@ -1,35 +1,14 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-import { returnRaw, fieldProperties } from '../../helpers/types';
+import * as create from './create.operation';
+import * as deleteTask from './deleteTask.operation';
+import * as get from './get.operation';
+import * as getAll from './getAll.operation';
+import * as update from './update.operation';
 
-const fields: string[] = [
-	'task_open_date',
-	'task_userid_close',
-	'task_last_update',
-	'task_userid_update',
-	'task_assignees',
-	'task_title',
-	'task_uuid',
-	'task_tags',
-	'id',
-	'task_description',
-	'task_userid_open',
-	'custom_attributes',
-	'task_status_id',
-	'task_close_date',
-	'task_case_id',
-	'modification_history',
-];
+export { create, deleteTask, get, getAll, update };
 
-const fieldsShort: string[] = [
-	'id',
-	'task_assignees_id',
-	'task_status_id',
-	'task_title',
-	'task_description',
-	'task_tags',
-	'custom_attributes',
-];
+export const endpoint = 'case/tasks';
 
 const thisRes = 'task';
 
@@ -48,209 +27,39 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Add',
 				value: 'create',
-				description: 'Create new task',
-				action: 'Add new task',
+				description: `Create new ${thisRes}`,
+				action: `Add new ${thisRes}`,
 			},
 			{
 				name: 'Update',
 				value: 'update',
-				description: 'Update a task',
-				action: 'Update a task',
+				description: `Update ${thisRes}`,
+				action: `Update ${thisRes}`,
 			},
 			{
 				name: 'Get',
 				value: 'get',
-				description: 'Get a task',
-				action: 'Get a task',
+				description: `Get ${thisRes}`,
+				action: `Get ${thisRes}`,
 			},
 			{
 				name: 'Get Many',
-				value: 'getMany',
-				description: 'Get multiple tasks',
-				action: 'Get multiple tasks',
+				value: 'getAll',
+				description: `Get multiple ${thisRes}`,
+				action: `Get multiple ${thisRes}`,
 			},
 			{
 				name: 'Delete',
-				value: 'delete',
-				description: 'Delete a task',
-				action: 'Delete a task',
+				value: 'deleteTask',
+				description: `Delete ${thisRes}`,
+				action: `Delete ${thisRes}`,
 			},
 		],
-		default: 'get',
+		default: 'getAll',
 	},
-];
-
-export const operations: INodeProperties[] = [
-	// ----------------------------------
-	//         task:shared
-	// ----------------------------------
-
-	{
-		displayName: 'Task ID',
-		name: 'taskId',
-		type: 'number',
-		default: '',
-		displayOptions: {
-			show: {
-				operation: ['get', 'update', 'delete'],
-				resource: [thisRes],
-			},
-		},
-		required: true,
-	},
-
-	// ----------------------------------
-	//         task:create/update
-	// ----------------------------------
-
-	{
-		displayName: 'Task Title',
-		name: 'title',
-		type: 'string',
-		default: 'Unnamed',
-		displayOptions: {
-			show: {
-				operation: ['create', 'update'],
-				resource: [thisRes],
-			},
-		},
-		required: true,
-	},
-	{
-		displayName: 'Task Assignee Name or ID',
-		name: 'assignee',
-		type: 'options',
-		typeOptions: {
-			loadOptionsMethod: 'getUsers',
-		},
-		default: '',
-		displayOptions: {
-			show: {
-				operation: ['create', 'update'],
-				resource: [thisRes],
-			},
-		},
-		required: true,
-		description:
-			'To whom assign a task. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
-	},
-	{
-		displayName: 'Task Status',
-		name: 'status',
-		type: 'options',
-		default: 1,
-		options: [
-			{
-				value: 1,
-				name: 'To Do',
-			},
-			{
-				value: 2,
-				name: 'In Progress',
-			},
-			{
-				value: 3,
-				name: 'On Hold',
-			},
-			{
-				value: 4,
-				name: 'Done',
-			},
-			{
-				value: 5,
-				name: 'Canceled',
-			},
-		],
-		displayOptions: {
-			show: {
-				operation: ['create', 'update'],
-				resource: [thisRes],
-			},
-		},
-		required: true,
-	},
-	{
-		displayName: 'Additional Fields',
-		name: 'additionalFields',
-		type: 'collection',
-		placeholder: 'Add Field',
-		displayOptions: {
-			show: {
-				operation: ['create', 'update'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [
-			{
-				displayName: 'Task Description',
-				name: 'task_description',
-				type: 'string',
-				default: '',
-			},
-			{
-				displayName: 'Task Tags',
-				name: 'task_tags',
-				type: 'string',
-				default: '',
-				description: 'Task tags as comma-separated string',
-			},
-			{
-				displayName: 'Custom Attributes',
-				name: 'custom_attributes',
-				type: 'json',
-				default: 0,
-				description: 'Add custom attributes',
-			},
-		],
-	},
-
-	// ----------------------------------
-	//         task:options
-	// ----------------------------------
-
-	{
-		displayName: 'Options',
-		name: 'options',
-		type: 'collection',
-		placeholder: 'Add Option',
-		displayOptions: {
-			show: {
-				operation: ['get'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [...returnRaw, ...fieldProperties(fields)],
-	},
-
-	{
-		displayName: 'Options',
-		name: 'options',
-		type: 'collection',
-		placeholder: 'Add Option',
-		displayOptions: {
-			show: {
-				operation: ['create', 'update'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [...returnRaw, ...fieldProperties(fieldsShort)],
-	},
-
-	{
-		displayName: 'Options',
-		name: 'options',
-		type: 'collection',
-		placeholder: 'Add Option',
-		displayOptions: {
-			show: {
-				operation: ['getMany'],
-				resource: [thisRes],
-			},
-		},
-		default: {},
-		options: [...returnRaw],
-	},
+	...create.description,
+	...deleteTask.description,
+	...get.description,
+	...getAll.description,
+	...update.description,
 ];

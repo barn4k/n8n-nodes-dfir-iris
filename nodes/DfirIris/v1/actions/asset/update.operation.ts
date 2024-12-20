@@ -11,28 +11,6 @@ import { endpoint } from './Asset.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
-const fields: string[] = [
-	'asset_enrichment',
-	'asset_type',
-	'asset_type_id',
-	'case_id',
-	'asset_description',
-	'asset_id',
-	'analysis_status_id',
-	'custom_attributes',
-	'asset_info',
-	'user_id',
-	'date_added',
-	'date_update',
-	'asset_name',
-	'asset_ip',
-	'asset_tags',
-	'asset_compromise_status_id',
-	'asset_uuid',
-	'asset_domain',
-	'linked_ioc',
-].sort();
-
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Asset Name or ID',
@@ -159,7 +137,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(fields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.assetFields)],
 	},
 ];
 

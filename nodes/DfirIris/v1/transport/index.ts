@@ -9,7 +9,7 @@ import type {
 	JsonObject,
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
-import { IFolder } from '../helpers/types';
+// import { IFolder } from '../helpers/types';
 
 import type FormData from 'form-data';
 
@@ -67,33 +67,33 @@ export async function apiRequest(
 	}
 }
 
-export async function getFolderName(
-	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
-	query: IDataObject,
-	folder: string,
-): Promise<any> {
-	const response = (await apiRequest.call(
-		this,
-		'GET',
-		'datastore/list/tree',
-		{},
-		query,
-	)) as IFolder;
-	this.logger.debug('getFolderResponse', response);
-	if (folder === 'root') return parseInt(Object.keys(response.data)[0].replace('d-', ''));
-	else {
-		const subs = Object.values(response.data)[0].children as object;
-		let returnedFolder: string = '';
-		try {
-			if (folder === 'evidences')
-				returnedFolder = Object.entries(subs).filter((s) => s[1].name === 'Evidences')[0][0];
-			else if (folder === 'iocs')
-				returnedFolder = Object.entries(subs).filter((s) => s[1].name === 'IOCs')[0][0];
-			else if (folder === 'images')
-				returnedFolder = Object.entries(subs).filter((s) => s[1].name === 'Images')[0][0];
-			return parseInt(returnedFolder.replace('d-', ''));
-		} catch (error) {
-			throw new NodeApiError(this.getNode(), error as JsonObject);
-		}
-	}
-}
+// export async function getFolderName(
+// 	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
+// 	query: IDataObject,
+// 	folder: string,
+// ): Promise<any> {
+// 	const response = (await apiRequest.call(
+// 		this,
+// 		'GET',
+// 		'datastore/list/tree',
+// 		{},
+// 		query,
+// 	)) as IFolder;
+// 	this.logger.debug('getFolderResponse', response);
+// 	if (folder === 'root') return parseInt(Object.keys(response.data)[0].replace('d-', ''));
+// 	else {
+// 		const subs = Object.values(response.data)[0].children as object;
+// 		let returnedFolder: string = '';
+// 		try {
+// 			if (folder === 'evidences')
+// 				returnedFolder = Object.entries(subs).filter((s) => s[1].name === 'Evidences')[0][0];
+// 			else if (folder === 'iocs')
+// 				returnedFolder = Object.entries(subs).filter((s) => s[1].name === 'IOCs')[0][0];
+// 			else if (folder === 'images')
+// 				returnedFolder = Object.entries(subs).filter((s) => s[1].name === 'Images')[0][0];
+// 			return parseInt(returnedFolder.replace('d-', ''));
+// 		} catch (error) {
+// 			throw new NodeApiError(this.getNode(), error as JsonObject);
+// 		}
+// 	}
+// }

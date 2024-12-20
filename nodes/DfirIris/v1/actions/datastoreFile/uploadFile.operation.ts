@@ -13,26 +13,7 @@ import type { Readable } from 'stream';
 
 import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
-import { utils } from '../../helpers';
-import { types } from '../../helpers';
-
-const returnFields: string[] = [
-	'file_size',
-	'file_is_ioc',
-	'file_sha256',
-	'file_is_evidence',
-	'file_uuid',
-	'file_case_id',
-	'file_date_added',
-	'file_parent_id',
-	'added_by_user_id',
-	'file_original_name',
-	'file_tags',
-	'modification_history',
-	'file_id',
-	'file_description',
-	'file_password',
-].sort();
+import { utils, types } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
@@ -103,7 +84,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(returnFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.datastoreFileFields)],
 	},
 ];
 

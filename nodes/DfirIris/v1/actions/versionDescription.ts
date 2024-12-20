@@ -1,10 +1,10 @@
 import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
 
 // import * as note from './note/Note.resource'
-// import * as task from './task/Task.resource'
+import * as task from './task/Task.resource';
 // import * as comment from './comment/Comment.resource'
 import * as asset from './asset/Asset.resource';
-// import * as ioc from './ioc/IOC.resource'
+import * as ioc from './ioc/IOC.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 
@@ -23,7 +23,8 @@ export const versionDescription: INodeTypeDescription = {
 	},
 	// usableAsTool: true,
 	inputs: [NodeConnectionType.Main],
-	outputs: ['main'],
+	// eslint-disable-next-line
+	outputs: [NodeConnectionType.Main],
 	credentials: [
 		{
 			name: 'dfirIrisApi',
@@ -45,10 +46,7 @@ export const versionDescription: INodeTypeDescription = {
 					name: 'Asset',
 					value: 'asset',
 				},
-				// {
-				// 	name: 'IOC',
-				// 	value: 'ioc',
-				// },
+
 				// {
 				// 	name: 'Case',
 				// 	value: 'case',
@@ -60,6 +58,14 @@ export const versionDescription: INodeTypeDescription = {
 				{
 					name: 'Datastore Folder',
 					value: 'datastoreFolder',
+				},
+				{
+					name: 'IOC',
+					value: 'ioc',
+				},
+				{
+					name: 'Task',
+					value: 'task',
 				},
 				// {
 				// 	name: 'Timeline',
@@ -77,10 +83,7 @@ export const versionDescription: INodeTypeDescription = {
 				// 	name: 'Note',
 				// 	value: 'note',
 				// },
-				// {
-				// 	name: 'Task',
-				// 	value: 'task',
-				// },
+
 				// {
 				// 	name: 'Comment',
 				// 	value: 'comment',
@@ -90,10 +93,10 @@ export const versionDescription: INodeTypeDescription = {
 		},
 		...cidDescription,
 		// ...note.resource,
-		// ...task.resource,
+		...task.resource,
 		// ...comment.resource,
 		...asset.resource,
-		// ...ioc.resource,
+		...ioc.resource,
 		...datastoreFile.resource,
 		...datastoreFolder.resource,
 	],

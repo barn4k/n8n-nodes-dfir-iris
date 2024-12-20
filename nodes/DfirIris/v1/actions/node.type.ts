@@ -8,19 +8,10 @@ type NodeMap = {
 		| 'downloadFile'
 		| 'moveFile'
 		| 'deleteFile';
-	datastoreFolder: 'getTree' | 'addFolder' | 'moveFolder' | 'renameFolder' | 'deleteFolder'; // +
+	datastoreFolder: 'getTree' | 'addFolder' | 'moveFolder' | 'renameFolder' | 'deleteFolder';
 	asset: 'create' | 'deleteAsset' | 'get' | 'getAll' | 'update';
-	// file:
-	// 	| 'copy'
-	// 	| 'createFromText'
-	// 	| 'download'
-	// 	| 'deleteFile'
-	// 	| 'move'
-	// 	| 'share'
-	// 	| 'upload'
-	// 	| 'update';
-	// folder: 'create' | 'deleteFolder' | 'share';
-	// fileFolder: 'search';
+	ioc: 'create' | 'deleteIOC' | 'get' | 'getAll' | 'update';
+	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';
 };
 
 export type DfirIrisType = AllEntities<NodeMap>;

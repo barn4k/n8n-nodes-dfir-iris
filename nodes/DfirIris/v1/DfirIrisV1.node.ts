@@ -50,6 +50,7 @@ export class DfirIrisV1 implements INodeType {
 	// }
 
 	async execute(this: IExecuteFunctions) {
+		// console.debug(this)
 		return await router.call(this);
 	}
 
@@ -233,47 +234,6 @@ export class DfirIrisV1 implements INodeType {
 	// 					// -----------------------------------------------
 
 	// 					endpoint = `${endpointBase}/comments/` + this.getNodeParameter('commentId', i) as string + '/delete';
-	// 					isRaw = true
-	// 				}
-	// 			}
-	// 			else if (resource === 'asset') {
-	// 				endpointBase = 'case/assets'
-	// 				if (operation === 'get') {
-	// 					// ----------------------------------
-	// 					//         asset:get
-	// 					// ----------------------------------
-	// 					requestMethod = 'GET'
-	// 					endpoint = `${endpointBase}/` + this.getNodeParameter('assetId', i) as string;
-	// 				} else if (operation === 'getMany') {
-	// 					// -----------------------------------------------
-	// 					//         asset:getMany
-	// 					// -----------------------------------------------
-	// 					requestMethod = 'GET'
-	// 					endpoint = `${endpointBase}/list`;
-	// 				} else if (operation === 'create') {
-	// 					// -----------------------------------------------
-	// 					//         asset:create
-	// 					// -----------------------------------------------
-
-	// 					endpoint = `${endpointBase}/add`;
-	// 					body.asset_type_id = this.getNodeParameter('assetType', i) as number;
-	// 					body.asset_name = this.getNodeParameter('assetName', i) as string;
-	// 					utils.addAdditionalFields.call(this, body, i)
-	// 				} else if (operation === 'update') {
-	// 					// -----------------------------------------------
-	// 					//         asset:update
-	// 					// -----------------------------------------------
-
-	// 					endpoint = `${endpointBase}/update/` + this.getNodeParameter('assetId', i) as string;
-	// 					body.asset_type_id = this.getNodeParameter('assetType', i) as number;
-	// 					body.asset_name = this.getNodeParameter('assetName', i) as string;
-	// 					utils.addAdditionalFields.call(this, body, i)
-	// 				} else if (operation === 'delete') {
-	// 					// -----------------------------------------------
-	// 					//         asset:delete
-	// 					// -----------------------------------------------
-
-	// 					endpoint = `${endpointBase}/delete/` + this.getNodeParameter('assetId', i) as string;
 	// 					isRaw = true
 	// 				}
 	// 			}

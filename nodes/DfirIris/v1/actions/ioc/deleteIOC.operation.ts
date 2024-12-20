@@ -7,19 +7,19 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Asset.resource';
+import { endpoint } from './IOC.resource';
 import { apiRequest } from '../../transport';
-import { types, utils } from '../../helpers';
+import { types } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Asset Name or ID',
-		name: 'assetId',
+		displayName: 'IOC Name or ID',
+		name: 'id',
 		type: 'options',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 		typeOptions: {
-			loadOptionsMethod: 'getAssets',
+			loadOptionsMethod: 'getIOCs',
 		},
 		default: '',
 		required: true,
@@ -30,14 +30,14 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.assetFields)],
+		options: [...types.returnRaw],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['asset'],
-		operation: ['get'],
+		resource: ['ioc'],
+		operation: ['deleteIOC'],
 	},
 };
 
@@ -49,8 +49,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	response = await apiRequest.call(
 		this,
-		'GET',
-		(`${endpoint}/` + this.getNodeParameter('assetId', i)) as string,
+		'POST',
+		(`${endpoint}/delete/` + this.getNodeParameter('id', i)) as string,
 		{},
 		query,
 	);
@@ -59,10 +59,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const isRaw = (options.isRaw as boolean) || false;
 	let responseModified = response as any;
 
-	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (!isRaw) responseModified = { status: 'success' };
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

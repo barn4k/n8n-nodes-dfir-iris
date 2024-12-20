@@ -93,6 +93,62 @@ export async function getAssetTypes(this: ILoadOptionsFunctions): Promise<INodeP
 	return returnData;
 }
 
+export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this, 'GET', 'case/ioc/list', {}, query);
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = response.data.ioc.map((ioc: any) => {
+		return {
+			name: `${ioc.ioc_value} | ${ioc.ioc_type} | ${ioc.tpl_name}`,
+			value: ioc.ioc_id,
+		};
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+export async function getTasks(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this, 'GET', 'case/tasks/list', {}, query);
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = response.data.tasks.map((entity: any) => {
+		return {
+			name: `${entity.task_title} | ${entity.status_name}`,
+			value: entity.task_id,
+		};
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
 // export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 // 	const endpoint = 'case/ioc/list';
 
