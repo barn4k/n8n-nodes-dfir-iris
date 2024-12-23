@@ -6,6 +6,19 @@ export interface IFolder {
 	};
 }
 
+export interface INoteGroup {
+	subdirectories: INoteGroup[] | [];
+	id: number;
+	name: string;
+	note_count: number;
+	notes: INoteSub[] | [];
+}
+
+interface INoteSub {
+	id: number;
+	title: string;
+}
+
 export interface IFolderSub {
 	children?: {
 		[key: string]: IFolderSub;

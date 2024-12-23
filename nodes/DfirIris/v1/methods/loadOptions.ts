@@ -149,34 +149,18 @@ export async function getTasks(this: ILoadOptionsFunctions): Promise<INodeProper
 	return returnData;
 }
 
-// export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-// 	const endpoint = 'case/ioc/list';
+export async function getNoteGroups(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
 
-// 	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
-// 	if (responseData?.data?.ioc === undefined) {
-// 		throw new NodeOperationError(this.getNode(), 'No data got returned');
-// 	}
+	const response = await apiRequest.call(this, 'GET', 'case/notes/directories/filter', {}, query);
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+	this.logger.debug(JSON.stringify(response.data))
+	const returnData: INodePropertyOptions[] = utils.getNoteGroupsNested(response.data);
 
-// 	const returnData: INodePropertyOptions[] = [];
-// 	responseData.data.ioc.forEach( (row: any) => {
-// 		returnData.push({
-// 			name: `${row.ioc_value} (${row.ioc_type})`,
-// 			value: row.ioc_id,
-// 		});
-// 	})
-
-// 	returnData.sort((a, b) => {
-// 		if (a.name < b.name) {
-// 			return -1;
-// 		}
-// 		if (a.name > b.name) {
-// 			return 1;
-// 		}
-// 		return 0;
-// 	});
-
-// 	return returnData;
-// }
+	return returnData;
+}
 
 export async function getIOCTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'manage/ioc-types/list';

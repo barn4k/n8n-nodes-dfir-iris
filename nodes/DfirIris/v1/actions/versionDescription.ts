@@ -7,6 +7,8 @@ import * as asset from './asset/Asset.resource';
 import * as ioc from './ioc/IOC.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
+// import * as note from './note/Note.resource';
+import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 
 import { cidDescription } from '../helpers/types';
 
@@ -63,10 +65,7 @@ export const versionDescription: INodeTypeDescription = {
 					name: 'IOC',
 					value: 'ioc',
 				},
-				{
-					name: 'Task',
-					value: 'task',
-				},
+
 				// {
 				// 	name: 'Timeline',
 				// 	value: 'timeline',
@@ -83,16 +82,25 @@ export const versionDescription: INodeTypeDescription = {
 				// 	name: 'Note',
 				// 	value: 'note',
 				// },
+{
+					name: 'Note Group',
+					value: 'noteDirectory',
+				},
 
 				// {
 				// 	name: 'Comment',
 				// 	value: 'comment',
 				// },
+				{
+					name: 'Task',
+					value: 'task',
+				},
 			],
 			default: 'datastoreFolder',
 		},
 		...cidDescription,
 		// ...note.resource,
+		...noteDirectory.resource,
 		...task.resource,
 		// ...comment.resource,
 		...asset.resource,

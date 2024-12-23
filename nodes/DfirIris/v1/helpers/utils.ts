@@ -1,7 +1,7 @@
 import type { IDataObject, IExecuteFunctions, INodePropertyOptions } from 'n8n-workflow';
 
 import { NodeOperationError } from 'n8n-workflow';
-import type { IFolder, IFolderSub } from './../helpers/types';
+import type { IFolder, IFolderSub, INoteGroup } from './../helpers/types';
 
 export function fieldsRemover(responseRoot: any, options: IDataObject) {
 	const fields = (options.fields as string[]) || [];
@@ -91,5 +91,52 @@ export function getFolderNested(
 			});
 			return getFolderNested(data, e[1].children || {}, `${prefix}${e[1].name} - `);
 		});
+	return data;
+}
+
+export function getNoteGroupsNested(
+	root: INoteGroup[],
+	data: INodePropertyOptions[] = [],
+	prefix: string = '',
+) {
+	if (root.length > 0){
+		root.forEach( (e: INoteGroup) => {
+			// console.log('checking '+e.name)
+			const oldEntry = data.filter( (x) => x.value === e.id)
+			// if in sub >> remove sub id from root
+			if (prefix){
+				if (oldEntry.length > 0){
+					if (oldEntry[0].name.indexOf('--') === -1){
+						// console.log('removing old entry with '+e.name)
+						// console.log('data before old', data)
+						data = data.filter( (x) => x.value !== e.id)
+						// console.log('data after old', data)
+
+						// console.log('adding new prefixed(1) entry '+prefix+" "+e.name)
+						data.push({
+							name: `${prefix}${e.name}`,
+							value: e.id,
+						});
+					}
+				} else {
+					// console.log('adding new prefixed(2) entry '+prefix+" "+e.name)
+					data.push({
+						name: `${prefix}${e.name}`,
+						value: e.id,
+					});
+				}
+			}
+			else if(oldEntry.length === 0){
+				// console.log('adding new root entry '+e.name)
+				data.push({
+					name: `${prefix}${e.name}`,
+					value: e.id,
+				});
+			}
+			// console.log('going in')
+			data = getNoteGroupsNested(e.subdirectories, data, `${prefix}-- `);
+		})
+	}
+	// console.log('going out')
 	return data;
 }

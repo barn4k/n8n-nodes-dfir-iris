@@ -12,6 +12,7 @@ type NodeMap = {
 	asset: 'create' | 'deleteAsset' | 'get' | 'getAll' | 'update';
 	ioc: 'create' | 'deleteIOC' | 'get' | 'getAll' | 'update';
 	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';
+	noteDirectory: 'create' | 'deleteNoteDirectory' | 'getAll' | 'update';
 };
 
 export type DfirIrisType = AllEntities<NodeMap>;
