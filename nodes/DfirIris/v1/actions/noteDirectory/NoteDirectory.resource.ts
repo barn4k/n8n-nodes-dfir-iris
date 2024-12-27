@@ -26,7 +26,7 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Get Many',
 				value: 'getAll',
-				action: 'Get many note groups',
+				action: 'Get many note groups and notes',
 			},
 			{
 				name: 'Add Note Group',

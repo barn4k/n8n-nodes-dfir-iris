@@ -140,3 +140,29 @@ export function getNoteGroupsNested(
 	// console.log('going out')
 	return data;
 }
+
+export function getFlattenGroups(
+	root: INoteGroup[],
+	data: any = {},
+	parentId: number = 0,
+) {
+	if (root.length > 0){
+		// initialize
+		if (parentId === 0){
+			data = Object.fromEntries(root.map( (x) => {return [x.id, {name: x.name, notes: x.notes}] } ))
+			console.debug('initialize data '+ data)
+		}
+		root.forEach( (e: INoteGroup) => {
+			console.debug('checking '+e.name)
+			if (parentId > 0){
+				console.debug('changing prefixed(1) entry '+parentId+"/"+e.name)
+				data[e.id].name = `${data[parentId].name}/${e.name}`
+			}
+			console.debug('going in')
+			data = getFlattenGroups(e.subdirectories, data, e.id);
+		})
+	}
+	console.debug('going out')
+	console.debug('out data', data)
+	return data;
+}

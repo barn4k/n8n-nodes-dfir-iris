@@ -104,6 +104,21 @@ export const datastoreFileFields: string[] = [
 	'file_password',
 ].sort();
 
+export const noteFields: string[] = [
+	"directory",
+	"note_id",
+	"note_uuid",
+	"note_title",
+	"note_content",
+	"note_user",
+	"note_creationdate",
+	"note_lastupdate",
+	"note_case_id",
+	"custom_attributes",
+	"directory_id",
+	"modification_history"
+].sort();
+
 export const cidDescription: INodeProperties[] = [
 	{
 		displayName: 'Case ID',

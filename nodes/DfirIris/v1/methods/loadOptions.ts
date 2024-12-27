@@ -162,6 +162,25 @@ export async function getNoteGroups(this: ILoadOptionsFunctions): Promise<INodeP
 	return returnData;
 }
 
+export async function getNotes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this, 'GET', 'case/notes/directories/filter', {}, query);
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+	this.logger.debug(JSON.stringify(response.data))
+	const newData = utils.getFlattenGroups(response.data);
+
+	let returnData: INodePropertyOptions[] = []
+
+	Object.values(newData).forEach( (d: any) => {
+		if (d.notes.length > 0)
+			d.notes.map( (n: any) => returnData.push({name: `${n.title} (${d.name})`, value: n.id}))
+	})
+	return returnData;
+}
+
 export async function getIOCTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'manage/ioc-types/list';
 

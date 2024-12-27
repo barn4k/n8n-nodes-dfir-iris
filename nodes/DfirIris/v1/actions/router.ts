@@ -8,7 +8,7 @@ import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as asset from './asset/Asset.resource';
 import * as ioc from './ioc/IOC.resource';
 import * as task from './task/Task.resource';
-// import * as note from './note/Note.resource';
+import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -41,9 +41,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'task':
 					returnData.push(...(await task[dfirIris.operation].execute.call(this, i)));
 					break;
-				// case 'note':
-				// 	returnData.push(...(await note[dfirIris.operation].execute.call(this, i)));
-				// 	break;
+				case 'note':
+					returnData.push(...(await note[dfirIris.operation].execute.call(this, i)));
+					break;
 				case 'noteDirectory':
 					returnData.push(...(await noteDirectory[dfirIris.operation].execute.call(this, i)));
 					break;
