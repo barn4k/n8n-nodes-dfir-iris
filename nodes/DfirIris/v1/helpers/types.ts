@@ -119,6 +119,16 @@ export const noteFields: string[] = [
 	"modification_history"
 ].sort();
 
+export const commentFields: string[] = [
+	'comment_date',
+	'comment_id',
+	'comment_text',
+	'comment_update_date',
+	'comment_uuid',
+	'name',
+	'user',
+].sort();
+
 export const cidDescription: INodeProperties[] = [
 	{
 		displayName: 'Case ID',

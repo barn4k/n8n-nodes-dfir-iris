@@ -14,6 +14,7 @@ type NodeMap = {
 	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';
 	note: 'create' | 'deleteNote' | 'get' | 'search' | 'update';
 	noteDirectory: 'create' | 'deleteNoteDirectory' | 'getAll' | 'update';
+	comment: 'create' | 'deleteComment' | 'getAll' | 'update';
 };
 
 export type DfirIrisType = AllEntities<NodeMap>;

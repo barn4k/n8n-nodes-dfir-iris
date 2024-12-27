@@ -9,6 +9,7 @@ import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
+import * as comment from './comment/Comment.resource';
 
 import { cidDescription } from '../helpers/types';
 
@@ -54,6 +55,10 @@ export const versionDescription: INodeTypeDescription = {
 				// 	value: 'case',
 				// },
 				{
+					name: 'Comment',
+					value: 'comment',
+				},
+				{
 					name: 'Datastore File',
 					value: 'datastoreFile',
 				},
@@ -87,10 +92,7 @@ export const versionDescription: INodeTypeDescription = {
 					value: 'noteDirectory',
 				},
 
-				// {
-				// 	name: 'Comment',
-				// 	value: 'comment',
-				// },
+
 				{
 					name: 'Task',
 					value: 'task',
@@ -102,7 +104,7 @@ export const versionDescription: INodeTypeDescription = {
 		...note.resource,
 		...noteDirectory.resource,
 		...task.resource,
-		// ...comment.resource,
+		...comment.resource,
 		...asset.resource,
 		...ioc.resource,
 		...datastoreFile.resource,
