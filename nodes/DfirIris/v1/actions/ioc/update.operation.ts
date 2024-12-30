@@ -53,20 +53,7 @@ const properties: INodeProperties[] = [
 				default: '',
 				description: 'IOC Tags, comma-separated',
 			},
-			{
-				displayName: 'IOC TLP',
-				name: 'ioc_tlp_id',
-				type: 'options',
-				options: [
-					{ value: 1, name: 'Red' },
-					{ value: 2, name: 'Amber' },
-					{ value: 3, name: 'Green' },
-					{ value: 4, name: 'Clear' },
-					{ value: 5, name: 'Amber Strict' },
-				],
-				default: 1,
-				description: 'IOC Name',
-			},
+			...types.iocTLP,
 			{
 				displayName: 'IOC Type Name or ID',
 				name: 'ioc_type_id',

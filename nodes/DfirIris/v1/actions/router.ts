@@ -5,6 +5,7 @@ import type { DfirIrisType } from './node.type';
 
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
+import * as alert from './alert/Alert.resource';
 import * as asset from './asset/Asset.resource';
 import * as ioc from './ioc/IOC.resource';
 import * as task from './task/Task.resource';
@@ -54,9 +55,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				// case 'case':
 				// 	returnData.push(...(await case[dfirIris.operation].execute.call(this, i)));
 				// 	break;
-				// case 'alert':
-				// 	returnData.push(...(await alert[dfirIris.operation].execute.call(this, i)));
-				// 	break;
+				case 'alert':
+					returnData.push(...(await alert[dfirIris.operation].execute.call(this, i)));
+					break;
 				// case 'file':
 				// 	returnData.push(...(await file[googleDrive.operation].execute.call(this, i, items[i])));
 				// 	break;

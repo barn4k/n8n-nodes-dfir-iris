@@ -7,36 +7,24 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Note.resource';
+import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Note Name or ID',
+		displayName: 'Alert ID',
 		name: 'id',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: {
-			loadOptionsMethod: 'getNotes',
-		},
-		default: '',
-		required: true,
-	},
-	{
-		displayName: 'Note Title',
-		name: 'title',
 		type: 'string',
 		default: '',
 		required: true,
 	},
 	{
-		displayName: 'Note Content',
-		name: 'content',
+		displayName: 'Case Title',
+		name: 'case_title',
+		required: true,
 		type: 'string',
 		default: '',
-		required: true,
 	},
 	{
 		displayName: 'Additional Fields',
@@ -46,22 +34,51 @@ const properties: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Parent Group Name or ID',
-				name: 'directory_id',
+				displayName: 'As Event',
+				name: 'import_as_event',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to add alert to the case timeline',
+			},
+			{
+				displayName: 'Case Tags',
+				name: 'case_tags',
+				type: 'string',
+				default: '',
+				description: 'Comma-separated list of case tags',
+			},
+			{
+				displayName: 'Case Template Name or ID',
+				name: 'case_template_id',
 				type: 'options',
 				description:
 					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 				typeOptions: {
-					loadOptionsMethod: 'getNoteGroups',
+					loadOptionsMethod: 'getCaseTemplates',
 				},
 				default: '',
 			},
 			{
-				displayName: 'Custom Attributes',
-				name: 'custom_attributes',
-				type: 'json',
-				default: 0,
-				description: 'Add custom attributes',
+				displayName: 'List of Asset UUIDs',
+				name: 'assets_import_list',
+				type: 'string',
+				default: '',
+				description:
+					'A comma-separated list of UUID matching the Assets to import into the case. These UUIDs are provided when getting information on an alert.',
+			},
+			{
+				displayName: 'List of IOC UUIDs',
+				name: 'iocs_import_list',
+				type: 'string',
+				default: '',
+				description:
+					'A comma-separated list of UUID matching the IOCs to import into the case. These UUIDs are provided when getting information on an alert.',
+			},
+			{
+				displayName: 'Note',
+				name: 'note',
+				type: 'string',
+				default: '',
 			},
 		],
 	},
@@ -72,14 +89,14 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.noteFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.caseFields)],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['note'],
-		operation: ['update'],
+		resource: ['alert'],
+		operation: ['escalate'],
 	},
 };
 
@@ -90,14 +107,19 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	body.note_title = this.getNodeParameter('title', i) as string;
-	body.note_content = this.getNodeParameter('content', i) as string;
+	body.case_title = this.getNodeParameter('case_title', i) as string;
+
 	utils.addAdditionalFields.call(this, body, i);
+	body.case_tags ??= '';
+	// @ts-ignore
+	body.assets_import_list = body.assets_import_list?.split(',') || [];
+	// @ts-ignore
+	body.iocs_import_list = body.iocs_import_list?.split(',') || [];
 
 	response = await apiRequest.call(
 		this,
 		'POST',
-		(`${endpoint}/update/` + this.getNodeParameter('id', i)) as string,
+		(`${endpoint}/escalate/` + this.getNodeParameter('id', i)) as string,
 		body,
 		query,
 	);

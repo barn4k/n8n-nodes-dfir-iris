@@ -9,6 +9,18 @@ type NodeMap = {
 		| 'moveFile'
 		| 'deleteFile';
 	datastoreFolder: 'getTree' | 'addFolder' | 'moveFolder' | 'renameFolder' | 'deleteFolder';
+	alert:
+		| 'create'
+		| 'update'
+		| 'get'
+		| 'countAlerts'
+		| 'deleteAlert'
+		| 'filterAlerts'
+		| 'batchUpdate'
+		| 'batchDelete'
+		| 'escalate'
+		| 'merge'
+		| 'unmerge';
 	asset: 'create' | 'deleteAsset' | 'get' | 'getAll' | 'update';
 	ioc: 'create' | 'deleteIOC' | 'get' | 'getAll' | 'update';
 	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';

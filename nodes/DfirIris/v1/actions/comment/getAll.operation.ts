@@ -16,12 +16,12 @@ const properties: INodeProperties[] = [
 		name: 'obj_name',
 		type: 'options',
 		options: [
-			{name: "Asset", value: "assets"},
+			{ name: 'Asset', value: 'assets' },
 			// {name: "Event", value: "events"},
 			// {name: "Evidence", value: "evidences"},
-			{name: "IOC", value: "ioc"},
-			{name: "Note", value: "notes"},
-			{name: "Task", value: "tasks"},
+			{ name: 'IOC', value: 'ioc' },
+			{ name: 'Note', value: 'notes' },
+			{ name: 'Task', value: 'tasks' },
 		],
 		default: 'tasks',
 		required: true,
@@ -65,7 +65,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		'GET',
 		`case/${obj_name}/${obj_id}/comments/list`,
 		{},
-		query
+		query,
 	);
 
 	const options = this.getNodeParameter('options', i, {});

@@ -16,12 +16,12 @@ const properties: INodeProperties[] = [
 		name: 'obj_name',
 		type: 'options',
 		options: [
-			{name: "Asset", value: "assets"},
+			{ name: 'Asset', value: 'assets' },
 			// {name: "Event", value: "events"},
 			// {name: "Evidence", value: "evidences"},
-			{name: "IOC", value: "ioc"},
-			{name: "Note", value: "notes"},
-			{name: "Task", value: "tasks"},
+			{ name: 'IOC', value: 'ioc' },
+			{ name: 'Note', value: 'notes' },
+			{ name: 'Task', value: 'tasks' },
 		],
 		default: 'tasks',
 		required: true,
@@ -71,7 +71,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`case/${obj_name}/${obj_id}/comments/${comment_id}/delete` ,
+		`case/${obj_name}/${obj_id}/comments/${comment_id}/delete`,
 		{},
 		query,
 	);

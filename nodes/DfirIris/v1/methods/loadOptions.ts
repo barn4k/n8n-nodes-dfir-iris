@@ -93,34 +93,6 @@ export async function getAssetTypes(this: ILoadOptionsFunctions): Promise<INodeP
 	return returnData;
 }
 
-export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-	const query = { cid: this.getNodeParameter('cid') as number };
-
-	const response = await apiRequest.call(this, 'GET', 'case/ioc/list', {}, query);
-	if (response === undefined) {
-		throw new NodeOperationError(this.getNode(), 'No data got returned');
-	}
-
-	const returnData: INodePropertyOptions[] = response.data.ioc.map((ioc: any) => {
-		return {
-			name: `${ioc.ioc_value} | ${ioc.ioc_type} | ${ioc.tpl_name}`,
-			value: ioc.ioc_id,
-		};
-	});
-
-	returnData.sort((a, b) => {
-		if (a.name < b.name) {
-			return -1;
-		}
-		if (a.name > b.name) {
-			return 1;
-		}
-		return 0;
-	});
-
-	return returnData;
-}
-
 export async function getTasks(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const query = { cid: this.getNodeParameter('cid') as number };
 
@@ -156,7 +128,7 @@ export async function getNoteGroups(this: ILoadOptionsFunctions): Promise<INodeP
 	if (response === undefined) {
 		throw new NodeOperationError(this.getNode(), 'No data got returned');
 	}
-	this.logger.debug(JSON.stringify(response.data))
+	this.logger.debug(JSON.stringify(response.data));
 	const returnData: INodePropertyOptions[] = utils.getNoteGroupsNested(response.data);
 
 	return returnData;
@@ -169,15 +141,43 @@ export async function getNotes(this: ILoadOptionsFunctions): Promise<INodeProper
 	if (response === undefined) {
 		throw new NodeOperationError(this.getNode(), 'No data got returned');
 	}
-	this.logger.debug(JSON.stringify(response.data))
+	this.logger.debug(JSON.stringify(response.data));
 	const newData = utils.getFlattenGroups(response.data);
 
-	let returnData: INodePropertyOptions[] = []
+	let returnData: INodePropertyOptions[] = [];
 
-	Object.values(newData).forEach( (d: any) => {
+	Object.values(newData).forEach((d: any) => {
 		if (d.notes.length > 0)
-			d.notes.map( (n: any) => returnData.push({name: `${n.title} (${d.name})`, value: n.id}))
-	})
+			d.notes.map((n: any) => returnData.push({ name: `${n.title} (${d.name})`, value: n.id }));
+	});
+	return returnData;
+}
+
+export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this, 'GET', 'case/ioc/list', {}, query);
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = response.data.ioc.map((ioc: any) => {
+		return {
+			name: `${ioc.ioc_value} | ${ioc.ioc_type} | ${ioc.tpl_name}`,
+			value: ioc.ioc_id,
+		};
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
 	return returnData;
 }
 
@@ -192,7 +192,7 @@ export async function getIOCTypes(this: ILoadOptionsFunctions): Promise<INodePro
 	const returnData: INodePropertyOptions[] = [];
 	for (const data of responseData.data) {
 		returnData.push({
-			name: `${data.type_description} ( ${data.type_name} )`,
+			name: `${data.type_name} ( ${data.type_description} )`,
 			value: data.type_id,
 		});
 	}
@@ -221,6 +221,66 @@ export async function getFolders(this: ILoadOptionsFunctions): Promise<INodeProp
 	this.logger.debug('getFolders responseData', response);
 
 	const returnData: INodePropertyOptions[] = utils.getFolderNested([], response.data);
+
+	return returnData;
+}
+
+export async function getCustomers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = 'manage/customers/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	responseData.data.forEach((row: any) => {
+		returnData.push({
+			name: row.customer_name,
+			value: row.customer_id,
+		});
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+export async function getAlertClassifications(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const endpoint = 'manage/case-classifications/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	responseData.data.forEach((row: any) => {
+		returnData.push({
+			name: row.name_expanded,
+			value: row.id,
+		});
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
 
 	return returnData;
 }

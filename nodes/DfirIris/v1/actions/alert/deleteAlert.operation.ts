@@ -7,47 +7,48 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Note.resource';
+import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Search Input',
-		name: 'search',
+		displayName: 'Alert ID',
+		name: 'id',
 		type: 'string',
-		description: 'Use a % as wildcard',
 		default: '',
 		required: true,
 	},
-
 	{
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.noteFields)],
+		options: [...types.returnRaw],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['note'],
-		operation: ['search'],
+		resource: ['alert'],
+		operation: ['deleteAlert'],
 	},
 };
 
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = {
-		cid: this.getNodeParameter('cid', i, 0) as number,
-		search_input: this.getNodeParameter('search', i) as string,
-	};
+	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response: INodeExecutionData[];
 
-	response = await apiRequest.call(this, 'GET', `${endpoint}/search`, {}, query);
+	response = await apiRequest.call(
+		this,
+		'POST',
+		(`${endpoint}/delete/` + this.getNodeParameter('id', i)) as string,
+		{},
+		query,
+	);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;

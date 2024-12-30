@@ -1,6 +1,7 @@
 import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
 
 // import * as note from './note/Note.resource'
+import * as alert from './alert/Alert.resource';
 import * as task from './task/Task.resource';
 // import * as comment from './comment/Comment.resource'
 import * as asset from './asset/Asset.resource';
@@ -41,10 +42,10 @@ export const versionDescription: INodeTypeDescription = {
 			type: 'options',
 			noDataExpression: true,
 			options: [
-				// {
-				// 	name: 'Alert',
-				// 	value: 'alert',
-				// },
+				{
+					name: 'Alert',
+					value: 'alert',
+				},
 				{
 					name: 'Asset',
 					value: 'asset',
@@ -92,7 +93,6 @@ export const versionDescription: INodeTypeDescription = {
 					value: 'noteDirectory',
 				},
 
-
 				{
 					name: 'Task',
 					value: 'task',
@@ -101,6 +101,7 @@ export const versionDescription: INodeTypeDescription = {
 			default: 'datastoreFolder',
 		},
 		...cidDescription,
+		...alert.resource,
 		...note.resource,
 		...noteDirectory.resource,
 		...task.resource,

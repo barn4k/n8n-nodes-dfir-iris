@@ -1,4 +1,4 @@
-import type { INodeProperties } from 'n8n-workflow';
+import type { INodeProperties, IDataObject } from 'n8n-workflow';
 
 export interface IFolder {
 	data: {
@@ -26,6 +26,45 @@ export interface IFolderSub {
 	is_root?: boolean;
 	name: string;
 	type: 'directory' | 'file';
+}
+
+export interface IIOC extends IDataObject {
+	ioc_value: string;
+	ioc_tlp_id: number;
+	ioc_type_id: number;
+	ioc_description?: string;
+	ioc_tags?: string;
+	ioc_enrichment?: object;
+}
+
+export interface IAsset extends IDataObject {
+	asset_name: string;
+	asset_type_id: number;
+	asset_description?: string;
+	asset_ip?: string;
+	asset_domain?: string;
+	asset_tags?: string;
+	asset_enrichment?: object;
+}
+
+export interface IAlert extends IDataObject {
+	alert_id?: number;
+	alert_title?: string;
+	alert_description?: string;
+	alert_source?: string;
+	alert_source_ref?: string;
+	alert_source_link?: string;
+	alert_severity_id?: number;
+	alert_status_id?: number;
+	alert_context?: object;
+	alert_source_event_time?: string;
+	alert_note?: string;
+	alert_tags?: string;
+	alert_iocs?: Array<IIOC>;
+	alert_assets?: Array<IAsset>;
+	alert_customer_id?: number;
+	alert_classification_id?: number;
+	alert_source_content?: object;
 }
 
 export const taskFields = [
@@ -105,18 +144,18 @@ export const datastoreFileFields: string[] = [
 ].sort();
 
 export const noteFields: string[] = [
-	"directory",
-	"note_id",
-	"note_uuid",
-	"note_title",
-	"note_content",
-	"note_user",
-	"note_creationdate",
-	"note_lastupdate",
-	"note_case_id",
-	"custom_attributes",
-	"directory_id",
-	"modification_history"
+	'directory',
+	'note_id',
+	'note_uuid',
+	'note_title',
+	'note_content',
+	'note_user',
+	'note_creationdate',
+	'note_lastupdate',
+	'note_case_id',
+	'custom_attributes',
+	'directory_id',
+	'modification_history',
 ].sort();
 
 export const commentFields: string[] = [
@@ -129,6 +168,59 @@ export const commentFields: string[] = [
 	'user',
 ].sort();
 
+export const alertFields: string[] = [
+	'owner',
+	'alert_note',
+	'alert_source',
+	'alert_title',
+	'modification_history',
+	'assets',
+	'classification',
+	'alert_id',
+	'alert_source_link',
+	'severity',
+	'iocs',
+	'alert_context',
+	'alert_classification_id',
+	'alert_source_content',
+	'alert_tags',
+	'alert_severity_id',
+	'alert_source_ref',
+	'alert_status_id',
+	'customer',
+	'alert_owner_id',
+	'alert_description',
+	'alert_creation_time',
+	'cases',
+	'alert_source_event_time',
+	'alert_customer_id',
+	'status',
+	'comments',
+	'alert_uuid',
+].sort();
+
+export const caseFields: string[] = [
+	'case_name',
+	'case_customer',
+	'case_uuid',
+	'case_description',
+	'case_id',
+	'open_date',
+	'status_id',
+	'modification_history',
+	'case_soc_id',
+	'state_id',
+	'close_date',
+	'classification_id',
+	'closing_note',
+	'owner_id',
+	'user_id',
+	'custom_attributes',
+	'reviewer_id',
+	'review_status_id',
+	'severity_id',
+].sort();
+
 export const cidDescription: INodeProperties[] = [
 	{
 		displayName: 'Case ID',
@@ -136,18 +228,21 @@ export const cidDescription: INodeProperties[] = [
 		type: 'number',
 		default: 1,
 		displayOptions: {
-			show: {
-				// operation: [
-				// 	'get',
-				// ],
-				// resource: [
-				// 	'note',
-				// 	'task',
-				// 	'comment',
-				// 	'asset',
-				// 	'alert',
-				// 	'alert',
-				// 	],
+			// show: {
+			// 	operation: [
+			// 		'get',
+			// 	],
+			// 	resource: [
+			// 		'note',
+			// 		'task',
+			// 		'comment',
+			// 		'asset',
+			// 		'alert',
+			// 		'alert',
+			// 		],
+			// },
+			hide: {
+				resource: ['alert'],
 			},
 		},
 		required: true,
@@ -211,5 +306,123 @@ export const returnRaw: INodeProperties[] = [
 		type: 'boolean',
 		default: false,
 		description: 'Whether to return the raw response',
+	},
+];
+
+export const alertStatus: INodeProperties[] = [
+	{
+		displayName: 'Alert Status',
+		name: 'alert_status_id',
+		type: 'options',
+		options: [
+			{
+				name: 'Unspecified',
+				value: 1,
+			},
+			{
+				name: 'New',
+				value: 2,
+			},
+			{
+				name: 'Assigned',
+				value: 3,
+			},
+			{
+				name: 'In Progress',
+				value: 4,
+			},
+			{
+				name: 'Pending',
+				value: 5,
+			},
+			{
+				name: 'Closed',
+				value: 6,
+			},
+			{
+				name: 'Merged',
+				value: 7,
+			},
+			{
+				name: 'Escalated',
+				value: 8,
+			},
+		],
+		default: 1,
+	},
+];
+
+export const alertSeverity: INodeProperties[] = [
+	{
+		displayName: 'Alert Severity',
+		name: 'alert_severity_id',
+		type: 'options',
+		options: [
+			{
+				name: 'Low',
+				value: 1,
+			},
+			{
+				name: 'Medium',
+				value: 2,
+			},
+			{
+				name: 'High',
+				value: 3,
+			},
+			{
+				name: 'Critical',
+				value: 4,
+			},
+		],
+		default: 2,
+	},
+];
+
+export const alertResolutionStatus: INodeProperties[] = [
+	{
+		displayName: 'Alert Resolution Status',
+		name: 'alert_resolution_status_id',
+		type: 'options',
+		options: [
+			{
+				name: 'False Positive',
+				value: 1,
+			},
+			{
+				name: 'True Positive With Impact',
+				value: 2,
+			},
+			{
+				name: 'True Positive Without Impact',
+				value: 3,
+			},
+			{
+				name: 'Not Applicable',
+				value: 4,
+			},
+			{
+				name: 'Unknown',
+				value: 5,
+			},
+		],
+		default: 5,
+	},
+];
+
+export const iocTLP: INodeProperties[] = [
+	{
+		displayName: 'IOC TLP',
+		name: 'tlpId',
+		type: 'options',
+		options: [
+			{ value: 1, name: 'Red' },
+			{ value: 2, name: 'Amber' },
+			{ value: 3, name: 'Green' },
+			{ value: 4, name: 'Clear' },
+			{ value: 5, name: 'Amber Strict' },
+		],
+		default: 1,
+		description: 'IOC Name',
 	},
 ];

@@ -7,34 +7,22 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Note.resource';
+import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
 const properties: INodeProperties[] = [
 	{
-		displayName: 'Note Title',
-		name: 'title',
+		displayName: 'Alert ID',
+		name: 'id',
 		type: 'string',
 		default: '',
 		required: true,
 	},
 	{
-		displayName: 'Note Content',
-		name: 'content',
-		type: 'string',
-		default: '',
-		required: true,
-	},
-	{
-		displayName: 'Group Name or ID',
-		name: 'directory_id',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: {
-			loadOptionsMethod: 'getNoteGroups',
-		},
+		displayName: 'Target Case ID',
+		name: 'case_id',
+		type: 'number',
 		default: '',
 		required: true,
 	},
@@ -45,14 +33,14 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.noteFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.caseFields)],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['note'],
-		operation: ['create'],
+		resource: ['alert'],
+		operation: ['unmerge'],
 	},
 };
 
@@ -63,11 +51,15 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	body.note_title = this.getNodeParameter('title', i) as string;
-	body.note_content = this.getNodeParameter('content', i) as string;
-	body.directory_id = this.getNodeParameter('directory_id', i) as number;
+	body.target_case_id = this.getNodeParameter('case_id', i) as number;
 
-	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);
+	response = await apiRequest.call(
+		this,
+		'POST',
+		(`${endpoint}/unmerge/` + this.getNodeParameter('id', i)) as string,
+		body,
+		query,
+	);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
