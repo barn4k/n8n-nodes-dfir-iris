@@ -254,7 +254,7 @@ export async function getCustomers(this: ILoadOptionsFunctions): Promise<INodePr
 	return returnData;
 }
 
-export async function getAlertClassifications(
+export async function getCaseClassifications(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {
 	const endpoint = 'manage/case-classifications/list';

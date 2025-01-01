@@ -10,17 +10,10 @@ import { updateDisplayOptions, NodeOperationError } from 'n8n-workflow';
 import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Alert IDs',
-		name: 'ids',
-		type: 'string',
-		description: 'Comma-separated list of alert IDs',
-		placeholder: '1,2,3',
-		default: '',
-		required: true,
-	},
+	local.rAlertIds,
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -46,7 +39,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	let body: IDataObject = {};
 	try {
-		body.alert_ids = (this.getNodeParameter('ids', i) as string)
+		body.alert_ids = (this.getNodeParameter('alert_ids', i) as string)
 			.replace(/\s/g, '')
 			.split(',')
 			.map((x) => parseInt(x));

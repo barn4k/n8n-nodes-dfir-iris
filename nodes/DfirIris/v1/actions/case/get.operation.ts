@@ -7,21 +7,17 @@ import type {
 
 import { updateDisplayOptions } from 'n8n-workflow';
 
-import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
-import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rAlertId,
 	{
-		displayName: 'Target Case ID',
-		name: 'case_id',
-		type: 'number',
+		displayName: 'Case ID',
+		name: 'id',
+		type: 'string',
 		default: '',
 		required: true,
 	},
-
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -34,27 +30,18 @@ const properties: INodeProperties[] = [
 
 const displayOptions = {
 	show: {
-		resource: ['alert'],
-		operation: ['unmerge'],
+		resource: ['case'],
+		operation: ['get'],
 	},
 };
 
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let query: IDataObject = { cid: this.getNodeParameter('id', i) as number };
 	let response: INodeExecutionData[];
-	let body: IDataObject = {};
 
-	body.target_case_id = this.getNodeParameter('case_id', i) as number;
-
-	response = await apiRequest.call(
-		this,
-		'POST',
-		(`${endpoint}/unmerge/` + this.getNodeParameter('alert_id', i)) as string,
-		body,
-		query,
-	);
+	response = await apiRequest.call(this, 'GET', `case/summary/fetch`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;

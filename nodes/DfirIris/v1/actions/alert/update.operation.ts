@@ -13,15 +13,10 @@ import type { IIOC, IAsset, IAlert } from '../../helpers/types';
 import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Alert ID',
-		name: 'id',
-		type: 'number',
-		default: '',
-		required: true,
-	},
+	local.rAlertId,
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -29,305 +24,19 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			// Asset
-			{
-				displayName: 'Add Assets',
-				name: '__assetsCollection',
-				type: 'fixedCollection',
-				placeholder: 'Add Asset',
-				default: {},
-				typeOptions: {
-					multipleValues: true,
-				},
-				options: [
-					{
-						name: 'assetData',
-						displayName: 'Asset',
-						values: [
-							{
-								displayName: 'Name',
-								name: 'asset_name',
-								type: 'string',
-								required: true,
-								default: '',
-							},
-							{
-								displayName: 'Value',
-								description: 'Markdown supported in cases',
-								name: 'asset_description',
-								type: 'string',
-								default: '',
-							},
-							{
-								displayName: 'Type Name or ID',
-								name: 'asset_type_id',
-								required: true,
-								type: 'options',
-								description:
-									'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-								typeOptions: {
-									loadOptionsMethod: 'getAssetTypes',
-								},
-								default: '',
-							},
-							{
-								displayName: 'IP',
-								name: 'asset_ip',
-								type: 'string',
-								default: '',
-							},
-							{
-								displayName: 'Domain',
-								name: 'asset_domain',
-								type: 'string',
-								default: '',
-							},
-							{
-								displayName: 'Tags',
-								name: 'asset_tags',
-								type: 'string',
-								default: '',
-								description: 'Comma-separated list of tag names',
-							},
-							{
-								displayName: 'Enrichment',
-								name: 'asset_enrichment',
-								type: 'json',
-								default: '{}',
-								description: 'JSON Object with additional data',
-							},
-						],
-					},
-				],
-			},
-			{
-				displayName: 'Add Assets (JSON)',
-				name: '__assetsCollectionJSON',
-				type: 'json',
-				description: 'Add data as array of assets. Will override usual setting.',
-				default: '{}',
-			},
-			// IOC  // No property in API schema
-			// {
-			// 	displayName: 'Add IOCs',
-			// 	name: '__iocsCollection',
-			// 	type: 'fixedCollection',
-			// 	placeholder: 'Add IOC',
-			// 	default: {},
-			// 	typeOptions: {
-			// 		multipleValues: true,
-			// 	},
-			// 	options: [
-			// 		{
-			// 			name: 'iocData',
-			// 			displayName: 'IOC',
-			// 			values: [
-			// 				{
-			// 					displayName: 'Value',
-			// 					name: 'ioc_value',
-			// 					required: true,
-			// 					type: 'string',
-			// 					default: '',
-			// 				},
-			// 				{
-			// 					displayName: 'Description',
-			// 					name: 'ioc_description',
-			// 					description: 'Markdown supported in cases',
-			// 					type: 'string',
-			// 					default: '',
-			// 				},
-			// 				...types.iocTLP,
-			// 				{
-			// 					displayName: 'Type Name or ID',
-			// 					name: 'ioc_type_id',
-			// 					required: true,
-			// 					type: 'options',
-			// 					description:
-			// 						'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-			// 					typeOptions: {
-			// 						loadOptionsMethod: 'getIOCTypes',
-			// 					},
-			// 					default: '',
-			// 				},
-			// 				{
-			// 					displayName: 'Tags',
-			// 					name: 'ioc_tags',
-			// 					type: 'string',
-			// 					default: '',
-			// 					description: 'Comma-separated list of tag names',
-			// 				},
-			// 				{
-			// 					displayName: 'Enrichment',
-			// 					name: 'ioc_enrichment',
-			// 					type: 'json',
-			// 					default: '{}',
-			// 					description: 'JSON Object with additional data',
-			// 				},
-			// 			],
-			// 		},
-			// 	],
-			// },
-			// {
-			// 	displayName: 'Add IOCs (JSON)',
-			// 	name: '__iocsCollectionJSON',
-			// 	type: 'json',
-			// 	description: 'Add data as array of IOCs. Will override usual setting.',
-			// 	default: '{}',
-			// },
-			{
-				displayName: 'Alert Classification Name or ID',
-				name: 'alert_classification_id',
-				type: 'options',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: {
-					loadOptionsMethod: 'getAlertClassifications',
-				},
-				default: '',
-			},
-			{
-				displayName: 'Alert Context',
-				name: 'alertContextType',
-				type: 'options',
-				options: [
-					{
-						name: 'Using Fields Below',
-						value: 'keypair',
-					},
-					{
-						name: 'Using JSON',
-						value: 'json',
-					},
-				],
-				default: 'keypair',
-			},
-			{
-				displayName: 'Alert Context JSON',
-				name: 'alertContextJSON',
-				type: 'json',
-				displayOptions: {
-					show: {
-						alertContextType: ['json'],
-					},
-				},
-				default: '{}',
-			},
-			{
-				displayName: 'Alert Context Key Value',
-				name: 'alertContextKV',
-				type: 'fixedCollection',
-				displayOptions: {
-					show: {
-						alertContextType: ['keypair'],
-					},
-				},
-				typeOptions: {
-					multipleValues: true,
-				},
-				placeholder: 'Add context field',
-				default: {
-					parameters: [],
-				},
-				options: [
-					{
-						name: 'parameters',
-						displayName: 'Parameter',
-						values: [
-							{
-								displayName: 'Name',
-								name: 'name',
-								type: 'string',
-								default: '',
-							},
-							{
-								displayName: 'Value',
-								name: 'value',
-								type: 'string',
-								default: '',
-							},
-						],
-					},
-				],
-			},
-			{
-				displayName: 'Alert Customer Name or ID',
-				name: 'alert_customer_id',
-				type: 'options',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: {
-					loadOptionsMethod: 'getCustomers',
-				},
-				default: '',
-			},
-			{
-				displayName: 'Alert Description',
-				name: 'alert_description',
-				type: 'string',
-				typeOptions: {
-					rows: 4,
-				},
-				default: '',
-			},
-			{
-				displayName: 'Alert Note',
-				name: 'alert_note',
-				type: 'string',
-				default: '',
-				description: 'Note of the alert (Summary)',
-			},
-			...types.alertResolutionStatus,
-			...types.alertSeverity,
-			{
-				displayName: 'Alert Source',
-				name: 'alert_source',
-				type: 'string',
-				default: '',
-				description: 'Source of the alert (where it comes from)',
-			},
-			{
-				displayName: 'Alert Source Content',
-				name: 'alert_source_content',
-				type: 'json',
-				default: '{}',
-				description: 'JSON of the source content (raw event)',
-			},
-			{
-				displayName: 'Alert Source Event Time',
-				name: 'alert_source_event_time',
-				type: 'dateTime',
-				default: `${new Date().toISOString().split('.')[0]}`,
-				description: 'Time of the Event in UTC according to RFC',
-				hint: 'e.g. 2023-03-26T03:00:30',
-			},
-			{
-				displayName: 'Alert Source Link',
-				name: 'alert_source_link',
-				type: 'string',
-				default: '',
-				description: 'Link to the source',
-			},
-			{
-				displayName: 'Alert Source Reference',
-				name: 'alert_source_ref',
-				type: 'string',
-				default: '',
-				description: 'Reference to the source. Usually it is a unique ID.',
-			},
-			...types.alertStatus,
-			{
-				displayName: 'Alert Tags',
-				name: 'alert_tags',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of tag names',
-			},
-			{
-				displayName: 'Alert Title',
-				name: 'alert_title',
-				type: 'string',
-				default: '',
-			},
+			...local.alertAssetProps,
+			// ...local.alertIocProps, // No property in API schema
+			local.alertClassification,
+			...local.alertContextProps,
+			local.alertCustomer,
+			local.alertDescription,
+			local.alertResolutionStatus,
+			local.alertNote,
+			local.alertSeverity,
+			...local.alertSourceProps,
+			local.alertStatus,
+			local.alerTags,
+			local.alerTitle,
 		],
 	},
 
@@ -369,11 +78,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	utils.addAdditionalFields.call(this, body, i);
 	const kvUI = this.getNodeParameter(
-		'alertContextKV.parameters',
+		'__alertContextKV.parameters',
 		i,
 		null,
 	) as INodePropertyOptions[];
-	const jsUI = this.getNodeParameter('alertContextJSON', i, null) as string;
+	const jsUI = this.getNodeParameter('__alertContextJSON', i, null) as string;
 
 	const sendEmpty = this.getNodeParameter('options.sendEmptyFields', i, false) as boolean;
 

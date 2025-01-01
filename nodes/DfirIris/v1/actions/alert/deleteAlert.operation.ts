@@ -10,15 +10,10 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Alert ID',
-		name: 'id',
-		type: 'string',
-		default: '',
-		required: true,
-	},
+	local.rAlertId,
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -45,7 +40,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		(`${endpoint}/delete/` + this.getNodeParameter('id', i)) as string,
+		(`${endpoint}/delete/` + this.getNodeParameter('alert_id', i)) as string,
 		{},
 		query,
 	);

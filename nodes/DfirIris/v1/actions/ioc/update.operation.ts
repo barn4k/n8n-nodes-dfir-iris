@@ -10,20 +10,10 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './IOC.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'IOC Name or ID',
-		name: 'id',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: {
-			loadOptionsMethod: 'getIOCs',
-		},
-		default: '',
-		required: true,
-	},
+	local.rIocId,
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -31,46 +21,12 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			{
-				displayName: 'Custom Attributes',
-				name: 'custom_attributes',
-				type: 'json',
-				default: 0,
-				description: 'Add custom attributes',
-			},
-			{
-				displayName: 'IOC Description',
-				name: 'ioc_description',
-				type: 'string',
-				default: '',
-			},
-			{
-				displayName: 'IOC Tags',
-				name: 'ioc_tags',
-				type: 'string',
-				validateType: 'string',
-				ignoreValidationDuringExecution: true,
-				default: '',
-				description: 'IOC Tags, comma-separated',
-			},
-			...types.iocTLP,
-			{
-				displayName: 'IOC Type Name or ID',
-				name: 'ioc_type_id',
-				type: 'options',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: {
-					loadOptionsMethod: 'getIOCTypes',
-				},
-				default: '',
-			},
-			{
-				displayName: 'IOC Value',
-				name: 'ioc_value',
-				type: 'string',
-				default: '',
-			},
+			local.iocType,
+			local.iocDescription,
+			local.iocValue,
+			local.iocTLP,
+			local.iocTags,
+			types.customAttributes,
 		],
 	},
 
@@ -103,7 +59,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		(`${endpoint}/update/` + this.getNodeParameter('id', i)) as string,
+		(`${endpoint}/update/` + this.getNodeParameter('ioc_id', i)) as string,
 		body,
 		query,
 	);

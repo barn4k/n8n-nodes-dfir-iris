@@ -10,20 +10,10 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './IOC.resource';
 import { apiRequest } from '../../transport';
 import { types } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'IOC Name or ID',
-		name: 'id',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: {
-			loadOptionsMethod: 'getIOCs',
-		},
-		default: '',
-		required: true,
-	},
+	local.rIocId,
 	{
 		displayName: 'Options',
 		name: 'options',

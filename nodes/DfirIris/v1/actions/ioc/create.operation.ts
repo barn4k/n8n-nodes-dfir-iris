@@ -10,60 +10,21 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './IOC.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'IOC Type Name or ID',
-		name: 'type',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: {
-			loadOptionsMethod: 'getIOCTypes',
-		},
-		default: '',
-		required: true,
-	},
-	{
-		displayName: 'IOC Description',
-		name: 'description',
-		type: 'string',
-		default: '',
-		required: true,
-	},
-	{
-		displayName: 'IOC Value',
-		name: 'value',
-		type: 'string',
-		default: '',
-		required: true,
-	},
-	...types.iocTLP,
-	{
-		displayName: 'IOC Tags',
-		name: 'tags',
-		type: 'string',
-		validateType: 'string',
-		ignoreValidationDuringExecution: true,
-		default: '',
-		required: true,
-		description: 'IOC Tags, comma-separated',
-	},
+	local.rIocType,
+	local.rIocDescription,
+	local.rIocValue,
+	local.rIocTLP,
+	local.rIocTags,
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
-		options: [
-			{
-				displayName: 'Custom Attributes',
-				name: 'custom_attributes',
-				type: 'json',
-				default: 0,
-				description: 'Add custom attributes',
-			},
-		],
+		options: [types.customAttributes],
 	},
 
 	{
@@ -90,11 +51,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	body.ioc_type_id = this.getNodeParameter('type', i) as number;
-	body.ioc_tlp_id = this.getNodeParameter('tlpId', i) as string;
-	body.ioc_value = this.getNodeParameter('value', i) as string;
-	body.ioc_description = this.getNodeParameter('description', i) as string;
-	body.ioc_tags = this.getNodeParameter('tags', i) as string;
+	body.ioc_type_id = this.getNodeParameter('ioc_type_id', i) as number;
+	body.ioc_tlp_id = this.getNodeParameter('ioc_tlp_id', i) as string;
+	body.ioc_value = this.getNodeParameter('ioc_value', i) as string;
+	body.ioc_description = this.getNodeParameter('ioc_description', i) as string;
+	body.ioc_tags = this.getNodeParameter('ioc_tags', i) as string;
 	utils.addAdditionalFields.call(this, body, i);
 
 	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);

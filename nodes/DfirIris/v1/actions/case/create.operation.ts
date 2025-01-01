@@ -10,16 +10,54 @@ import type { IIOC, IAsset } from '../../helpers/types';
 
 import { updateDisplayOptions, NodeOperationError } from 'n8n-workflow';
 
-import { endpoint } from './Alert.resource';
+import { endpoint } from './Case.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
-import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rAlertCustomer,
-	local.rAlertSeverity,
-	local.rAlertStatus,
-	local.rAlertTitle,
+	{
+		displayName: 'Case SOC ID',
+		name: 'case_soc_id',
+		type: 'string',
+		description: 'A SOC ticket reference',
+		default: '',
+		required: true,
+	},
+	{
+		displayName: 'Case Customer Name or ID',
+		name: 'case_customer',
+		type: 'options',
+		description:
+			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+		typeOptions: {
+			loadOptionsMethod: 'getCustomers',
+		},
+		default: '',
+		required: true,
+	},
+	{
+		displayName: 'Case Name',
+		name: 'case_name',
+		type: 'string',
+		default: '',
+		required: true,
+	},
+	{
+		displayName: 'Case Description',
+		name: 'case_description',
+		type: 'string',
+		default: '',
+		required: true,
+	},
+
+	// ...types.alertSeverity,
+	// ...types.alertStatus,
+	{
+		displayName: 'Alert Title',
+		name: 'alert_title',
+		type: 'string',
+		default: '',
+	},
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -27,15 +65,24 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			...local.alertAssetProps,
-			...local.alertIocProps,
-			local.alertClassification,
-			...local.alertContextProps,
-			local.alertDescription,
-			local.alertNote,
-			local.alertResolutionStatus,
-			...local.alertSourceProps,
-			local.alerTags,
+			{
+				displayName: 'Case Classification Name or ID',
+				name: 'classification_id',
+				type: 'options',
+				description:
+					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+				typeOptions: {
+					loadOptionsMethod: 'getCaseClassifications',
+				},
+				default: '',
+			},
+			{
+				displayName: 'Custom Attributes',
+				name: 'custom_attributes',
+				type: 'json',
+				default: 0,
+				description: 'Add custom attributes',
+			},
 		],
 	},
 
@@ -45,13 +92,13 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.alertFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.caseFields)],
 	},
 ];
 
 const displayOptions = {
 	show: {
-		resource: ['alert'],
+		resource: ['case'],
 		operation: ['create'],
 	},
 };
@@ -70,8 +117,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	utils.addAdditionalFields.call(this, body, i);
 
-	let kvUI = this.getNodeParameter('__alertContextKV.parameters', i, null) as INodePropertyOptions[];
-	let jsUI = this.getNodeParameter('__alertContextJSON', i, null) as string;
+	let kvUI = this.getNodeParameter('alertContextKV.parameters', i, null) as INodePropertyOptions[];
+	let jsUI = this.getNodeParameter('alertContextJSON', i, null) as string;
 
 	if (kvUI !== null && kvUI.length > 0) {
 		body.alert_context = Object.fromEntries(
