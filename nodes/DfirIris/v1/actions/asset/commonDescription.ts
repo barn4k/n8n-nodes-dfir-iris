@@ -19,7 +19,7 @@ export const assetName: INodeProperties = {
 	type: 'string',
 	default: '',
 	required: true,
-}
+};
 
 export const assetType: INodeProperties = {
 	displayName: 'Asset Type Name or ID',
@@ -47,7 +47,7 @@ export const assetAnalysisStatus: INodeProperties = {
 		{ value: 6, name: 'Done' },
 	],
 	default: 1,
-}
+};
 
 export const assetCompromiseStatus: INodeProperties = {
 	displayName: 'Asset Compromise Status',
@@ -60,7 +60,7 @@ export const assetCompromiseStatus: INodeProperties = {
 		{ value: 3, name: 'Unknown' },
 	],
 	default: 0,
-}
+};
 
 export const assetDescription: INodeProperties = {
 	displayName: 'Asset Value',
@@ -112,5 +112,5 @@ export const iocReference: INodeProperties = {
 		'Related IOCs. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 };
 
-export const rAssetName: INodeProperties = Object.assign(assetName, {required: true})
-export const rAssetType: INodeProperties = Object.assign(assetType, {required: true})
+export const rAssetName: INodeProperties = Object.assign(assetName, { required: true });
+export const rAssetType: INodeProperties = Object.assign(assetType, { required: true });

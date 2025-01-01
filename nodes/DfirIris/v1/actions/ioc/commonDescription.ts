@@ -64,8 +64,8 @@ export const iocTags: INodeProperties = {
 	description: 'IOC Tags, comma-separated',
 };
 
-export const rIocTLP: INodeProperties = Object.assign(iocTLP, {required: true})
-export const rIocType: INodeProperties = Object.assign(iocType, {required: true})
-export const rIocDescription: INodeProperties = Object.assign(iocDescription, {required: true})
-export const rIocValue: INodeProperties = Object.assign(iocValue, {required: true})
-export const rIocTags: INodeProperties = Object.assign(iocTags, {required: true})
+export const rIocTLP: INodeProperties = Object.assign(iocTLP, { required: true });
+export const rIocType: INodeProperties = Object.assign(iocType, { required: true });
+export const rIocDescription: INodeProperties = Object.assign(iocDescription, { required: true });
+export const rIocValue: INodeProperties = Object.assign(iocValue, { required: true });
+export const rIocTags: INodeProperties = Object.assign(iocTags, { required: true });

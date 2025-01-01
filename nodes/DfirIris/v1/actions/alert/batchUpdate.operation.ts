@@ -68,7 +68,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const _b = Object.entries(body);
 	let newBody: IDataObject = Object.fromEntries(_b);
 
-	let kvUI = this.getNodeParameter('___alertContextKV.parameters', i, null) as INodePropertyOptions[];
+	let kvUI = this.getNodeParameter(
+		'___alertContextKV.parameters',
+		i,
+		null,
+	) as INodePropertyOptions[];
 	let jsUI = this.getNodeParameter('___alertContextJSON', i, null) as string;
 
 	if (kvUI !== null && kvUI.length > 0) {
