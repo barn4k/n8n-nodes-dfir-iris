@@ -100,8 +100,7 @@ export async function apiRequestAll(
 		ignoreHttpStatusErrors: true,
 	};
 
-	console.debug('req body: ', options.body);
-	console.debug('req query: ', options.qs);
+	console.debug('req options: ', options);
 	do {
 		try {
 			responseData = await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {
@@ -111,27 +110,37 @@ export async function apiRequestAll(
 		} catch (error) {
 			throw new NodeApiError(this.getNode(), error as JsonObject);
 		}
-		// console.debug('max_items: ',max_items)
+		// console.debug('responseData', responseData)
+		// proceed = false
+
 		// console.debug('current_page: ',responseData.data.current_page)
 		// console.debug('next_page: ', responseData.data.next_page)
 		// console.debug('last_page: ',responseData.data.last_page)
 		// console.debug('total: ',responseData.data.total)
 
 		returnData.push(...responseData.data[propKey]);
+		// console.debug('max_items: ', max_items)
+		// console.debug('returnData.length: ', returnData.length)
 
-		if (responseData.data.next_page || (returnData.length >= max_items && max_items > 0)) {
+		if (max_items > 0 && returnData.length >= max_items) {
+			proceed = false;
+		} else if (
+			!responseData.data.next_page ||
+			responseData.data.next_page === 'null' ||
+			responseData.data.next_page === null
+		) {
+			proceed = false;
+		} else {
 			// @ts-ignore
 			options.qs.page = responseData.data.next_page;
-		} else {
-			proceed = false;
 		}
 
-		// if (
-		// 	responseData.data.current_page >= responseData.data.last_page ||
-		// 	responseData.data.total === 0 ||
-		// 	(returnData.length >= max_items && max_items > 0)
-		// )
+		// if (responseData.data.next_page && (max_items > 0 && returnData.length > max_items)) {
+		// 	// @ts-ignore
+		// 	options.qs.page = responseData.data.next_page;
+		// } else {
 		// 	proceed = false;
+		// }
 	} while (proceed);
 
 	if (max_items > 0) returnData = returnData.slice(0, max_items);

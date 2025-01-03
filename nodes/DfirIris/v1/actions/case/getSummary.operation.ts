@@ -9,36 +9,31 @@ import { updateDisplayOptions } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as icase from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Case ID',
-		name: 'id',
-		type: 'string',
-		default: '',
-		required: true,
-	},
+	icase.rCaseId,
 	{
 		displayName: 'Options',
 		name: 'options',
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.caseFields)],
+		options: [...types.returnRaw],
 	},
 ];
 
 const displayOptions = {
 	show: {
 		resource: ['case'],
-		operation: ['get'],
+		operation: ['getSummary'],
 	},
 };
 
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('id', i) as number };
+	let query: IDataObject = { cid: this.getNodeParameter('case_id', i) as number };
 	let response: INodeExecutionData[];
 
 	response = await apiRequest.call(this, 'GET', `case/summary/fetch`, {}, query);

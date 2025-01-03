@@ -11,6 +11,7 @@ import { endpoint } from './Alert.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
+import * as icase from '../case/commonDescription';
 
 const properties: INodeProperties[] = [
 	local.rAlertId,
@@ -35,24 +36,8 @@ const properties: INodeProperties[] = [
 				default: false,
 				description: 'Whether to add alert to the case timeline',
 			},
-			{
-				displayName: 'Case Tags',
-				name: 'case_tags',
-				type: 'string',
-				default: '',
-				description: 'Comma-separated list of case tags',
-			},
-			{
-				displayName: 'Case Template Name or ID',
-				name: 'case_template_id',
-				type: 'options',
-				description:
-					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: {
-					loadOptionsMethod: 'getCaseTemplates',
-				},
-				default: '',
-			},
+			icase.caseTags,
+			icase.caseTemplateId,
 			{
 				displayName: 'List of Asset UUIDs',
 				name: 'assets_import_list',

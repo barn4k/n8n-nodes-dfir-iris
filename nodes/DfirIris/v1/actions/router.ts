@@ -12,6 +12,7 @@ import * as task from './task/Task.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as comment from './comment/Comment.resource';
+import * as icase from './case/Case.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	const items = this.getInputData();
@@ -52,9 +53,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'comment':
 					returnData.push(...(await comment[dfirIris.operation].execute.call(this, i)));
 					break;
-				// case 'case':
-				// 	returnData.push(...(await case[dfirIris.operation].execute.call(this, i)));
-				// 	break;
+				case 'case':
+					returnData.push(...(await icase[dfirIris.operation].execute.call(this, i)));
+					break;
 				case 'alert':
 					returnData.push(...(await alert[dfirIris.operation].execute.call(this, i)));
 					break;

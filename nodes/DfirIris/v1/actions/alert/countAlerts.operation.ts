@@ -33,8 +33,8 @@ const properties: INodeProperties[] = [
 			local.alertSource,
 			local.alertStartDate,
 			local.alertStatus,
-			local.alerTags,
-			local.alerTitle,
+			local.alertTags,
+			local.alertTitle,
 		],
 	},
 
@@ -44,7 +44,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw],
+		options: [...types.returnRaw, ...types.fieldProperties(types.alertFields)],
 	},
 ];
 
@@ -73,6 +73,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const isRaw = (options.isRaw as boolean) || false;
 	let responseModified = response as any;
 	console.debug('responseModified', responseModified);
+
+	// field remover
+	if (options.hasOwnProperty('fields'))
+		responseModified.data.alerts = utils.fieldsRemover(responseModified.data.alerts, options);
+
 	if (!isRaw) responseModified = { total: responseModified.data?.total || 0 };
 
 	const executionData = this.helpers.constructExecutionMetaData(

@@ -7,6 +7,13 @@ export const alertId: INodeProperties = {
 	name: 'alert_id',
 	type: 'string',
 	default: '',
+};
+
+export const rAlertId: INodeProperties = {
+	displayName: 'Alert ID',
+	name: 'alert_id',
+	type: 'string',
+	default: '',
 	required: true,
 };
 
@@ -51,6 +58,48 @@ export const alertStatus: INodeProperties = {
 	default: 1,
 };
 
+export const rAlertStatus: INodeProperties = {
+	displayName: 'Alert Status',
+	name: 'alert_status_id',
+	type: 'options',
+	options: [
+		{
+			name: 'Unspecified',
+			value: 1,
+		},
+		{
+			name: 'New',
+			value: 2,
+		},
+		{
+			name: 'Assigned',
+			value: 3,
+		},
+		{
+			name: 'In Progress',
+			value: 4,
+		},
+		{
+			name: 'Pending',
+			value: 5,
+		},
+		{
+			name: 'Closed',
+			value: 6,
+		},
+		{
+			name: 'Merged',
+			value: 7,
+		},
+		{
+			name: 'Escalated',
+			value: 8,
+		},
+	],
+	default: 1,
+	required: true,
+};
+
 export const alertSeverity: INodeProperties = {
 	displayName: 'Alert Severity',
 	name: 'alert_severity_id',
@@ -74,6 +123,32 @@ export const alertSeverity: INodeProperties = {
 		},
 	],
 	default: 2,
+};
+
+export const rAlertSeverity: INodeProperties = {
+	displayName: 'Alert Severity',
+	name: 'alert_severity_id',
+	type: 'options',
+	options: [
+		{
+			name: 'Low',
+			value: 1,
+		},
+		{
+			name: 'Medium',
+			value: 2,
+		},
+		{
+			name: 'High',
+			value: 3,
+		},
+		{
+			name: 'Critical',
+			value: 4,
+		},
+	],
+	default: 2,
+	required: true,
 };
 
 export const alertResolutionStatus: INodeProperties = {
@@ -112,6 +187,16 @@ export const alertIds: INodeProperties = {
 	description: 'Comma-separated list of alert IDs',
 	placeholder: '1,2,3',
 	default: '-1',
+};
+
+export const rAlertIds: INodeProperties = {
+	displayName: 'Alert IDs',
+	name: 'alert_ids',
+	type: 'string',
+	description: 'Comma-separated list of alert IDs',
+	placeholder: '1,2,3',
+	default: '-1',
+	required: true,
 };
 
 export const alertClassification: INodeProperties = {
@@ -205,6 +290,19 @@ export const alertCustomer: INodeProperties = {
 	default: '',
 };
 
+export const rAlertCustomer: INodeProperties = {
+	displayName: 'Alert Customer Name or ID',
+	name: 'alert_customer_id',
+	type: 'options',
+	description:
+		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getCustomers',
+	},
+	default: '',
+	required: true,
+};
+
 export const alertDescription: INodeProperties = {
 	displayName: 'Alert Description',
 	name: 'alert_description',
@@ -294,7 +392,7 @@ export const alertSourceProps: INodeProperties[] = [
 	},
 ];
 
-export const alerTags: INodeProperties = {
+export const alertTags: INodeProperties = {
 	displayName: 'Alert Tags',
 	name: 'alert_tags',
 	type: 'string',
@@ -302,11 +400,19 @@ export const alerTags: INodeProperties = {
 	description: 'Comma-separated list of tag names',
 };
 
-export const alerTitle: INodeProperties = {
+export const alertTitle: INodeProperties = {
 	displayName: 'Alert Title',
 	name: 'alert_title',
 	type: 'string',
 	default: '',
+};
+
+export const rAlertTitle: INodeProperties = {
+	displayName: 'Alert Title',
+	name: 'alert_title',
+	type: 'string',
+	default: '',
+	required: true,
 };
 
 export const alertAssets: INodeProperties = {
@@ -407,10 +513,3 @@ export const alertIocProps: INodeProperties[] = [
 		default: '{}',
 	},
 ];
-
-export const rAlertCustomer: INodeProperties = Object.assign(alertCustomer, { required: true });
-export const rAlertSeverity: INodeProperties = Object.assign(alertSeverity, { required: true });
-export const rAlertStatus: INodeProperties = Object.assign(alertStatus, { required: true });
-export const rAlertTitle: INodeProperties = Object.assign(alerTitle, { required: true });
-export const rAlertId: INodeProperties = Object.assign(alertId, { required: true });
-export const rAlertIds: INodeProperties = Object.assign(alertIds, { required: true });

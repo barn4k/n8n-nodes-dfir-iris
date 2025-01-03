@@ -284,3 +284,32 @@ export async function getCaseClassifications(
 
 	return returnData;
 }
+
+export async function getCaseState(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = 'manage/case-states/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	responseData.data.forEach((row: any) => {
+		returnData.push({
+			name: row.state_name,
+			value: row.state_id,
+		});
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}

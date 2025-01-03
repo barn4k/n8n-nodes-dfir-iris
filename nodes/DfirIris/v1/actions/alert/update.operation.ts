@@ -35,8 +35,8 @@ const properties: INodeProperties[] = [
 			local.alertSeverity,
 			...local.alertSourceProps,
 			local.alertStatus,
-			local.alerTags,
-			local.alerTitle,
+			local.alertTags,
+			local.alertTitle,
 		],
 	},
 
