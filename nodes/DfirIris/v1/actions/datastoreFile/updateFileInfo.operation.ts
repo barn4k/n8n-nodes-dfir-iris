@@ -14,15 +14,10 @@ import type { Readable } from 'stream';
 import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'File ID',
-		name: 'fileId',
-		type: 'number',
-		default: '',
-		required: true,
-	},
+	local.rFileId,
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -138,7 +133,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/file/update/` + this.getNodeParameter('fileId', i, 0),
+		`${endpoint}/file/update/` + this.getNodeParameter('file_id', i, 0),
 		body,
 		query,
 		{},

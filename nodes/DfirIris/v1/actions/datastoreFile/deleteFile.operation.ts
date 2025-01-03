@@ -10,15 +10,10 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'File ID',
-		name: 'fileId',
-		type: 'number',
-		default: '',
-		required: true,
-	},
+	local.rFileId,
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -46,7 +41,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`${endpoint}/file/delete/` + (this.getNodeParameter('fileId', i) as string),
+		`${endpoint}/file/delete/` + (this.getNodeParameter('file_id', i) as string),
 		body,
 		query,
 	);

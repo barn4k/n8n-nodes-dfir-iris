@@ -18,10 +18,29 @@ export const assetName: INodeProperties = {
 	name: 'asset_name',
 	type: 'string',
 	default: '',
+};
+
+export const rAssetName: INodeProperties = {
+	displayName: 'Asset Name',
+	name: 'asset_name',
+	type: 'string',
+	default: '',
 	required: true,
 };
 
 export const assetType: INodeProperties = {
+	displayName: 'Asset Type Name or ID',
+	name: 'asset_type_id',
+	type: 'options',
+	description:
+		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getAssetTypes',
+	},
+	default: '',
+};
+
+export const rAssetType: INodeProperties = {
 	displayName: 'Asset Type Name or ID',
 	name: 'asset_type_id',
 	type: 'options',
@@ -111,6 +130,3 @@ export const iocReference: INodeProperties = {
 	description:
 		'Related IOCs. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 };
-
-export const rAssetName: INodeProperties = Object.assign(assetName, { required: true });
-export const rAssetType: INodeProperties = Object.assign(assetType, { required: true });

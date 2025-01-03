@@ -3,16 +3,16 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import type { DfirIrisType } from './node.type';
 
-import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
-import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as alert from './alert/Alert.resource';
 import * as asset from './asset/Asset.resource';
+import * as icase from './case/Case.resource';
+import * as comment from './comment/Comment.resource';
+import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
+import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as ioc from './ioc/IOC.resource';
-import * as task from './task/Task.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
-import * as comment from './comment/Comment.resource';
-import * as icase from './case/Case.resource';
+import * as task from './task/Task.resource';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	const items = this.getInputData();

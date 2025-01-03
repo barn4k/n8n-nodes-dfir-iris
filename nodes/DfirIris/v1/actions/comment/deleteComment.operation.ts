@@ -9,37 +9,12 @@ import { updateDisplayOptions } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
 import { types } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Object Name',
-		name: 'obj_name',
-		type: 'options',
-		options: [
-			{ name: 'Asset', value: 'assets' },
-			// {name: "Event", value: "events"},
-			// {name: "Evidence", value: "evidences"},
-			{ name: 'IOC', value: 'ioc' },
-			{ name: 'Note', value: 'notes' },
-			{ name: 'Task', value: 'tasks' },
-		],
-		default: 'tasks',
-		required: true,
-	},
-	{
-		displayName: 'Object ID',
-		name: 'obj_id',
-		type: 'string',
-		default: '',
-		required: true,
-	},
-	{
-		displayName: 'Comment ID',
-		name: 'id',
-		type: 'string',
-		default: '',
-		required: true,
-	},
+	local.rObjectName,
+	local.rObjectId,
+	local.rCommentId,
 
 	{
 		displayName: 'Options',
@@ -66,7 +41,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const obj_name = this.getNodeParameter('obj_name', i) as string;
 	const obj_id = this.getNodeParameter('obj_id', i) as string;
-	const comment_id = this.getNodeParameter('id', i) as string;
+	const comment_id = this.getNodeParameter('comment_id', i) as string;
 
 	response = await apiRequest.call(
 		this,

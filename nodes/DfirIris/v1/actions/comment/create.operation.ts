@@ -9,37 +9,12 @@ import { updateDisplayOptions } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Object Name',
-		name: 'obj_name',
-		type: 'options',
-		options: [
-			{ name: 'Asset', value: 'assets' },
-			// {name: "Event", value: "events"},
-			// {name: "Evidence", value: "evidences"},
-			{ name: 'IOC', value: 'ioc' },
-			{ name: 'Note', value: 'notes' },
-			{ name: 'Task', value: 'tasks' },
-		],
-		default: 'tasks',
-		required: true,
-	},
-	{
-		displayName: 'Object ID',
-		name: 'obj_id',
-		type: 'string',
-		default: '',
-		required: true,
-	},
-	{
-		displayName: 'Comment Text',
-		name: 'text',
-		type: 'string',
-		default: '',
-		required: true,
-	},
+	local.rObjectName,
+	local.rObjectId,
+	local.rCommentText,
 
 	{
 		displayName: 'Options',
@@ -65,7 +40,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	body.comment_text = this.getNodeParameter('text', i) as string;
+	body.comment_text = this.getNodeParameter('comment_text', i) as string;
 
 	const obj_name = this.getNodeParameter('obj_name', i) as string;
 	const obj_id = this.getNodeParameter('obj_id', i) as string;

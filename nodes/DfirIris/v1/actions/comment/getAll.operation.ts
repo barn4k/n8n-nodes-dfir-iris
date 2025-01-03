@@ -9,30 +9,11 @@ import { updateDisplayOptions } from 'n8n-workflow';
 
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Object Name',
-		name: 'obj_name',
-		type: 'options',
-		options: [
-			{ name: 'Asset', value: 'assets' },
-			// {name: "Event", value: "events"},
-			// {name: "Evidence", value: "evidences"},
-			{ name: 'IOC', value: 'ioc' },
-			{ name: 'Note', value: 'notes' },
-			{ name: 'Task', value: 'tasks' },
-		],
-		default: 'tasks',
-		required: true,
-	},
-	{
-		displayName: 'Object ID',
-		name: 'obj_id',
-		type: 'string',
-		default: '',
-		required: true,
-	},
+	local.rObjectName,
+	local.rObjectId,
 
 	{
 		displayName: 'Options',

@@ -11,15 +11,10 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
 import { utils } from '../../helpers';
+import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'File ID',
-		name: 'fileId',
-		type: 'number',
-		default: '',
-		required: true,
-	},
+	local.rFileId,
 	{
 		displayName: 'Put Output File in Field',
 		name: 'binaryName',
@@ -67,7 +62,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'GET',
-		`${endpoint}/file/view/` + (this.getNodeParameter('fileId', i) as string),
+		`${endpoint}/file/view/` + (this.getNodeParameter('file_id', i) as string),
 		{},
 		query,
 		{

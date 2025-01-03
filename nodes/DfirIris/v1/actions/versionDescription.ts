@@ -1,17 +1,15 @@
 import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
 
-// import * as note from './note/Note.resource'
 import * as alert from './alert/Alert.resource';
-import * as task from './task/Task.resource';
-// import * as comment from './comment/Comment.resource'
 import * as asset from './asset/Asset.resource';
-import * as ioc from './ioc/IOC.resource';
-import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as icase from './case/Case.resource';
+import * as comment from './comment/Comment.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
+import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as ioc from './ioc/IOC.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
-import * as comment from './comment/Comment.resource';
-import * as icase from './case/Case.resource';
+import * as task from './task/Task.resource';
 
 import { cidDescription } from '../helpers/types';
 

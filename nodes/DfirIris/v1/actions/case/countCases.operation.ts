@@ -15,7 +15,7 @@ import * as icase from './commonDescription';
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Sort',
-		name: 'sort',  // not working
+		name: 'sort', // not working
 		type: 'options',
 		required: true,
 		options: [
@@ -37,8 +37,8 @@ const properties: INodeProperties[] = [
 			icase.caseName, // ok
 			icase.caseDescription, // ok
 			icase.caseClassification, // ok
-			icase.caseOwner,// not working
-			icase.caseOpeningUser,// ok
+			icase.caseOwner, // not working
+			icase.caseOpeningUser, // ok
 			icase.caseSeverity, // not working
 			icase.caseState, // not working
 			icase.caseSocId,

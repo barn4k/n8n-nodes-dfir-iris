@@ -20,7 +20,7 @@ export const caseIds: INodeProperties = {
 	name: 'case_ids',
 	type: 'string',
 	description: 'List of comma-separated case IDs',
-	default: ''
+	default: '',
 };
 
 export const caseSocId: INodeProperties = {
