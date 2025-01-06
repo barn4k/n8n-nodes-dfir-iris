@@ -17,8 +17,8 @@ export class DfirIris extends VersionedNodeType {
 
 		const nodeVersions: IVersionedNodeType['nodeVersions'] = {
 			1: new DfirIrisV1(baseDescription),
-			// 2: new AirtableV2(baseDescription),
-			// 2.1: new AirtableV2(baseDescription),
+			// 2: new DfirIrisV2(baseDescription),
+			// 2.1: new DfirIrisV2(baseDescription),
 		};
 
 		super(nodeVersions, baseDescription);

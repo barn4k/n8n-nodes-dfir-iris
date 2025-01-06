@@ -74,7 +74,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
-	const alertId = this.getNodeParameter('id', i) as string;
+	const alertId = this.getNodeParameter('alert_id', i) as string;
 
 	utils.addAdditionalFields.call(this, body, i);
 	const kvUI = this.getNodeParameter(

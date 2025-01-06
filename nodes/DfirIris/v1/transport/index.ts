@@ -29,6 +29,10 @@ export async function apiRequest(
 
 	query = query || {};
 
+	const disableSslChecks = credentials.isHttp
+		? true
+		: (credentials.allowUnauthorizedCerts as boolean);
+
 	let options: IHttpRequestOptions = {
 		headers: headers,
 		method,
@@ -36,9 +40,7 @@ export async function apiRequest(
 		body,
 		qs: query,
 		json: true,
-		skipSslCertificateValidation: credentials.isHttp
-			? true
-			: (credentials.allowUnauthorizedCerts as boolean),
+		skipSslCertificateValidation: disableSslChecks,
 		ignoreHttpStatusErrors: true,
 	};
 	if (Object.keys(option).length > 0) {
@@ -53,14 +55,12 @@ export async function apiRequest(
 		delete options.qs;
 	}
 
+	Object.assign(options, { rejectUnauthorized: disableSslChecks });
+
 	try {
-		console.debug('options', options);
+		// console.debug('options', options);
 		this.logger.debug('options', options);
-		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {
-			...options,
-			rejectUnauthorized: true,
-		});
-		// return await this.helpers.httpRequestWithAuthentication.call(this, 'dfirIrisApi', {...options, rejectUnauthorized: true});
+		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
@@ -83,6 +83,9 @@ export async function apiRequestAll(
 	let returnData: IDataObject[] = [];
 	let responseData;
 	let proceed = true;
+	const disableSslChecks = credentials.isHttp
+		? true
+		: (credentials.allowUnauthorizedCerts as boolean);
 
 	query.page = 1;
 	query.per_page = max_items > 0 && max_items < 100 ? max_items : 100;
@@ -94,13 +97,13 @@ export async function apiRequestAll(
 		body,
 		qs: query,
 		json: true,
-		skipSslCertificateValidation: credentials.isHttp
-			? true
-			: (credentials.allowUnauthorizedCerts as boolean),
+		skipSslCertificateValidation: disableSslChecks,
 		ignoreHttpStatusErrors: true,
 	};
 
-	console.debug('req options: ', options);
+	Object.assign(options, { rejectUnauthorized: disableSslChecks });
+
+	// console.debug('req options: ', options);
 	do {
 		try {
 			responseData = await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {
@@ -110,6 +113,7 @@ export async function apiRequestAll(
 		} catch (error) {
 			throw new NodeApiError(this.getNode(), error as JsonObject);
 		}
+		// for troubleshooting
 		// console.debug('responseData', responseData)
 		// proceed = false
 
@@ -134,13 +138,6 @@ export async function apiRequestAll(
 			// @ts-ignore
 			options.qs.page = responseData.data.next_page;
 		}
-
-		// if (responseData.data.next_page && (max_items > 0 && returnData.length > max_items)) {
-		// 	// @ts-ignore
-		// 	options.qs.page = responseData.data.next_page;
-		// } else {
-		// 	proceed = false;
-		// }
 	} while (proceed);
 
 	if (max_items > 0) returnData = returnData.slice(0, max_items);

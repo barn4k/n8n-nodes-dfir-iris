@@ -106,20 +106,28 @@ export const alertSeverity: INodeProperties = {
 	type: 'options',
 	options: [
 		{
-			name: 'Low',
+			name: 'Medium',
 			value: 1,
 		},
 		{
-			name: 'Medium',
+			name: 'Unspecified',
 			value: 2,
 		},
 		{
-			name: 'High',
+			name: 'Informational',
 			value: 3,
 		},
 		{
-			name: 'Critical',
+			name: 'Low',
 			value: 4,
+		},
+		{
+			name: 'High',
+			value: 5,
+		},
+		{
+			name: 'Critical',
+			value: 6,
 		},
 	],
 	default: 2,
@@ -131,20 +139,28 @@ export const rAlertSeverity: INodeProperties = {
 	type: 'options',
 	options: [
 		{
-			name: 'Low',
+			name: 'Medium',
 			value: 1,
 		},
 		{
-			name: 'Medium',
+			name: 'Unspecified',
 			value: 2,
 		},
 		{
-			name: 'High',
+			name: 'Informational',
 			value: 3,
 		},
 		{
-			name: 'Critical',
+			name: 'Low',
 			value: 4,
+		},
+		{
+			name: 'High',
+			value: 5,
+		},
+		{
+			name: 'Critical',
+			value: 6,
 		},
 	],
 	default: 2,
@@ -186,7 +202,7 @@ export const alertIds: INodeProperties = {
 	type: 'string',
 	description: 'Comma-separated list of alert IDs',
 	placeholder: '1,2,3',
-	default: '-1',
+	default: '',
 };
 
 export const rAlertIds: INodeProperties = {
@@ -195,7 +211,7 @@ export const rAlertIds: INodeProperties = {
 	type: 'string',
 	description: 'Comma-separated list of alert IDs',
 	placeholder: '1,2,3',
-	default: '-1',
+	default: '',
 	required: true,
 };
 
