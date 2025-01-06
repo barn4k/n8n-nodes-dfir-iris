@@ -3,7 +3,9 @@
   "version": "1.0",
   "description": "n8n node for DFIR IRIS IRP",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "dfir-iris",
+    "iris"
   ],
   "license": "MIT",
   "homepage": "",
