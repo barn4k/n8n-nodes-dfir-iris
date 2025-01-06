@@ -74,6 +74,9 @@ npm link # use once
 pnpm build
 pnpm dev
 
+# publish package
+pnpm publish
+
 # set ENVs before use n8n is PS
 # cd $env:userprofile/.n8n
 $env:N8N_LOG_LEVEL="debug"
