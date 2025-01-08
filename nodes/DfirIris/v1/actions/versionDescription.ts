@@ -8,6 +8,7 @@ import * as comment from './comment/Comment.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as ioc from './ioc/IOC.resource';
+import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as task from './task/Task.resource';
@@ -25,9 +26,8 @@ export const versionDescription: INodeTypeDescription = {
 	defaults: {
 		name: 'DFIR IRIS',
 	},
-	// usableAsTool: true,
 	inputs: [NodeConnectionType.Main],
-	// eslint-disable-next-line
+	// eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
 	outputs: [NodeConnectionType.Main],
 	credentials: [
 		{
@@ -75,10 +75,10 @@ export const versionDescription: INodeTypeDescription = {
 				// 	name: 'Timeline',
 				// 	value: 'timeline',
 				// },
-				// {
-				// 	name: 'Modules',
-				// 	value: 'modules',
-				// },
+				{
+					name: 'Module',
+					value: 'module',
+				},
 				// {
 				// 	name: 'Evidence',
 				// 	value: 'evidence',
@@ -107,6 +107,7 @@ export const versionDescription: INodeTypeDescription = {
 		...datastoreFile.resource,
 		...datastoreFolder.resource,
 		...ioc.resource,
+		...iModule.resource,
 		...note.resource,
 		...noteDirectory.resource,
 		...task.resource,

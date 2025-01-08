@@ -10,6 +10,7 @@ import * as comment from './comment/Comment.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
 import * as ioc from './ioc/IOC.resource';
+import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as task from './task/Task.resource';
@@ -44,6 +45,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'task':
 					returnData.push(...(await task[dfirIris.operation].execute.call(this, i)));
 					break;
+				case 'module':
+					returnData.push(...(await iModule[dfirIris.operation].execute.call(this, i)));
+					break;
 				case 'note':
 					returnData.push(...(await note[dfirIris.operation].execute.call(this, i)));
 					break;
@@ -59,9 +63,6 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'alert':
 					returnData.push(...(await alert[dfirIris.operation].execute.call(this, i)));
 					break;
-				// case 'file':
-				// 	returnData.push(...(await file[googleDrive.operation].execute.call(this, i, items[i])));
-				// 	break;
 				default:
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);
 			}
