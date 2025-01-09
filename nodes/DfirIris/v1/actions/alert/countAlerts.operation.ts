@@ -12,6 +12,39 @@ import { apiRequestAll } from '../../transport';
 import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
+const fields = [
+	'alert_classification_id',
+	'alert_context',
+	'alert_creation_time',
+	'alert_customer_id',
+	'alert_description',
+	'alert_id',
+	'alert_note',
+	'alert_owner_id',
+	'alert_resolution_status_id',
+	'alert_severity_id',
+	'alert_source',
+	'alert_source_content',
+	'alert_source_event_time',
+	'alert_source_link',
+	'alert_source_ref',
+	'alert_status_id',
+	'alert_tags',
+	'alert_title',
+	'alert_uuid',
+	'assets',
+	'cases',
+	'classification',
+	'comments',
+	'customer',
+	'iocs',
+	'modification_history',
+	'owner',
+	'resolution_status',
+	'severity',
+	'status',
+];
+
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Additional Fields',
@@ -44,7 +77,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.alertFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

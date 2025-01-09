@@ -11,6 +11,21 @@ import { endpoint } from './Note.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
+const fields = [
+	'custom_attributes',
+	'directory',
+	'directory_id',
+	'modification_history',
+	'note_case_id',
+	'note_content',
+	'note_creationdate',
+	'note_id',
+	'note_lastupdate',
+	'note_title',
+	'note_user',
+	'note_uuid',
+];
+
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Note Title',
@@ -23,6 +38,9 @@ const properties: INodeProperties[] = [
 		displayName: 'Note Content',
 		name: 'content',
 		type: 'string',
+		typeOptions: {
+			rows: 4,
+		},
 		default: '',
 		required: true,
 	},
@@ -45,7 +63,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.noteFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

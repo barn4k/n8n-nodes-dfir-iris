@@ -12,6 +12,24 @@ import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
+const fields = [
+	'case_customer',
+	'case_description',
+	'case_id',
+	'case_name',
+	'case_soc_id',
+	'case_uuid',
+	'classification_id',
+	'close_date',
+	'closing_note',
+	'custom_attributes',
+	'modification_history',
+	'open_date',
+	'owner_id',
+	'status_id',
+	'user_id',
+];
+
 const properties: INodeProperties[] = [
 	local.rAlertId,
 	{
@@ -28,7 +46,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.caseFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

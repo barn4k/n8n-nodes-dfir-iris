@@ -11,6 +11,16 @@ import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
+const fields = [
+	'comment_date',
+	'comment_id',
+	'comment_text',
+	'comment_update_date',
+	'comment_uuid',
+	'name',
+	'user',
+];
+
 const properties: INodeProperties[] = [
 	local.rObjectName,
 	local.rObjectId,
@@ -22,7 +32,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.commentFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

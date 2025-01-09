@@ -239,7 +239,7 @@ export const cidDescription: INodeProperties[] = [
 		displayName: 'Case ID',
 		name: 'cid',
 		type: 'number',
-		default: 1,
+		default: '',
 		displayOptions: {
 			hide: {
 				resource: ['alert', 'case'],

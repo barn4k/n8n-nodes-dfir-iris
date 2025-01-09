@@ -18,7 +18,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.taskFields)],
+		options: [...types.returnRaw],
 	},
 ];
 

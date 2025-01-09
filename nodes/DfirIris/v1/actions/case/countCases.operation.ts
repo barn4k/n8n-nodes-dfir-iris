@@ -12,6 +12,26 @@ import { apiRequestAll } from '../../transport';
 import { types, utils } from '../../helpers';
 import * as icase from './commonDescription';
 
+const fields = [
+	'access_level',
+	'case_close_date',
+	'case_description',
+	'case_id',
+	'case_name',
+	'case_open_date',
+	'case_soc_id',
+	'case_uuid',
+	'classification',
+	'classification_id',
+	'client_name',
+	'opened_by',
+	'opened_by_user_id',
+	'owner',
+	'owner_id',
+	'state_id',
+	'state_name',
+];
+
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Sort',
@@ -56,7 +76,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.caseFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

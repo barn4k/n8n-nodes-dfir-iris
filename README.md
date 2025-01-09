@@ -22,7 +22,7 @@ Supported operations:
 |Case General|**Get/Update Summary, Export case**|
 |Case Evidence|**Not supported yet**|
 |Case IOCs|Fully supported|
-|Case Modules|**Not supported yet**|
+|Case Modules|**Call Module, List Tasks**|
 |Case Notes|Fully supported|
 |Case Note Groups|Fully supported|
 |Case Tasks|Fully supported|

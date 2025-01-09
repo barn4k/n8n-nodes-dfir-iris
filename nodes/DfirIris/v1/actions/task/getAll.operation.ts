@@ -11,6 +11,25 @@ import { endpoint } from './Task.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
+const fields = [
+	'custom_attributes',
+	'id',
+	'modification_history',
+	'task_assignees',
+	'task_case_id',
+	'task_close_date',
+	'task_description',
+	'task_last_update',
+	'task_open_date',
+	'task_status_id',
+	'task_tags',
+	'task_title',
+	'task_userid_close',
+	'task_userid_open',
+	'task_userid_update',
+	'task_uuid',
+];
+
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Options',
@@ -18,7 +37,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.taskFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

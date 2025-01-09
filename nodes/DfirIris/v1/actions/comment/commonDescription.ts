@@ -24,15 +24,18 @@ export const rObjectId: INodeProperties = {
 	required: true,
 };
 
-export const rCommentId: INodeProperties = {
+export const rCommentText: INodeProperties = {
 	displayName: 'Comment Text',
 	name: 'comment_text',
 	type: 'string',
+	typeOptions: {
+		rows: 4,
+	},
 	default: '',
 	required: true,
 };
 
-export const rCommentText: INodeProperties = {
+export const rCommentId: INodeProperties = {
 	displayName: 'Comment ID',
 	name: 'comment_id',
 	type: 'string',

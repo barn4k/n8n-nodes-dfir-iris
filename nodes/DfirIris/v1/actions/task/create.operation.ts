@@ -11,6 +11,23 @@ import { endpoint } from './Task.resource';
 import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
+const fields = [
+	'custom_attributes',
+	'id',
+	'task_case_id',
+	'task_close_date',
+	'task_description',
+	'task_last_update',
+	'task_open_date',
+	'task_status_id',
+	'task_tags',
+	'task_title',
+	'task_userid_close',
+	'task_userid_open',
+	'task_userid_update',
+	'task_uuid',
+];
+
 const properties: INodeProperties[] = [
 	{
 		displayName: 'Task Title',
@@ -71,6 +88,9 @@ const properties: INodeProperties[] = [
 				displayName: 'Task Description',
 				name: 'task_description',
 				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
 				default: '',
 			},
 			{
@@ -96,7 +116,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.taskFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
 	},
 ];
 

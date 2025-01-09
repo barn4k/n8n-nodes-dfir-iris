@@ -314,6 +314,37 @@ export async function getCaseState(this: ILoadOptionsFunctions): Promise<INodePr
 	return returnData;
 }
 
+export async function getCaseTemplates(
+	this: ILoadOptionsFunctions,
+): Promise<INodePropertyOptions[]> {
+	const endpoint = 'manage/case-templates/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	responseData.data.forEach((row: any) => {
+		returnData.push({
+			name: `${row.display_name} (prefix: ${row.title_prefix} )`,
+			value: row.id,
+		});
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
 export async function getModules(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = `dim/hooks/options/${this.getNodeParameter('type')}/list`;
 
