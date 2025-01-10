@@ -88,7 +88,7 @@ export const caseDescription: INodeProperties = {
 		rows: 4,
 	},
 	default: '',
-	description: 'Minimum 2 characters'
+	description: 'Minimum 2 characters',
 };
 
 export const rCaseDescription: INodeProperties = {
@@ -100,7 +100,7 @@ export const rCaseDescription: INodeProperties = {
 	},
 	default: '',
 	required: true,
-	description: 'Minimum 2 characters'
+	description: 'Minimum 2 characters',
 };
 
 export const caseClassification: INodeProperties = {

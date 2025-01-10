@@ -249,25 +249,27 @@ export const cidDescription: INodeProperties[] = [
 	},
 ];
 
-export function fieldProperties(fields: string[]) {
+export function fieldProperties(fields: string[] = []) {
 	return [
 		{
 			displayName: 'Return Fields',
 			name: 'fields',
-			type: 'multiOptions',
-			options: fields.map((f) => {
-				return { name: f, value: f };
-			}),
-			default: [],
+			type: 'string',
+			default: fields.sort().join(',\n'),
+			typeOptions: {
+				rows: fields.length > 20 ? 20 : fields.length < 4 ? 4 : fields.length,
+			},
+			// type: 'multiOptions',
+			// options: fields.map((f) => {
+			// 	return { name: f, value: f };
+			// }),
+			// default: [],
 			description: 'Fields to be included',
 		},
 		{
 			displayName: 'Exclude',
 			name: 'inverseFields',
 			type: 'boolean',
-			options: fields.map((f) => {
-				return { name: f, value: f };
-			}),
 			default: false,
 			description: 'Whether the selected fields should be excluded instead',
 		},

@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.6
+
+
+### Features
+
+* changed **returned fields** for major operations from a **list** to **string** due to the difficulties with proper fields mapping in various versions
+
+
 ## v1.0.5
 
 

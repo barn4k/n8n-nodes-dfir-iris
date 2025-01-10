@@ -4,7 +4,8 @@ import { NodeOperationError } from 'n8n-workflow';
 import type { IFolder, IFolderSub, INoteGroup } from './../helpers/types';
 
 export function fieldsRemover(responseRoot: any, options: IDataObject) {
-	const fields = (options.fields as string[]) || [];
+	// const fields = (options.fields as string[]) || [];
+	const fields = (options.fields as string).replace(/\s+/g, '').split(',') || [];
 	const inverseFields = (options.inverseFields as boolean) || false;
 
 	if (fields.length > 0) {
