@@ -8,6 +8,7 @@ export const rAssetId: INodeProperties = {
 		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	typeOptions: {
 		loadOptionsMethod: 'getAssets',
+		loadOptionsDependsOn: ['cid'],
 	},
 	default: '',
 	required: true,
@@ -125,6 +126,7 @@ export const iocReference: INodeProperties = {
 	typeOptions: {
 		// multipleValues: true,
 		loadOptionsMethod: 'getIOCs',
+		loadOptionsDependsOn: ['cid'],
 	},
 	default: [],
 	description:

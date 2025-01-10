@@ -328,7 +328,7 @@ export async function getCaseTemplates(
 	responseData.data.forEach((row: any) => {
 		returnData.push({
 			name: `${row.display_name} (prefix: ${row.title_prefix} )`,
-			value: row.id,
+			value: String(row.id),
 		});
 	});
 

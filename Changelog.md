@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.5
+
+
+### Bug fixes
+
+* ** Add Case** operation - fixed another issue with **case_template_id**. Value must be a **string**
+* ** Add Case** operation - **case_description** must be present
+* ** Get Case** operation - fixed return fields. Changed **case_name** with **name**
+* **Add Task** operation - **task_description** now mandatory
+* fixed couple of fields so they now depend on the chosen case instead of preloading with default one
+
+
 ## v1.0.4
 
 

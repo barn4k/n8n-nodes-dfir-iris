@@ -17,7 +17,7 @@ const fields = [
 	'case_close_date',
 	'case_description',
 	'case_id',
-	'case_name',
+	'name',
 	'case_open_date',
 	'case_soc_id',
 	'case_uuid',

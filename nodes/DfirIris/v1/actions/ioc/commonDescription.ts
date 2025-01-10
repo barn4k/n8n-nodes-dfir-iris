@@ -8,6 +8,7 @@ export const rIocId: INodeProperties = {
 		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	typeOptions: {
 		loadOptionsMethod: 'getIOCs',
+		loadOptionsDependsOn: ['cid'],
 	},
 	default: '',
 	required: true,

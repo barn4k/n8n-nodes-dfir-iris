@@ -37,6 +37,15 @@ const properties: INodeProperties[] = [
 		required: true,
 	},
 	{
+		displayName: 'Task Description',
+		name: 'task_description',
+		type: 'string',
+		typeOptions: {
+			rows: 4,
+		},
+		default: '',
+	},
+	{
 		displayName: 'Task Assignee Name or ID',
 		name: 'assignee',
 		type: 'options',
@@ -85,15 +94,6 @@ const properties: INodeProperties[] = [
 		default: {},
 		options: [
 			{
-				displayName: 'Task Description',
-				name: 'task_description',
-				type: 'string',
-				typeOptions: {
-					rows: 4,
-				},
-				default: '',
-			},
-			{
 				displayName: 'Task Tags',
 				name: 'task_tags',
 				type: 'string',
@@ -135,6 +135,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let body: IDataObject = {};
 
 	body.task_title = this.getNodeParameter('title', i) as string;
+	body.task_description = this.getNodeParameter('task_description', i) as string;
 	body.task_assignees_id = [this.getNodeParameter('assignee', i) as number];
 	body.task_status_id = this.getNodeParameter('status', i) as number;
 	utils.addAdditionalFields.call(this, body, i);
