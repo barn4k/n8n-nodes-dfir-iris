@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.7
+
+
+### Bug fixes
+
+* changed  the **case severities** from static to dynamically be populated from the IRIS
+
+
 ## v1.0.6
 
 

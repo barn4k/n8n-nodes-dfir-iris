@@ -204,37 +204,48 @@ export const caseStatus: INodeProperties = {
 	default: 1,
 };
 
+// export const caseSeverity: INodeProperties = {
+// 	displayName: 'Case Severity',
+// 	name: 'severity_id',
+// 	type: 'options',
+// 	options: [
+// 		{
+// 			name: 'Unspecified',
+// 			value: 2,
+// 		},
+// 		{
+// 			name: 'Informational',
+// 			value: 3,
+// 		},
+// 		{
+// 			name: 'Low',
+// 			value: 4,
+// 		},
+// 		{
+// 			name: 'Medium',
+// 			value: 1,
+// 		},
+// 		{
+// 			name: 'High',
+// 			value: 5,
+// 		},
+// 		{
+// 			name: 'Critical',
+// 			value: 6,
+// 		},
+// 	],
+// 	default: 2,
+// };
+
 export const caseSeverity: INodeProperties = {
-	displayName: 'Case Severity',
+	displayName: 'Case Severity Name or ID',
 	name: 'severity_id',
 	type: 'options',
-	options: [
-		{
-			name: 'Unspecified',
-			value: 2,
-		},
-		{
-			name: 'Informational',
-			value: 3,
-		},
-		{
-			name: 'Low',
-			value: 4,
-		},
-		{
-			name: 'Medium',
-			value: 1,
-		},
-		{
-			name: 'High',
-			value: 5,
-		},
-		{
-			name: 'Critical',
-			value: 6,
-		},
-	],
-	default: 2,
+	description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getSeverity',
+	},
+	default: '',
 };
 
 export const caseTags: INodeProperties = {

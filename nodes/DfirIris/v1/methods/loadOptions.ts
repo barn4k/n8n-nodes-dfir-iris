@@ -314,6 +314,36 @@ export async function getCaseState(this: ILoadOptionsFunctions): Promise<INodePr
 	return returnData;
 }
 
+export async function getSeverity(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = 'manage/severities/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	responseData.data.forEach((row: any) => {
+		returnData.push({
+			name: row.severity_name,
+			value: row.severity_id,
+		});
+	});
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+
 export async function getCaseTemplates(
 	this: ILoadOptionsFunctions,
 ): Promise<INodePropertyOptions[]> {

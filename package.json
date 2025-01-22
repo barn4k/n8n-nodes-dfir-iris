@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-dfir-iris",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "n8n node for DFIR IRIS IRP",
   "keywords": [
     "n8n-community-node-package",
