@@ -52,6 +52,18 @@ export const caseCustomer: INodeProperties = {
 	default: '',
 };
 
+export const caseCustomerF: INodeProperties = {
+	displayName: 'Case Customer Name or ID',
+	name: 'case_customer_id',
+	type: 'options',
+	description:
+		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getCustomers',
+	},
+	default: '',
+};
+
 export const rCaseCustomer: INodeProperties = {
 	displayName: 'Case Customer Name or ID',
 	name: 'case_customer',
@@ -115,6 +127,18 @@ export const caseClassification: INodeProperties = {
 	default: '',
 };
 
+export const caseClassificationF: INodeProperties = {
+	displayName: 'Case Classification Name or ID',
+	name: 'case_classification_id',
+	type: 'options',
+	description:
+		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getCaseClassifications',
+	},
+	default: '',
+};
+
 export const caseTemplateId: INodeProperties = {
 	displayName: 'Case Template Name or ID',
 	name: 'case_template_id',
@@ -130,6 +154,18 @@ export const caseTemplateId: INodeProperties = {
 export const caseOwner: INodeProperties = {
 	displayName: 'Case Owner Name or ID',
 	name: 'owner_id',
+	type: 'options',
+	typeOptions: {
+		loadOptionsMethod: 'getUsers',
+	},
+	default: '',
+	description:
+		'To whom assign a case. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+};
+
+export const caseOwnerF: INodeProperties = {
+	displayName: 'Case Owner Name or ID',
+	name: 'case_owner_id',
 	type: 'options',
 	typeOptions: {
 		loadOptionsMethod: 'getUsers',
@@ -163,9 +199,33 @@ export const caseReviewer: INodeProperties = {
 		'Who will review the case. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 };
 
+export const caseReviewerF: INodeProperties = {
+	displayName: 'Case Reviewer Name or ID',
+	name: 'case_reviewer_id',
+	type: 'options',
+	typeOptions: {
+		loadOptionsMethod: 'getUsers',
+	},
+	default: '',
+	description:
+		'Who will review the case. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+};
+
 export const caseState: INodeProperties = {
 	displayName: 'Case State Name or ID',
 	name: 'state_id',
+	type: 'options',
+	description:
+		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getCaseState',
+	},
+	default: '',
+};
+
+export const caseStateF: INodeProperties = {
+	displayName: 'Case State Name or ID',
+	name: 'case_state_id',
 	type: 'options',
 	description:
 		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
@@ -204,38 +264,34 @@ export const caseStatus: INodeProperties = {
 	default: 1,
 };
 
-// export const caseSeverity: INodeProperties = {
-// 	displayName: 'Case Severity',
-// 	name: 'severity_id',
-// 	type: 'options',
-// 	options: [
-// 		{
-// 			name: 'Unspecified',
-// 			value: 2,
-// 		},
-// 		{
-// 			name: 'Informational',
-// 			value: 3,
-// 		},
-// 		{
-// 			name: 'Low',
-// 			value: 4,
-// 		},
-// 		{
-// 			name: 'Medium',
-// 			value: 1,
-// 		},
-// 		{
-// 			name: 'High',
-// 			value: 5,
-// 		},
-// 		{
-// 			name: 'Critical',
-// 			value: 6,
-// 		},
-// 	],
-// 	default: 2,
-// };
+export const caseStatusF: INodeProperties = {
+	displayName: 'Case Resolution Status',
+	name: 'case_status_id',
+	type: 'options',
+	options: [
+		{
+			name: 'Unknown',
+			value: 0,
+		},
+		{
+			name: 'False Positive',
+			value: 1,
+		},
+		{
+			name: 'True Positive with Impact',
+			value: 2,
+		},
+		{
+			name: 'True Positive without Impact',
+			value: 3,
+		},
+		{
+			name: 'Not Applicable',
+			value: 4,
+		},
+	],
+	default: 1,
+};
 
 export const caseSeverity: INodeProperties = {
 	displayName: 'Case Severity Name or ID',
@@ -248,9 +304,28 @@ export const caseSeverity: INodeProperties = {
 	default: '',
 };
 
+export const caseSeverityF: INodeProperties = {
+	displayName: 'Case Severity Name or ID',
+	name: 'case_severity_id',
+	type: 'options',
+	description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getSeverity',
+	},
+	default: '',
+};
+
 export const caseTags: INodeProperties = {
 	displayName: 'Case Tags',
 	name: 'case_tags',
+	type: 'string',
+	default: '',
+	description: 'Comma-separated list of case tags',
+};
+
+export const caseTagsF: INodeProperties = {
+	displayName: 'Case Tags',
+	name: 'tags',
 	type: 'string',
 	default: '',
 	description: 'Comma-separated list of case tags',

@@ -103,7 +103,7 @@ export async function apiRequestAll(
 
 	Object.assign(options, { rejectUnauthorized: disableSslChecks });
 
-	// console.debug('req options: ', options);
+	console.debug('req options: ', options);
 	do {
 		try {
 			responseData = await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {

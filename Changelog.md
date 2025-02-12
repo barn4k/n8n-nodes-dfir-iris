@@ -5,6 +5,7 @@
 
 ### Bug fixes
 
+* fixed issue with **case filtering** options. Now the filter should work for the supported fields.
 * changed  the **case severities** from static to dynamically be populated from the IRIS
 
 

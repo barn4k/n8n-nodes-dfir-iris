@@ -53,19 +53,19 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			icase.caseIds,
-			icase.caseCustomer,
-			icase.caseName,
-			icase.caseDescription,
-			icase.caseClassification,
-			icase.caseOwner,
-			icase.caseOpeningUser,
-			icase.caseSeverity,
-			icase.caseState,
+			icase.caseIds,							// ok for 2.4.19
+			icase.caseCustomerF,				// ok for 2.4.19
+			icase.caseName,							// ok for 2.4.19
+			icase.caseDescription,			// ok for 2.4.19
+			icase.caseClassificationF,  // ok for 2.4.19
+			icase.caseOwnerF,						// ok for 2.4.19
+			icase.caseOpeningUser,			// ok for 2.4.19
+			icase.caseSeverityF,				// ok for 2.4.19
+			icase.caseStateF,						// ok for 2.4.19
 			icase.caseSocId,
-			icase.caseReviewer,
-			icase.caseStatus,
-			icase.caseTags,
+			icase.caseReviewerF,
+			// icase.caseStatusF,					// not working for 2.4.19
+			// icase.caseTagsF, 					// not working for 2.4.19
 			icase.caseOpenStartDate,
 			icase.caseOpenEndDate,
 		],
