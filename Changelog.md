@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.0.8
+
+
+### Bug fixes
+
+* fixed issue with **alert assets** and **alert iocs** within alert **Update** operation. Now assets and iocs should be added/updated properly. (However, the ioc resource isn't described in the docs)
+
+### Features
+
+* added option to manage comments for the **Alert** resource (may not work, as there is no API description though)
+
+
 ## v1.0.7
 
 

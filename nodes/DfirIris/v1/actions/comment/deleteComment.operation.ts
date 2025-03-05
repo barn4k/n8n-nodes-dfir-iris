@@ -42,11 +42,12 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const obj_name = this.getNodeParameter('obj_name', i) as string;
 	const obj_id = this.getNodeParameter('obj_id', i) as string;
 	const comment_id = this.getNodeParameter('comment_id', i) as string;
+	const uri_base = obj_name === 'alert' ? 'alerts' : `case/${obj_name}`
 
 	response = await apiRequest.call(
 		this,
 		'POST',
-		`case/${obj_name}/${obj_id}/comments/${comment_id}/delete`,
+		`${uri_base}/${obj_id}/comments/${comment_id}/delete`,
 		{},
 		query,
 	);

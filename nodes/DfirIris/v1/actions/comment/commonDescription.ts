@@ -5,6 +5,7 @@ export const rObjectName: INodeProperties = {
 	name: 'obj_name',
 	type: 'options',
 	options: [
+		{ name: 'Alert', value: 'alert' },
 		{ name: 'Asset', value: 'assets' },
 		// {name: "Event", value: "events"},
 		// {name: "Evidence", value: "evidences"},

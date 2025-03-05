@@ -58,7 +58,7 @@ const properties: INodeProperties[] = [
 		default: {},
 		options: [
 			...local.alertAssetProps,
-			// ...local.alertIocProps, // No property in API schema
+			...local.alertIocProps, // No property in API schema
 			local.alertClassification,
 			...local.alertContextProps,
 			local.alertCustomer,
@@ -135,35 +135,28 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 
-	// let iocs = this.getNodeParameter('additionalFields.__iocsCollection.iocData', i, null) as Array<IIOC>;
+	let iocs = this.getNodeParameter(
+		'additionalFields.__iocsCollection.iocData', i, null) as Array<IIOC>;
 	let assets = this.getNodeParameter(
-		'additionalFields.__assetsCollection.assetData',
-		i,
-		null,
-	) as Array<IAsset>;
+		'additionalFields.__assetsCollection.assetData', i, null) as Array<IAsset>;
 
-	// let iocsJSON = this.getNodeParameter('additionalFields.__iocsCollectionJSON', i, null) as Array<IIOC>;
+	let iocsJSON = this.getNodeParameter(
+		'additionalFields.__iocsCollectionJSON', i, null) as Array<IIOC>;
 	let assetsJSON = this.getNodeParameter(
-		'additionalFields.__assetsCollectionJSON',
-		i,
-		null,
-	) as Array<IAsset>;
+		'additionalFields.__assetsCollectionJSON', i, null) as Array<IAsset>;
 
-	// if (iocsJSON !== null)
-	// 	iocs = iocsJSON
-
+	if (iocsJSON !== null) iocs = iocsJSON
 	if (assetsJSON !== null) assets = assetsJSON;
 
-	// if (sendEmpty && !iocs) iocs = [];
+	if (sendEmpty && !iocs) iocs = [];
 	if (sendEmpty && !assets) assets = [];
 
-	// if (iocs !== null)
-	// 	body.alert_iocs = iocs
+	if (iocs !== null) body.iocs = iocs
+	if (assets !== null) body.assets = assets;
 
-	if (assets !== null) body.alert_assets = assets;
-
+	// console.log('body1', body)
 	let alertResponse: object;
-	if ((body.alert_iocs || body.alert_assets) && !sendEmpty) {
+	if ((body.iocs || body.assets) && !sendEmpty) {
 		try {
 			alertResponse = await apiRequest.call(this, 'GET', `alerts/${alertId}`, {}, {});
 		} catch {
@@ -172,15 +165,32 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		if ('data' in alertResponse) {
 			let alertData = (alertResponse as any).data as IAlert;
 
-			if (body.alert_iocs && 'iocs' in alertData) {
-				(body.alert_iocs as Array<object>).push(...(alertData.iocs as Array<IIOC>));
+			if (body.iocs && 'iocs' in alertData) {
+				const iocSanitized = (alertData.iocs as Array<IIOC>).map( i => { return {
+					ioc_value: i.ioc_value,
+					ioc_description: i.ioc_description,
+					ioc_type_id: i.ioc_type_id,
+					ioc_tlp_id: i.ioc_tlp_id,
+					ioc_tags: i.ioc_tags,
+					ioc_enrichment: i.ioc_enrichment,
+				} }) as Array<IIOC>
+				(body.iocs as Array<object>).push(...iocSanitized);
 			}
-			if (body.alert_assets && 'assets' in alertData) {
-				(body.alert_assets as Array<object>).push(...(alertData.assets as Array<IAsset>));
+			if (body.assets && 'assets' in alertData) {
+				const assetSanitized = (alertData.assets as Array<IAsset>).map( a => { return {
+					asset_name: a.asset_name,
+					asset_description: a.asset_description,
+					asset_type_id: a.asset_type_id,
+					asset_ip: a.asset_ip,
+					asset_domain: a.asset_domain,
+					asset_tags: a.asset_tags,
+					asset_enrichment: a.asset_enrichment,
+				} }) as Array<IAsset>
+				(body.assets as Array<object>).push(...assetSanitized);
 			}
 		}
 	}
-
+	// console.log('body2', body)
 	response = await apiRequest.call(this, 'POST', `${endpoint}/update/${alertId}`, body, query);
 
 	const isRaw = (options.isRaw as boolean) || false;
