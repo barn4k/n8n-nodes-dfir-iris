@@ -3,6 +3,7 @@ import type { INodeProperties } from 'n8n-workflow';
 import * as create from './create.operation';
 import * as deleteAlert from './deleteAlert.operation';
 import * as get from './get.operation';
+import * as getRelations from './getRelations.operation';
 import * as filterAlerts from './filterAlerts.operation';
 import * as update from './update.operation';
 import * as countAlerts from './countAlerts.operation';
@@ -16,6 +17,7 @@ export {
 	create,
 	deleteAlert,
 	get,
+	getRelations,
 	filterAlerts,
 	update,
 	countAlerts,
@@ -85,6 +87,12 @@ export const resource: INodeProperties[] = [
 				action: `Get ${thisRes}`,
 			},
 			{
+				name: 'Get Relations',
+				value: 'getRelations',
+				description: 'Get Similiar Entitites Relevant to the Alert',
+				action: `Get Alert Relations`,
+			},
+			{
 				name: 'Escalate',
 				value: 'escalate',
 				description: `Escalate ${thisRes} to a case`,
@@ -114,6 +122,7 @@ export const resource: INodeProperties[] = [
 	...create.description,
 	...deleteAlert.description,
 	...get.description,
+	...getRelations.description,
 	...update.description,
 	...filterAlerts.description,
 	...countAlerts.description,

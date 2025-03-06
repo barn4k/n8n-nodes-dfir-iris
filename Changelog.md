@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.9
+
+
+### Features
+
+* added option to look for alert **relations** (experimental, as there is no PAI description)
+
+
 ## v1.0.8
 
 

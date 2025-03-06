@@ -8,3 +8,4 @@ yarn.lock
 .vscode/launch.json
 .vscode/*.code-workspace
 test.ps1
+Debug.md
