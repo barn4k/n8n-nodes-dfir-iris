@@ -154,7 +154,6 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	if (iocs !== null) body.iocs = iocs
 	if (assets !== null) body.assets = assets;
 
-	// console.log('body1', body)
 	let alertResponse: object;
 	if ((body.iocs || body.assets) && !sendEmpty) {
 		try {
@@ -190,7 +189,6 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 			}
 		}
 	}
-	// console.log('body2', body)
 	response = await apiRequest.call(this, 'POST', `${endpoint}/update/${alertId}`, body, query);
 
 	const isRaw = (options.isRaw as boolean) || false;

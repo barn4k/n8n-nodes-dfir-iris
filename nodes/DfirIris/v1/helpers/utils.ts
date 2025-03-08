@@ -3,6 +3,17 @@ import type { IDataObject, IExecuteFunctions, INodePropertyOptions } from 'n8n-w
 import { NodeOperationError } from 'n8n-workflow';
 import type { IFolder, IFolderSub, INoteGroup } from './../helpers/types';
 
+const SHOW_LOGS = false
+export function customDebug(msg: string, obj: any = {}){
+	if (SHOW_LOGS){
+		if (obj){
+			console.debug(msg, obj)
+		} else {
+			console.debug(msg)
+		}
+	}
+}
+
 export function fieldsRemover(responseRoot: any, options: IDataObject) {
 	// const fields = (options.fields as string[]) || [];
 	const fields = (options.fields as string).replace(/\s+/g, '').split(',') || [];
@@ -60,7 +71,7 @@ export function addAdditionalFields(
 ) {
 	// Add the additional fields
 	const additionalFields = this.getNodeParameter('additionalFields', index);
-	this.logger.debug('additionalFields', additionalFields);
+	customDebug('additionalFields', additionalFields);
 
 	if (additionalFields.hasOwnProperty('custom_attributes')) {
 		if (typeof additionalFields.custom_attributes !== 'object') {
@@ -105,42 +116,42 @@ export function getNoteGroupsNested(
 ) {
 	if (root.length > 0) {
 		root.forEach((e: INoteGroup) => {
-			// console.log('checking '+e.name)
+			customDebug('checking '+e.name)
 			const oldEntry = data.filter((x) => x.value === e.id);
 			// if in sub >> remove sub id from root
 			if (prefix) {
 				if (oldEntry.length > 0) {
 					if (oldEntry[0].name.indexOf('--') === -1) {
-						// console.log('removing old entry with '+e.name)
-						// console.log('data before old', data)
+						customDebug('removing old entry with '+e.name)
+						customDebug('data before old', data)
 						data = data.filter((x) => x.value !== e.id);
-						// console.log('data after old', data)
+						customDebug('data after old', data)
 
-						// console.log('adding new prefixed(1) entry '+prefix+" "+e.name)
+						customDebug('adding new prefixed(1) entry '+prefix+" "+e.name)
 						data.push({
 							name: `${prefix}${e.name}`,
 							value: e.id,
 						});
 					}
 				} else {
-					// console.log('adding new prefixed(2) entry '+prefix+" "+e.name)
+					customDebug('adding new prefixed(2) entry '+prefix+" "+e.name)
 					data.push({
 						name: `${prefix}${e.name}`,
 						value: e.id,
 					});
 				}
 			} else if (oldEntry.length === 0) {
-				// console.log('adding new root entry '+e.name)
+				customDebug('adding new root entry '+e.name)
 				data.push({
 					name: `${prefix}${e.name}`,
 					value: e.id,
 				});
 			}
-			// console.log('going in')
+			customDebug('going in')
 			data = getNoteGroupsNested(e.subdirectories, data, `${prefix}-- `);
 		});
 	}
-	// console.log('going out')
+	customDebug('going out')
 	return data;
 }
 
@@ -153,19 +164,19 @@ export function getFlattenGroups(root: INoteGroup[], data: any = {}, parentId: n
 					return [x.id, { name: x.name, notes: x.notes }];
 				}),
 			);
-			console.debug('initialize data ' + data);
+			customDebug('initialize data ' + data);
 		}
 		root.forEach((e: INoteGroup) => {
-			console.debug('checking ' + e.name);
+			customDebug('checking ' + e.name);
 			if (parentId > 0) {
-				console.debug('changing prefixed(1) entry ' + parentId + '/' + e.name);
+				customDebug('changing prefixed(1) entry ' + parentId + '/' + e.name);
 				data[e.id].name = `${data[parentId].name}/${e.name}`;
 			}
-			console.debug('going in');
+			customDebug('going in');
 			data = getFlattenGroups(e.subdirectories, data, e.id);
 		});
 	}
-	console.debug('going out');
-	console.debug('out data', data);
+	customDebug('going out');
+	customDebug('out data', data);
 	return data;
 }

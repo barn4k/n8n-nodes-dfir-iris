@@ -10,6 +10,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
+import { customDebug } from '../helpers/utils';
 import type FormData from 'form-data';
 
 export async function apiRequest(
@@ -58,8 +59,7 @@ export async function apiRequest(
 	Object.assign(options, { rejectUnauthorized: disableSslChecks });
 
 	try {
-		// console.debug('options', options);
-		this.logger.debug('options', options);
+		customDebug('options', options)
 		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
@@ -103,7 +103,7 @@ export async function apiRequestAll(
 
 	Object.assign(options, { rejectUnauthorized: disableSslChecks });
 
-	console.debug('req options: ', options);
+	customDebug('req options: ', options)
 	do {
 		try {
 			responseData = await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {
@@ -113,18 +113,20 @@ export async function apiRequestAll(
 		} catch (error) {
 			throw new NodeApiError(this.getNode(), error as JsonObject);
 		}
+
 		// for troubleshooting
-		// console.debug('responseData', responseData)
+		customDebug('responseData', responseData)
 		// proceed = false
 
-		// console.debug('current_page: ',responseData.data.current_page)
-		// console.debug('next_page: ', responseData.data.next_page)
-		// console.debug('last_page: ',responseData.data.last_page)
-		// console.debug('total: ',responseData.data.total)
+		customDebug('current_page: ',responseData.data.current_page)
+		customDebug('next_page: ', responseData.data.next_page)
+		customDebug('last_page: ',responseData.data.last_page)
+		customDebug('total: ',responseData.data.total)
 
 		returnData.push(...responseData.data[propKey]);
-		// console.debug('max_items: ', max_items)
-		// console.debug('returnData.length: ', returnData.length)
+
+		customDebug('max_items: ', max_items)
+		customDebug('returnData.length: ', returnData.length)
 
 		if (max_items > 0 && returnData.length >= max_items) {
 			proceed = false;

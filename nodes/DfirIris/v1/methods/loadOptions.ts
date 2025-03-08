@@ -128,7 +128,7 @@ export async function getNoteGroups(this: ILoadOptionsFunctions): Promise<INodeP
 	if (response === undefined) {
 		throw new NodeOperationError(this.getNode(), 'No data got returned');
 	}
-	this.logger.debug(JSON.stringify(response.data));
+	utils.customDebug(response.data)
 	const returnData: INodePropertyOptions[] = utils.getNoteGroupsNested(response.data);
 
 	return returnData;
@@ -141,7 +141,7 @@ export async function getNotes(this: ILoadOptionsFunctions): Promise<INodeProper
 	if (response === undefined) {
 		throw new NodeOperationError(this.getNode(), 'No data got returned');
 	}
-	this.logger.debug(JSON.stringify(response.data));
+	utils.customDebug(response.data);
 	const newData = utils.getFlattenGroups(response.data);
 
 	let returnData: INodePropertyOptions[] = [];
@@ -218,7 +218,7 @@ export async function getFolders(this: ILoadOptionsFunctions): Promise<INodeProp
 		throw new NodeOperationError(this.getNode(), 'No data got returned');
 	}
 
-	this.logger.debug('getFolders responseData', response);
+	utils.customDebug('getFolders responseData', response);
 
 	const returnData: INodePropertyOptions[] = utils.getFolderNested([], response.data);
 
@@ -382,7 +382,7 @@ export async function getModules(this: ILoadOptionsFunctions): Promise<INodeProp
 	if (responseData === undefined) {
 		throw new NodeOperationError(this.getNode(), 'No data got returned');
 	}
-	console.log('getModules', responseData);
+	utils.customDebug('getModules', responseData);
 	const returnData: INodePropertyOptions[] = [];
 	responseData.data.forEach((row: any) => {
 		returnData.push({

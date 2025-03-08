@@ -2,6 +2,7 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
 import type { DfirIrisType } from './node.type';
+import { customDebug } from '../helpers/utils';
 
 import * as alert from './alert/Alert.resource';
 import * as asset from './asset/Asset.resource';
@@ -66,8 +67,8 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				default:
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);
 			}
-			// console.debug('returnData');
-			// console.debug(returnData);
+
+			customDebug('router returnData:', returnData)
 		} catch (error) {
 			if (this.continueOnFail()) {
 				if (resource === 'datastoreFile' && operation === 'downloadFile') {
