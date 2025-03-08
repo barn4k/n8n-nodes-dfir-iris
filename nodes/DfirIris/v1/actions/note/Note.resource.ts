@@ -32,7 +32,7 @@ export const resource: INodeProperties[] = [
 			},
 			{
 				name: 'Delete',
-				value: 'delete',
+				value: 'deleteNote',
 				description: 'Delete a note',
 				action: 'Delete a note',
 			},

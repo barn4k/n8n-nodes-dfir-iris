@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.0.10
+
+
+### Bug fixes
+
+* removed excessive logging.
+* fixed issue with **Note >> Delete** operation, where there was no **Note ID** field.
+
 ## v1.0.9
 
 

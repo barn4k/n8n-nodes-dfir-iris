@@ -113,8 +113,6 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	utils.addAdditionalFields.call(this, body, i);
 
-	console.log('updated body', body);
-
 	Object.assign(query, body);
 
 	response = await apiRequestAll.call(
