@@ -1,5 +1,12 @@
 # Changelog
 
+# v1.0.11
+
+
+### Features
+
+* added pagination for **Case** and **ALert** **Filter** operation methods
+
 ## v1.0.10
 
 

@@ -73,6 +73,7 @@ export async function apiRequestAll(
 	body: IDataObject = {},
 	query: IDataObject,
 	max_items: number = 0,
+	start_page: number = 1,
 	propKey: string,
 ): Promise<any> {
 	const credentials = await this.getCredentials('dfirIrisApi');
@@ -87,8 +88,12 @@ export async function apiRequestAll(
 		? true
 		: (credentials.allowUnauthorizedCerts as boolean);
 
-	query.page = 1;
+	query.page = start_page;
 	query.per_page = max_items > 0 && max_items < 100 ? max_items : 100;
+
+	if (start_page > 1){
+		query.page = Math.floor(start_page * max_items / query.per_page) + 1
+	}
 
 	let options: IHttpRequestOptions = {
 		headers: headers,

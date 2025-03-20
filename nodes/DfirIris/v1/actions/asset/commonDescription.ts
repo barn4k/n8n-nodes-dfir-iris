@@ -83,7 +83,7 @@ export const assetCompromiseStatus: INodeProperties = {
 };
 
 export const assetDescription: INodeProperties = {
-	displayName: 'Asset Value',
+	displayName: 'Asset Description',
 	name: 'asset_description',
 	type: 'string',
 	default: '',

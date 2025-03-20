@@ -99,7 +99,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	Object.assign(query, body);
 
-	response = await apiRequestAll.call(this, 'GET', `${endpoint}/filter`, {}, query, 1, 'cases');
+	response = await apiRequestAll.call(this, 'GET', `${endpoint}/filter`, {}, query, 1, 1, 'cases');
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;

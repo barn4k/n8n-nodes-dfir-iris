@@ -90,7 +90,17 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(fields)],
+		options: [
+			...types.returnRaw,
+			...types.fieldProperties(fields),
+			{
+				displayName: 'Start Page',
+				name: 'startPage',
+				type: 'number',
+				default: 1,
+				description: 'Controls how many entries to skip',
+			}
+		],
 	},
 ];
 
@@ -122,6 +132,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		{},
 		body,
 		returnAll ? 0 : (this.getNodeParameter('limit', i) as number),
+		this.getNodeParameter('options.startPage', i, 1) as number,
 		'alerts',
 	);
 
