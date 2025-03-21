@@ -1,5 +1,12 @@
 # Changelog
 
+# v1.0.12
+
+
+### Bug fixes
+
+* fixed an issue with incorect starting page for pagination
+
 # v1.0.11
 
 

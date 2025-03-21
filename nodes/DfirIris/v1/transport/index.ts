@@ -92,7 +92,7 @@ export async function apiRequestAll(
 	query.per_page = max_items > 0 && max_items < 100 ? max_items : 100;
 
 	if (start_page > 1){
-		query.page = Math.floor(start_page * max_items / query.per_page) + 1
+		query.page = Math.floor(start_page * max_items / query.per_page)
 	}
 
 	let options: IHttpRequestOptions = {
