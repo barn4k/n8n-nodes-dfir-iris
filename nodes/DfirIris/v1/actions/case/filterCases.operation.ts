@@ -13,38 +13,67 @@ import { types, utils } from '../../helpers';
 import * as icase from './commonDescription';
 
 const fields = [
-	'access_level',
-	'case_close_date',
-	'case_description',
-	'case_id',
-	'name',
-	'case_open_date',
-	'case_soc_id',
-	'case_uuid',
-	'classification',
-	'classification_id',
-	'client_name',
-	'opened_by',
-	'opened_by_user_id',
-	'owner',
-	'owner_id',
-	'state_id',
-	'state_name',
+	"alerts",
+	"case_id",
+	"case_uuid",
+	"classification",
+	"classification_id",
+	"client",
+	"client_id",
+	"close_date",
+	"closing_note",
+	"custom_attributes",
+	"description",
+	"initial_date",
+	"modification_history",
+	"name",
+	"note_directories",
+	"open_date",
+	"owner",
+	"owner_id",
+	"protagonists",
+	"review_status",
+	"review_status_id",
+	"reviewer",
+	"reviewer_id",
+	"severity",
+	"severity_id",
+	"soc_id",
+	"state",
+	"state_id",
+	"status_id",
+	"status_name",
+	"tags",
+	"user",
+	"user_id"
 ];
 
 const properties: INodeProperties[] = [
 	...types.returnAllOrLimit,
 	{
-		displayName: 'Sort',
-		name: 'sort',
+		displayName: 'Sort Order',
+		name: 'sort_dir',
 		type: 'options',
 		required: true,
 		options: [
 			{ name: 'Ascending', value: 'asc' },
 			{ name: 'Descending', value: 'desc' },
 		],
-		description: 'Sort by alert creation time',
 		default: 'asc',
+	},
+	{
+		displayName: 'Sort By',
+		name: 'sort_by',
+		type: 'options',
+		required: true,
+		options: [
+			{ name: 'Case ID', value: 'case_id' },
+			{ name: 'Name', value: 'name' },
+			{ name: 'Close Date', value: 'close_date' },
+			{ name: 'Initial Date', value: 'initial_date' },
+		],
+		description: 'Sorting field',
+		default: 'case_id',
 	},
 	{
 		displayName: 'Filter Options',
@@ -105,7 +134,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	body.sort = this.getNodeParameter('sort', i) as string;
+	body.sort_dir = this.getNodeParameter('sort_dir', i) as string;
+	body.order_by = this.getNodeParameter('sort_by', i) as string;
 	const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 
 	utils.addAdditionalFields.call(this, body, i);

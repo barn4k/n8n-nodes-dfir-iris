@@ -180,3 +180,29 @@ export function getFlattenGroups(root: INoteGroup[], data: any = {}, parentId: n
 	customDebug('out data', data);
 	return data;
 }
+
+// export function getFlattenDs(root: IFolder[], data: any = {}, parentId: string = '') {
+// 	if (root.length > 0) {
+// 		// initialize
+// 		if (parentId === '') {
+// 			data = Object.fromEntries(
+// 				Object.entries(root).map((x) => {
+// 					return [{folder_id: x[0], folder_name: }];
+// 				}),
+// 			);
+// 			customDebug('initialize data ' + data);
+// 		}
+// 		root.forEach((e: INoteGroup) => {
+// 			customDebug('checking ' + e.name);
+// 			if (parentId > 0) {
+// 				customDebug('changing prefixed(1) entry ' + parentId + '/' + e.name);
+// 				data[e.id].name = `${data[parentId].name}/${e.name}`;
+// 			}
+// 			customDebug('going in');
+// 			data = getFlattenGroups(e.subdirectories, data, e.id);
+// 		});
+// 	}
+// 	customDebug('going out');
+// 	customDebug('out data', data);
+// 	return data;
+// }

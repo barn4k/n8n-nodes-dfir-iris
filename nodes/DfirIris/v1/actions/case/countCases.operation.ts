@@ -13,38 +13,42 @@ import { types, utils } from '../../helpers';
 import * as icase from './commonDescription';
 
 const fields = [
-	'access_level',
-	'case_close_date',
-	'case_description',
-	'case_id',
-	'name',
-	'case_open_date',
-	'case_soc_id',
-	'case_uuid',
-	'classification',
-	'classification_id',
-	'client_name',
-	'opened_by',
-	'opened_by_user_id',
-	'owner',
-	'owner_id',
-	'state_id',
-	'state_name',
+	"alerts",
+	"case_id",
+	"case_uuid",
+	"classification",
+	"classification_id",
+	"client",
+	"client_id",
+	"close_date",
+	"closing_note",
+	"custom_attributes",
+	"description",
+	"initial_date",
+	"modification_history",
+	"name",
+	"note_directories",
+	"open_date",
+	"owner",
+	"owner_id",
+	"protagonists",
+	"review_status",
+	"review_status_id",
+	"reviewer",
+	"reviewer_id",
+	"severity",
+	"severity_id",
+	"soc_id",
+	"state",
+	"state_id",
+	"status_id",
+	"status_name",
+	"tags",
+	"user",
+	"user_id"
 ];
 
 const properties: INodeProperties[] = [
-	{
-		displayName: 'Sort',
-		name: 'sort', // not working
-		type: 'options',
-		required: true,
-		options: [
-			{ name: 'Ascending', value: 'asc' },
-			{ name: 'Descending', value: 'desc' },
-		],
-		description: 'Sort by alert creation time',
-		default: 'asc',
-	},
 	{
 		displayName: 'Filter Options',
 		name: 'additionalFields',
@@ -90,7 +94,7 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { sort: 'desc' };
+	let query: IDataObject = { cid: 1 };
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 

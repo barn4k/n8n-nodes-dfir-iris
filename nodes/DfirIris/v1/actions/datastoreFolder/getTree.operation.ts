@@ -18,7 +18,16 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw],
+		options: [
+			...types.returnRaw,
+			// {
+			// 	displayName: 'Simplify',
+			// 	name: '__simplify',
+			// 	type: 'boolean',
+			// 	default: false,
+			// 	description: "Whether to return a flat list of objects instead of a tree"
+			// },
+		],
 	},
 ];
 

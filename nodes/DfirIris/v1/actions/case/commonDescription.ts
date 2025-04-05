@@ -253,13 +253,18 @@ export const caseStatus: INodeProperties = {
 			value: 2,
 		},
 		{
-			name: 'True Positive without Impact',
+			name: 'Not Applicable',
 			value: 3,
 		},
 		{
-			name: 'Not Applicable',
+			name: 'True Positive without Impact',
 			value: 4,
 		},
+		{
+			name: 'Legitimate',
+			value: 5,
+		},
+
 	],
 	default: 1,
 };

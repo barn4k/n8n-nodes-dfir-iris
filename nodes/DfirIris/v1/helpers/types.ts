@@ -257,13 +257,8 @@ export function fieldProperties(fields: string[] = []) {
 			type: 'string',
 			default: fields.sort().join(',\n'),
 			typeOptions: {
-				rows: fields.length > 20 ? 20 : fields.length < 4 ? 4 : fields.length,
+				rows: fields.length > 10 ? 10 : fields.length < 4 ? 4 : fields.length,
 			},
-			// type: 'multiOptions',
-			// options: fields.map((f) => {
-			// 	return { name: f, value: f };
-			// }),
-			// default: [],
 			description: 'Fields to be included',
 		},
 		{

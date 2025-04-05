@@ -1,5 +1,13 @@
 # Changelog
 
+# v1.0.13
+
+
+### Bug fixes
+
+* fixed issue with incorrect case resolution statuses
+* fixed issue with alert and case sorting
+
 # v1.0.12
 
 

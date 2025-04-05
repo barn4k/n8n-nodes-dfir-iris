@@ -48,16 +48,28 @@ const fields = [
 const properties: INodeProperties[] = [
 	...types.returnAllOrLimit,
 	{
-		displayName: 'Sort',
-		name: 'sort',
+		displayName: 'Sort Order',
+		name: 'sort_dir',
 		type: 'options',
 		required: true,
 		options: [
 			{ name: 'Ascending', value: 'asc' },
 			{ name: 'Descending', value: 'desc' },
 		],
-		description: 'Sort by alert creation time',
 		default: 'asc',
+	},
+	{
+		displayName: 'Sort By',
+		name: 'sort_by',
+		type: 'options',
+		required: true,
+		options: [
+			{ name: 'Alert ID', value: 'alert_id' },
+			{ name: 'Name', value: 'alert_title' },
+			{ name: 'Initial Date', value: 'alert_creation_time' },
+		],
+		description: 'Sorting field',
+		default: 'alert_id',
 	},
 	{
 		displayName: 'Filter Options',
@@ -118,7 +130,9 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	body.sort = this.getNodeParameter('sort', i) as string;
+	body.sort_dir = this.getNodeParameter('sort_dir', i) as string;
+	body.order_by = this.getNodeParameter('sort_by', i) as string;
+
 	const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 
 	utils.addAdditionalFields.call(this, body, i);
