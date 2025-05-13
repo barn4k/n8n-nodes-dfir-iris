@@ -10,6 +10,7 @@ import { updateDisplayOptions } from 'n8n-workflow';
 import { endpoint } from './DatastoreFolder.resource';
 import { apiRequest } from '../../transport';
 import { types } from '../../helpers';
+import { getFlattenTree } from '../../helpers/utils';
 
 const properties: INodeProperties[] = [
 	{
@@ -20,13 +21,30 @@ const properties: INodeProperties[] = [
 		default: {},
 		options: [
 			...types.returnRaw,
-			// {
-			// 	displayName: 'Simplify',
-			// 	name: '__simplify',
-			// 	type: 'boolean',
-			// 	default: false,
-			// 	description: "Whether to return a flat list of objects instead of a tree"
-			// },
+			{
+				displayName: 'Simplify',
+				name: '__simplify',
+				type: 'boolean',
+				default: false,
+				description: "Whether to return a flat list of objects instead of a tree"
+			},
+			{
+				displayName: 'Simplify Type',
+				name: '__simplify_type',
+				type: 'options',
+				options: [
+					{name: 'Return only Files', value: 'file'},
+					{name: 'Return only Folders', value: 'folder'},
+					{name: 'Return All', value: 'all'},
+				],
+				default: 'all',
+				description: "Which entities to return in simplified mode",
+				displayOptions: {
+					show: {
+						__simplify: [true]
+					}
+				}
+			},
 		],
 	},
 ];
@@ -48,9 +66,17 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
+	const returnSimple = (options.__simplify as boolean) || false;
+	const returnSimpleType = options.__simplify_type as 'file'|'folder'|'all' || 'all';
 	let responseModified = response as any;
 
-	if (!isRaw) responseModified = responseModified.data;
+
+	if (returnSimple){
+		responseModified.data = getFlattenTree(responseModified.data, "", "", returnSimpleType)
+	}
+
+		if (!isRaw) responseModified = responseModified.data;
+
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

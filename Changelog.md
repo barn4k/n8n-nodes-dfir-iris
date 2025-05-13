@@ -1,5 +1,17 @@
 # Changelog
 
+# v1.0.14
+
+
+### Bug fixes
+
+* disabled debug logs
+
+### Features
+
+* added simplify mode option with simplified type option for datastore tree. It's possible to filter response by file/folder/all entitity types
+
+
 # v1.0.13
 
 

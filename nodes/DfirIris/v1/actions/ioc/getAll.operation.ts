@@ -42,9 +42,9 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let responseModified = response as any;
 
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data.ioc = utils.fieldsRemover(responseModified.data.ioc, options);
-	if (!isRaw) responseModified = responseModified.data.ioc;
+	if (options.hasOwnProperty('fields') && responseModified.hasOwnProperty('data'))
+		responseModified.data.ioc = utils.fieldsRemover(responseModified.data?.ioc, options);
+	if (!isRaw) responseModified = responseModified.data?.ioc;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

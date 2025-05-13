@@ -99,7 +99,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let body: IDataObject = {};
 
 	utils.addAdditionalFields.call(this, body, i);
-	console.log('updated body', body);
+	utils.customDebug('updated body', body);
 
 	Object.assign(query, body);
 
@@ -108,13 +108,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
 	let responseModified = response as any;
-	console.debug('responseModified', responseModified);
+	utils.customDebug('responseModified', responseModified);
 
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data.cases = utils.fieldsRemover(responseModified.data.cases, options);
+	if (options.hasOwnProperty('fields') && responseModified.hasOwnProperty('data') )
+		responseModified.data.cases = utils.fieldsRemover(responseModified.data?.cases, options);
 
-	if (!isRaw) responseModified = { total: responseModified.data?.total || 0 };
+	if (!isRaw)
+		responseModified = { total: responseModified.data?.total || 0 };
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

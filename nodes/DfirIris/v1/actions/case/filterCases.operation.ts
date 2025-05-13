@@ -140,7 +140,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	utils.addAdditionalFields.call(this, body, i);
 
-	console.log('updated body', body);
+	utils.customDebug('updated body', body);
 
 	Object.assign(query, body);
 
@@ -160,10 +160,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let responseModified = response as any;
 
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data.cases = utils.fieldsRemover(responseModified.data.cases, options);
+	if (options.hasOwnProperty('fields') && responseModified.hasOwnProperty('data') )
+		responseModified.data.cases = utils.fieldsRemover(responseModified.data?.cases, options);
 
-	if (!isRaw) responseModified = responseModified.data.cases;
+	if (!isRaw)
+		responseModified = responseModified.data?.cases;
 
 	const executionData = this.helpers.constructExecutionMetaData(
 		this.helpers.returnJsonArray(responseModified as IDataObject[]),

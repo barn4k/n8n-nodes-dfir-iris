@@ -2,7 +2,7 @@ import type { INodeProperties, IDataObject } from 'n8n-workflow';
 
 export interface IFolder {
 	data: {
-		[key: string]: IFolderSub;
+		[key: string]: IFolderSub | IFileSub;
 	};
 }
 
@@ -20,12 +20,31 @@ interface INoteSub {
 }
 
 export interface IFolderSub {
-	children?: {
-		[key: string]: IFolderSub;
+	children: {
+		[key: string]: IFolderSub | IFileSub;
 	};
 	is_root?: boolean;
 	name: string;
-	type: 'directory' | 'file';
+	type: 'directory';
+}
+
+export interface IFileSub {
+	file_parent_id: number
+	file_description: string
+	modification_history: any
+	file_date_added: string
+	added_by_user_id: number
+	file_id: number
+	file_tags: string
+	file_size: number
+	file_case_id: number
+	file_uuid: string
+	file_is_ioc: string | undefined
+	file_sha256: string
+	file_is_evidence: string | undefined
+	file_original_name: string
+	file_password: string
+	type: 'file'
 }
 
 export interface IIOC extends IDataObject {

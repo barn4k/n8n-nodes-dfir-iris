@@ -141,39 +141,6 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		...body,
 	};
 
-	// formData.append('file_original_name', fileName)
-	// console.debug('appended file_original_name')
-	// console.debug('--- fileName: ', fileName)
-
-	// // formData.append('file_content', uploadData, fileName);
-	// console.debug('appended file_content')
-	// console.debug('--- uploadData: ', uploadData)
-	// console.debug('--- options: ', {filename: fileName,contentType: binaryData.mimeType})
-	// formData.append('file_content', (uploadData as Buffer), fileName);
-
-	// formData.append('file_content', uploadData, {
-	// 	filename: fileName,
-	// 	contentType: binaryData.mimeType
-	// });
-
-	// const keysToAdd = [
-	// 	'file_description',
-	// 	'file_password',
-	// 	'file_tags',
-	// 	'file_is_evidence',
-	// 	'file_is_ioc',
-	// ]
-	// keysToAdd.forEach( (k: string) => {
-	// 	let _v
-	// 	if (body.hasOwnProperty(k)){
-	// 		_v = (body as IDataObject)[k]
-	// 		if (typeof _v === 'boolean')
-	// 			_v = _v ? 'Y' : 'N'
-	// 		this.logger.debug(`appending property ${k}: `+_v)
-	// 		formData.append(k, _v);
-	// 	}
-	// })
-
 	response = await apiRequest.call(
 		this,
 		'POST',

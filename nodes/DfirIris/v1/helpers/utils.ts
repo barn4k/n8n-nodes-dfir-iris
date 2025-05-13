@@ -97,9 +97,9 @@ export function getFolderNested(
 	root: IFolder['data'],
 	prefix: string = '',
 ) {
-	const rootObj = Object.entries(root).filter((e: [string, IFolderSub]) => e[0].startsWith('d-'));
+	const rootObj = Object.entries(root).filter(e => e[0].startsWith('d-')) as [string, IFolderSub][];
 	if (rootObj.length >= 0)
-		rootObj.forEach((e: [string, IFolderSub]) => {
+		rootObj.forEach(e => {
 			data.push({
 				name: `${prefix}${e[1].name}`,
 				value: e[0].replace('d-', ''),
@@ -181,28 +181,39 @@ export function getFlattenGroups(root: INoteGroup[], data: any = {}, parentId: n
 	return data;
 }
 
-// export function getFlattenDs(root: IFolder[], data: any = {}, parentId: string = '') {
-// 	if (root.length > 0) {
-// 		// initialize
-// 		if (parentId === '') {
-// 			data = Object.fromEntries(
-// 				Object.entries(root).map((x) => {
-// 					return [{folder_id: x[0], folder_name: }];
-// 				}),
-// 			);
-// 			customDebug('initialize data ' + data);
-// 		}
-// 		root.forEach((e: INoteGroup) => {
-// 			customDebug('checking ' + e.name);
-// 			if (parentId > 0) {
-// 				customDebug('changing prefixed(1) entry ' + parentId + '/' + e.name);
-// 				data[e.id].name = `${data[parentId].name}/${e.name}`;
-// 			}
-// 			customDebug('going in');
-// 			data = getFlattenGroups(e.subdirectories, data, e.id);
-// 		});
-// 	}
-// 	customDebug('going out');
-// 	customDebug('out data', data);
-// 	return data;
-// }
+export function getFlattenTree(
+	data: IFolder['data'],
+	parentId: string="",
+	parentKey: string="",
+	returnType: 'file'|'folder'|'all' = "all"){
+
+  const ar = Object.entries(data)
+  let out: any = []
+
+  ar.forEach( ele => {
+    let [k,v] = ele
+    if (v.type === "directory"){
+      if (Object.keys( v.children ).length > 0){
+        out.push(...getFlattenTree(v.children, k, v.name, returnType))
+      }
+
+			if (returnType === 'folder' || returnType === 'all' ){
+				out.push({
+					_parentId: parentId,
+					_parentKey: parentKey,
+					_key: k,
+					type: "directory",
+					name: v.name,
+					is_root: v.is_root
+				})
+			}
+    } else {
+      if (returnType === 'file' || returnType === 'all' ){
+        const obj = Object.assign({}, {_parentId: parentId,_parentKey: parentKey, _key: k}, v)
+        out.push(obj)
+      }
+    }
+
+  })
+  return out
+}
