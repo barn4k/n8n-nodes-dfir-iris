@@ -13,7 +13,8 @@ import { types } from '../../helpers';
 import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rAlertId,
+	{ ...local.alertId, required: true },
+	// local.rAlertId,
 	{
 		displayName: 'Options',
 		name: 'options',

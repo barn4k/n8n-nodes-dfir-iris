@@ -359,7 +359,7 @@ export const alertSource: INodeProperties = {
 	name: 'alert_source',
 	type: 'string',
 	default: '',
-	description: 'Source of the alert (where it comes from)',
+	description: 'Source of the alert (where it comes from). You can use part of the string for filtering.',
 };
 
 export const alertOwner: INodeProperties = {
@@ -436,8 +436,8 @@ export const alertAssets: INodeProperties = {
 	name: 'alert_assets',
 	type: 'string',
 	default: '',
-	description: 'Comma-separated list of Alert Asset IDs',
-	placeholder: '1,2,3',
+	description: 'Comma-separated list of Asset Names',
+	placeholder: 'asset 1,username,pc-1',
 };
 
 export const alertAssetProps: INodeProperties[] = [

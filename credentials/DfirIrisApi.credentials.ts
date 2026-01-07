@@ -63,6 +63,13 @@ export class DfirIrisApi implements ICredentialType {
 				},
 			},
 		},
+		{
+			displayName: 'Enable Debug',
+			name: 'enableDebug',
+			type: 'boolean',
+			description: 'Whether to write debug logs in the console',
+			default: false,
+		},
 	];
 
 	// This allows the credential to be used by other parts of n8n

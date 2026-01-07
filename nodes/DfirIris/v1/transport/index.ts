@@ -10,7 +10,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
-import { customDebug } from '../helpers/utils';
+import { customDebug, enableDebug } from '../helpers/utils';
 import type FormData from 'form-data';
 
 export async function apiRequest(
@@ -23,6 +23,9 @@ export async function apiRequest(
 	isFormData: boolean = false,
 ): Promise<any> {
 	const credentials = await this.getCredentials('dfirIrisApi');
+
+	enableDebug(credentials?.enableDebug as boolean)
+
 	const baseUrl = (credentials?.isHttp ? 'http://' : 'https://') + credentials?.host;
 	let headers = { 'content-type': 'application/json; charset=utf-8' };
 
@@ -77,6 +80,9 @@ export async function apiRequestAll(
 	propKey: string,
 ): Promise<any> {
 	const credentials = await this.getCredentials('dfirIrisApi');
+
+	enableDebug(credentials?.enableDebug as boolean)
+
 	const baseUrl = (credentials?.isHttp ? 'http://' : 'https://') + credentials?.host;
 	let headers = { 'content-type': 'application/json; charset=utf-8' };
 

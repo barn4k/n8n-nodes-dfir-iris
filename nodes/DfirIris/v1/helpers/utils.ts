@@ -3,7 +3,17 @@ import type { IDataObject, IExecuteFunctions, INodePropertyOptions } from 'n8n-w
 import { NodeOperationError } from 'n8n-workflow';
 import type { IFolder, IFolderSub, INoteGroup } from './../helpers/types';
 
-const SHOW_LOGS = false
+// overwrite on global level
+const SHOW_LOGS_FORCED = false
+
+let SHOW_LOGS = false
+
+export function enableDebug(state: boolean): void{
+	if (!SHOW_LOGS_FORCED){
+		SHOW_LOGS = state ? true : false
+	}
+}
+
 export function customDebug(msg: string, obj: any = {}){
 	if (SHOW_LOGS){
 		if (obj){
@@ -15,7 +25,6 @@ export function customDebug(msg: string, obj: any = {}){
 }
 
 export function fieldsRemover(responseRoot: any, options: IDataObject) {
-	// const fields = (options.fields as string[]) || [];
 	const fields = (options.fields as string).replace(/\s+/g, '').split(',') || [];
 	const inverseFields = (options.inverseFields as boolean) || false;
 
