@@ -26,7 +26,7 @@ const properties: INodeProperties[] = [
 			local.iocValue,
 			local.iocTLP,
 			local.iocTags,
-			types.customAttributes,
+			...types.customAttributes,
 		],
 	},
 
@@ -54,7 +54,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	utils.addAdditionalFields.call(this, body, i);
+	utils.addAdditionalFields.call(this, body, i, 'IOC');
 
 	response = await apiRequest.call(
 		this,

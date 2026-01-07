@@ -24,7 +24,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
-		options: [types.customAttributes],
+		options: [...types.customAttributes],
 	},
 
 	{
@@ -56,7 +56,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	body.ioc_value = this.getNodeParameter('ioc_value', i) as string;
 	body.ioc_description = this.getNodeParameter('ioc_description', i) as string;
 	body.ioc_tags = this.getNodeParameter('ioc_tags', i) as string;
-	utils.addAdditionalFields.call(this, body, i);
+	utils.addAdditionalFields.call(this, body, i, 'IOC');
 
 	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);
 

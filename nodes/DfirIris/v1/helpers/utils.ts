@@ -1,9 +1,10 @@
 import type { IDataObject, IExecuteFunctions, INodePropertyOptions } from 'n8n-workflow';
 
 import { NodeOperationError } from 'n8n-workflow';
-import type { IFolder, IFolderSub, INoteGroup } from './../helpers/types';
+import type { IFolder, IFolderSub, INoteGroup, TCustomAttributeNames } from './../helpers/types';
+import { getCustomAttributes } from '../transport';
 
-const SHOW_LOGS = false
+let SHOW_LOGS = false
 export function customDebug(msg: string, obj: any = {}){
 	if (SHOW_LOGS){
 		if (obj){
@@ -56,16 +57,11 @@ export function fieldsRemover(responseRoot: any, options: IDataObject) {
 	return responseRoot;
 }
 
-/**
- * Add the additional fields to the body
- *
- * @param {IDataObject} body The body object to add fields to
- * @param {number} index The index of the item
- */
 export function addAdditionalFields(
 	this: IExecuteFunctions,
 	body: IDataObject,
 	index: number,
+	entityType?: TCustomAttributeNames,
 	nodeVersion?: number,
 	instanceId?: string,
 ) {
@@ -74,16 +70,38 @@ export function addAdditionalFields(
 	customDebug('additionalFields', additionalFields);
 
 	if (additionalFields.hasOwnProperty('custom_attributes')) {
-		if (typeof additionalFields.custom_attributes !== 'object') {
+		let addAttributes = additionalFields.custom_attributes
+		if (typeof addAttributes !== 'object') {
 			try {
-				JSON.parse(additionalFields.custom_attributes as string);
+				addAttributes = JSON.parse(addAttributes as string);
 			} catch {
 				throw new NodeOperationError(this.getNode(), 'JSON parameter needs to be valid JSON', {
 					itemIndex: index,
 				});
 			}
-			additionalFields.custom_attributes = JSON.parse(additionalFields.custom_attributes as string);
 		}
+
+		if (additionalFields.hasOwnProperty('custom_attributes_mode')){
+			if (additionalFields.custom_attributes_mode === 'rewrite'){
+				additionalFields.custom_attributes = addAttributes;
+			} else if (additionalFields.custom_attributes_mode === 'update'){
+				let irisAttributes = getCustomAttributes.call(this, entityType as TCustomAttributeNames)
+				customDebug('attributes', irisAttributes)
+				Object.keys(addAttributes as IDataObject).forEach(ca => {
+					if ( !Object.keys(irisAttributes).includes(ca) ){
+						throw new NodeOperationError(this.getNode(), `Custom Attribute '${ca}' not in the schema. Supported attributes are: ${Object.keys(irisAttributes).join(', ')}`, {
+							itemIndex: index,
+						});
+					} else {
+						// @ts-ignore
+						Object.assign(irisAttributes[ca], addAttributes[ca])
+						additionalFields.custom_attributes = irisAttributes
+					}
+				})
+			}
+			delete additionalFields.custom_attributes_mode
+		}
+
 	}
 
 	Object.keys(additionalFields).forEach((f) => {
@@ -91,6 +109,42 @@ export function addAdditionalFields(
 	});
 	Object.assign(body, additionalFields);
 }
+
+// /**
+//  * Add the additional fields to the body
+//  *
+//  * @param {IDataObject} body The body object to add fields to
+//  * @param {number} index The index of the item
+//  */
+// export function addAdditionalFields(
+// 	this: IExecuteFunctions,
+// 	body: IDataObject,
+// 	index: number,
+// 	nodeVersion?: number,
+// 	instanceId?: string,
+// ) {
+// 	// Add the additional fields
+// 	const additionalFields = this.getNodeParameter('additionalFields', index);
+// 	customDebug('additionalFields', additionalFields);
+
+// 	if (additionalFields.hasOwnProperty('custom_attributes')) {
+// 		if (typeof additionalFields.custom_attributes !== 'object') {
+// 			try {
+// 				JSON.parse(additionalFields.custom_attributes as string);
+// 			} catch {
+// 				throw new NodeOperationError(this.getNode(), 'JSON parameter needs to be valid JSON', {
+// 					itemIndex: index,
+// 				});
+// 			}
+// 			additionalFields.custom_attributes = JSON.parse(additionalFields.custom_attributes as string);
+// 		}
+// 	}
+
+// 	Object.keys(additionalFields).forEach((f) => {
+// 		f.startsWith('__') ? delete additionalFields[f] : '';
+// 	});
+// 	Object.assign(body, additionalFields);
+// }
 
 export function getFolderNested(
 	data: INodePropertyOptions[],

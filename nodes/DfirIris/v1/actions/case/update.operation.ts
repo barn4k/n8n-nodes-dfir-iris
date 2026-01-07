@@ -51,7 +51,7 @@ const properties: INodeProperties[] = [
 			icase.caseStatus,
 			icase.caseSeverity,
 			icase.caseTags,
-			types.customAttributes,
+			...types.customAttributes,
 		],
 	},
 
@@ -79,7 +79,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response: INodeExecutionData[];
 	let body: IDataObject = {};
 
-	utils.addAdditionalFields.call(this, body, i);
+	utils.addAdditionalFields.call(this, body, i, 'Cases');
 
 	const options = this.getNodeParameter('options', i, {});
 

@@ -28,6 +28,33 @@ export interface IFolderSub {
 	type: 'directory';
 }
 
+
+export interface ICustomAttributeContent {
+	[tab: string]: {
+		[field: string]: {
+			type: string
+			mandatory: boolean
+			value: any
+		}
+	}
+}
+
+export interface ICustomAttributeContentResponse {
+	[tab: string]: {
+		[field: string]:  any
+	}
+}
+
+export type TCustomAttributeNames = "IOC"| "Events" | "Assets" | "Tasks" | "Notes" | "Evidences" | "Customers" | "Cases"
+
+export interface ICustomAttribute {
+	attribute_id: number,
+	attribute_display_name: TCustomAttributeNames
+	attribute_description: string
+	attribute_content: ICustomAttributeContent
+	attribute_for: string
+}
+
 export interface IFileSub {
 	file_parent_id: number
 	file_description: string

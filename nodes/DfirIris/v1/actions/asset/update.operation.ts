@@ -30,7 +30,7 @@ const properties: INodeProperties[] = [
 			local.assetInfo,
 			local.assetIP,
 			local.assetTags,
-			types.customAttributes,
+			...types.customAttributes,
 			local.iocReference,
 		],
 	},
@@ -61,7 +61,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	body.asset_type_id = this.getNodeParameter('asset_type_id', i) as number;
 	body.asset_name = this.getNodeParameter('asset_name', i) as string;
-	utils.addAdditionalFields.call(this, body, i);
+	utils.addAdditionalFields.call(this, body, i, 'Assets');
 
 	response = await apiRequest.call(
 		this,

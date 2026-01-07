@@ -8,10 +8,11 @@ import type {
 	IWebhookFunctions,
 	JsonObject,
 } from 'n8n-workflow';
-import { NodeApiError } from 'n8n-workflow';
+import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 
 import { customDebug } from '../helpers/utils';
 import type FormData from 'form-data';
+import { ICustomAttribute, ICustomAttributeContentResponse, TCustomAttributeNames } from '../helpers/types';
 
 export async function apiRequest(
 	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
@@ -151,4 +152,25 @@ export async function apiRequestAll(
 
 	responseData.data[propKey] = returnData;
 	return responseData;
+}
+
+export async function getCustomAttributes(this: IExecuteFunctions, aType: TCustomAttributeNames): Promise<ICustomAttributeContentResponse> {
+	const endpoint = 'manage/attributes/list';
+
+	const responseData = await apiRequest.call(this, 'GET', endpoint, {});
+	if (responseData === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const attributeContent = (responseData.data as ICustomAttribute[]).filter( (x: any) => x.attribute_display_name === aType)[0].attribute_content
+	let newContent: ICustomAttributeContentResponse = {}
+
+	Object.keys(attributeContent).forEach(tab => {
+		newContent[tab] = {}
+		Object.keys(tab).forEach( field => {
+			newContent.tab[field] = attributeContent.tab.field.value
+		})
+	})
+
+	return newContent
 }

@@ -45,7 +45,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Field',
 		default: {},
-		options: [icase.caseClassification, icase.caseTemplateId, types.customAttributes],
+		options: [icase.caseClassification, icase.caseTemplateId, ...types.customAttributes],
 	},
 
 	{
@@ -77,7 +77,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	body.case_name = this.getNodeParameter('case_name', i) as number;
 	body.case_description = this.getNodeParameter('case_description', i) as number;
 
-	utils.addAdditionalFields.call(this, body, i);
+	utils.addAdditionalFields.call(this, body, i, 'Cases');
 
 	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);
 
