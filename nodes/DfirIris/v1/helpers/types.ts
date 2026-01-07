@@ -352,10 +352,45 @@ export const returnRaw: INodeProperties[] = [
 	},
 ];
 
-export const customAttributes: INodeProperties = {
-	displayName: 'Custom Attributes',
+export const customAttributes: INodeProperties[] = [
+	{
+		displayName: 'Custom Attributes',
+		name: 'custom_attributes',
+		type: 'json',
+		default: 0,
+		description: 'Add custom attributes',
+		displayOptions: {
+			show: {
+				'@version': [1]
+			}
+		}
+	},
+	{
+	displayName: 'Custom Attributes (JSON)',
 	name: 'custom_attributes',
 	type: 'json',
 	default: 0,
-	description: 'Add custom attributes',
-};
+	description: 'Add custom attributes as JSON (without stringify). Will replace existing custom attributes.',
+	displayOptions: {
+		hide: {
+			'@version': [1]
+		}
+	}
+},
+{
+	displayName: 'Custom Attributes Write Mode',
+	name: 'custom_attributes_mode',
+	type: 'options',
+	options: [
+		{name: "Update", value: "update"},
+		{name: "Rewrite", value: "rewrite"}
+	],
+	default: "update",
+	description: 'Whether to update or rewrite custom attributes',
+	displayOptions: {
+		hide: {
+			'@version': [1]
+		}
+	}
+}
+];
