@@ -60,20 +60,20 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
 	let body: IDataObject = {};
 
 	utils.addAdditionalFields.call(this, body, i);
 	const _b = Object.entries(body);
-	let newBody: IDataObject = Object.fromEntries(_b);
+	const newBody: IDataObject = Object.fromEntries(_b);
 
-	let kvUI = this.getNodeParameter(
+	const kvUI = this.getNodeParameter(
 		'___alertContextKV.parameters',
 		i,
 		null,
 	) as INodePropertyOptions[];
-	let jsUI = this.getNodeParameter('___alertContextJSON', i, null) as string;
+	const jsUI = this.getNodeParameter('___alertContextJSON', i, null) as string;
 
 	if (kvUI !== null && kvUI.length > 0) {
 		newBody.alert_context = Object.fromEntries(
@@ -102,12 +102,12 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		null,
 	) as Array<IAsset>;
 
-	let iocsJSON = this.getNodeParameter(
+	const iocsJSON = this.getNodeParameter(
 		'additionalFields.__iocsCollectionJSON',
 		i,
 		null,
 	) as Array<IIOC>;
-	let assetsJSON = this.getNodeParameter(
+	const assetsJSON = this.getNodeParameter(
 		'additionalFields.__assetsCollectionJSON',
 		i,
 		null,
@@ -129,12 +129,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(this, 'POST', `${endpoint}/batch/update`, body, query);
 
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
 
-	if (!isRaw) responseModified = { status: 'success' };
+	if (!isRaw) response = { status: 'success' };
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject),
 		{ itemData: { item: i } },
 	);
 

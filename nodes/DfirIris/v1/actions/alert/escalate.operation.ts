@@ -105,18 +105,17 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
+	const body: IDataObject = {};
 
 	body.case_title = this.getNodeParameter('case_title', i) as string;
 
 	utils.addAdditionalFields.call(this, body, i);
 	body.case_tags ??= '';
-	// @ts-ignore
-	body.assets_import_list = body.assets_import_list?.split(',') || [];
-	// @ts-ignore
-	body.iocs_import_list = body.iocs_import_list?.split(',') || [];
+	
+	body.assets_import_list = (body.assets_import_list as string).split(',') || [];
+	body.iocs_import_list = (body.iocs_import_list as string).split(',') || [];
 
 	response = await apiRequest.call(
 		this,
@@ -128,15 +127,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
 
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

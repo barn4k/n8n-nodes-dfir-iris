@@ -9,6 +9,7 @@ export class DfirIrisApi implements ICredentialType {
 	name = 'dfirIrisApi';
 	displayName = 'DFIR IRIS API';
 	documentationUrl = 'https://docs.dfir-iris.org/latest/_static/iris_api_reference_v2.0.4.html';
+	icon = { light: "file:icons/iris.svg", dark: "file:icons/iris.svg"} as const;
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Token',
@@ -62,6 +63,7 @@ export class DfirIrisApi implements ICredentialType {
 					isHttp: [false],
 				},
 			},
+			typeOptions: { password: true },
 		},
 		{
 			displayName: 'Enable Debug',

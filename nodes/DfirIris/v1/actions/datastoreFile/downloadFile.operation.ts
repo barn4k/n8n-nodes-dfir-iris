@@ -51,22 +51,21 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let body: IDataObject | FormData = {};
-	let response: any;
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	const body: IDataObject = {};
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
 	utils.addAdditionalFields.call(this, body, i);
 
-	response = await apiRequest.call(
+	const response = await apiRequest.call(
 		this,
 		'GET',
 		`${endpoint}/file/view/` + (this.getNodeParameter('file_id', i) as string),
 		{},
 		query,
 		{
-			useStream: true,
+			// useStream: true,
 			returnFullResponse: true,
 			encoding: 'arraybuffer',
 			json: false,
@@ -74,11 +73,13 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	);
 
 	const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
-	const mimeType = (response.headers as IDataObject)?.['content-type'] ?? undefined;
+	const headers = response.headers as IDataObject
+	const mimeType = headers?.['content-type'] ?? undefined;
+	const contentDisposition = (headers['content-disposition'] ?? undefined) as string
 	const fileName =
-		(body as any).fileName ??
-		response.contentDisposition?.filename ??
-		response.headers?.['content-disposition']
+		(body as IDataObject).fileName ??
+		(response.contentDisposition as IDataObject)?.filename ??
+		contentDisposition
 			.split('; ')
 			.filter((d: string) => d.indexOf('filename') >= 0)[0]
 			.replace('filename=', '');
@@ -99,7 +100,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	item = newItem;
 
 	item.binary![binaryName] = await this.helpers.prepareBinaryData(
-		response as Buffer,
+		Buffer.from(response.body as ArrayBuffer),
 		fileName as string,
 		mimeType as string,
 	);

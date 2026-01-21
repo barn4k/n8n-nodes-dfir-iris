@@ -2,7 +2,6 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
 import type { DfirIrisType } from './node.type';
-import { customDebug } from '../helpers/utils';
 
 import * as alert from './alert/Alert.resource';
 import * as asset from './asset/Asset.resource';
@@ -15,10 +14,12 @@ import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as task from './task/Task.resource';
+import { IrisLog } from '../helpers/utils';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	const items = this.getInputData();
 	const returnData: INodeExecutionData[] = [];
+	const irisLogger = new IrisLog(this.logger);
 
 	const resource = this.getNodeParameter<DfirIrisType>('resource', 0);
 	const operation = this.getNodeParameter('operation', 0);
@@ -68,7 +69,7 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);
 			}
 
-			customDebug('router returnData:', returnData)
+			irisLogger.info('router returnData:', {returnData});
 		} catch (error) {
 			if (this.continueOnFail()) {
 				if (resource === 'datastoreFile' && operation === 'downloadFile') {

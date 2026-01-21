@@ -10,21 +10,21 @@ import type {
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 
-import { customDebug, enableDebug } from '../helpers/utils';
-import type FormData from 'form-data';
+import { enableDebug, IrisLog } from '../helpers/utils';
 
 export async function apiRequest(
 	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
 	method: IHttpRequestMethods,
 	endpoint: string,
-	body: IDataObject | FormData = {},
+	body: IDataObject = {},
 	query?: IDataObject,
 	option: IDataObject = {},
 	isFormData: boolean = false,
-): Promise<any> {
+): Promise<IDataObject> {
 	const credentials = await this.getCredentials('dfirIrisApi');
 
 	enableDebug(credentials?.enableDebug as boolean)
+	const irisLogger = new IrisLog(this.logger);
 
 	const baseUrl = (credentials?.isHttp ? 'http://' : 'https://') + credentials?.host;
 	let headers = { 'content-type': 'application/json; charset=utf-8' };
@@ -62,8 +62,8 @@ export async function apiRequest(
 	Object.assign(options, { rejectUnauthorized: disableSslChecks });
 
 	try {
-		customDebug('options', options)
-		return await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', options);
+		irisLogger.info('options', {options});
+		return await this.helpers.httpRequestWithAuthentication.call(this, 'dfirIrisApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
@@ -78,13 +78,14 @@ export async function apiRequestAll(
 	max_items: number = 0,
 	start_page: number = 1,
 	propKey: string,
-): Promise<any> {
+): Promise<IDataObject> {
 	const credentials = await this.getCredentials('dfirIrisApi');
 
 	enableDebug(credentials?.enableDebug as boolean)
 
 	const baseUrl = (credentials?.isHttp ? 'http://' : 'https://') + credentials?.host;
-	let headers = { 'content-type': 'application/json; charset=utf-8' };
+	const headers = { 'content-type': 'application/json; charset=utf-8' };
+	const irisLogger = new IrisLog(this.logger);
 
 	query = query || {};
 	let returnData: IDataObject[] = [];
@@ -101,7 +102,7 @@ export async function apiRequestAll(
 		query.page = Math.floor(start_page * max_items / query.per_page)
 	}
 
-	let options: IHttpRequestOptions = {
+	const options: IHttpRequestOptions = {
 		headers: headers,
 		method,
 		url: `${baseUrl}/${endpoint}`,
@@ -114,10 +115,10 @@ export async function apiRequestAll(
 
 	Object.assign(options, { rejectUnauthorized: disableSslChecks });
 
-	customDebug('req options: ', options)
+	irisLogger.info('req options: ', {options});
 	do {
 		try {
-			responseData = await this.helpers.requestWithAuthentication.call(this, 'dfirIrisApi', {
+			responseData = await this.helpers.httpRequestWithAuthentication.call(this, 'dfirIrisApi', {
 				...options,
 				rejectUnauthorized: true,
 			});
@@ -126,18 +127,18 @@ export async function apiRequestAll(
 		}
 
 		// for troubleshooting
-		customDebug('responseData', responseData)
+		irisLogger.info('responseData', {responseData});
 		// proceed = false
 
-		customDebug('current_page: ',responseData.data.current_page)
-		customDebug('next_page: ', responseData.data.next_page)
-		customDebug('last_page: ',responseData.data.last_page)
-		customDebug('total: ',responseData.data.total)
+		irisLogger.info('current_page: ', responseData.data.current_page);
+		irisLogger.info('next_page: ', responseData.data.next_page);
+		irisLogger.info('last_page: ', responseData.data.last_page);
+		irisLogger.info('total: ', responseData.data.total);
 
 		returnData.push(...responseData.data[propKey]);
 
-		customDebug('max_items: ', max_items)
-		customDebug('returnData.length: ', returnData.length)
+		irisLogger.info(`max_items: ${max_items}`);
+		irisLogger.info(`returnData.length: ${returnData.length}`);
 
 		if (max_items > 0 && returnData.length >= max_items) {
 			proceed = false;
@@ -148,8 +149,9 @@ export async function apiRequestAll(
 		) {
 			proceed = false;
 		} else {
-			// @ts-ignore
-			options.qs.page = responseData.data.next_page;
+			if (options.qs && typeof options.qs === 'object'){
+				options.qs.page = responseData.data.next_page;
+			}
 		}
 	} while (proceed);
 

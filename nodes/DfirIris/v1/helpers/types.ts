@@ -31,7 +31,7 @@ export interface IFolderSub {
 export interface IFileSub {
 	file_parent_id: number
 	file_description: string
-	modification_history: any
+	modification_history: IDataObject
 	file_date_added: string
 	added_by_user_id: number
 	file_id: number

@@ -8,7 +8,7 @@ export class DfirIris extends VersionedNodeType {
 		const baseDescription: INodeTypeBaseDescription = {
 			displayName: 'DFIR IRIS',
 			name: 'dfirIris',
-			icon: 'file:iris.svg',
+			icon: 'file:icons/iris.svg',
 			group: ['input'],
 			subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',
 			description: 'works with DFIR IRIS IRP',

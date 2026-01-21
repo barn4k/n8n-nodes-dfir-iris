@@ -42,14 +42,13 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	const body: IDataObject = {};
 
 	body.parent_node = this.getNodeParameter('folderId', i) as string;
 	body.folder_name = this.getNodeParameter('folderName', i, 0) as string;
 
-	response = await apiRequest.call(
+	const response = await apiRequest.call(
 		this,
 		'POST',
 		`${endpoint}/folder/rename/` + (this.getNodeParameter('folderId', i) as string),
@@ -58,7 +57,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	);
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(response as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject),
 		{ itemData: { item: i } },
 	);
 

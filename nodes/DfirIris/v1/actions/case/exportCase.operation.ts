@@ -22,14 +22,13 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('case_id', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('case_id', i, 0) as number };
+	const body: IDataObject = {};
 
-	response = await apiRequest.call(this, 'GET', `case/export`, body, query);
+	const response = await apiRequest.call(this, 'GET', `case/export`, body, query);
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(response as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject),
 		{ itemData: { item: i } },
 	);
 

@@ -46,9 +46,9 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
+	const body: IDataObject = {};
 
 	body['destination-node'] = this.getNodeParameter('folderId', i, 0) as string;
 
@@ -62,15 +62,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
+	
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified = utils.fieldsRemover(responseModified, options);
-	if (!isRaw) responseModified = { status: 'success' };
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response = utils.fieldsRemover(response, options);
+	if (!isRaw) response = [{ status: 'success' }];
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

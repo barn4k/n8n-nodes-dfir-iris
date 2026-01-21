@@ -58,9 +58,8 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	const body: IDataObject = {};
 
 	[body.hook_name, body.module_name, body.hook_ui_name] = (
 		this.getNodeParameter('moduleData', i) as string
@@ -69,10 +68,10 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	body.type = this.getNodeParameter('type', i) as string;
 	body.targets = (this.getNodeParameter('targetsString', i) as string).replace(/ /g, '').split(',');
 
-	response = await apiRequest.call(this, 'POST', 'dim/hooks/call', body, query);
+	const response = await apiRequest.call(this, 'POST', 'dim/hooks/call', body, query);
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(response as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject),
 		{ itemData: { item: i } },
 	);
 

@@ -1,5 +1,5 @@
 /* eslint-disable n8n-nodes-base/node-filename-against-convention */
-import { NodeConnectionType, type INodeTypeDescription } from 'n8n-workflow';
+import { NodeConnectionTypes, type INodeTypeDescription } from 'n8n-workflow';
 
 import * as alert from './alert/Alert.resource';
 import * as asset from './asset/Asset.resource';
@@ -18,7 +18,7 @@ import { cidDescription } from '../helpers/types';
 export const versionDescription: INodeTypeDescription = {
 	displayName: 'DFIR IRIS',
 	name: 'dfirIris',
-	icon: 'file:iris.svg',
+	icon: 'file:icons/iris.svg',
 	group: ['input'],
 	version: [1],
 	subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',
@@ -26,9 +26,9 @@ export const versionDescription: INodeTypeDescription = {
 	defaults: {
 		name: 'DFIR IRIS',
 	},
-	inputs: [NodeConnectionType.Main],
-	// eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
-	outputs: [NodeConnectionType.Main],
+	inputs: [NodeConnectionTypes.Main],
+	 
+	outputs: [NodeConnectionTypes.Main],
 	credentials: [
 		{
 			name: 'dfirIrisApi',

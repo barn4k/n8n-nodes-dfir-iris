@@ -41,22 +41,21 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = {
+	const query: IDataObject = {
 		cid: this.getNodeParameter('cid', i, 0) as number,
 		search_input: this.getNodeParameter('search', i) as string,
 	};
-	let response: INodeExecutionData[];
+	let response;
 
 	response = await apiRequest.call(this, 'GET', `${endpoint}/search`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
-	if (!isRaw) responseModified = { status: 'success' };
+	
+	if (!isRaw) response = [{ status: 'success' }];
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

@@ -1,4 +1,4 @@
-import type { IDataObject, IExecuteFunctions, INodePropertyOptions } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, INodePropertyOptions, Logger } from 'n8n-workflow';
 
 import { NodeOperationError } from 'n8n-workflow';
 import type { IFolder, IFolderSub, INoteGroup } from './../helpers/types';
@@ -8,29 +8,55 @@ const SHOW_LOGS_FORCED = false
 
 let SHOW_LOGS = false
 
+export interface IrisLogger {
+  info(message: string, meta?: Record<string, unknown>): void;
+}
+
+export class IrisLog implements IrisLogger {
+  private readonly logger: Logger;
+
+  constructor(logger: Logger) {
+    this.logger = logger;
+  }
+
+  info(message: string, meta?: Record<string, unknown>): void {
+	if (SHOW_LOGS){
+		if (meta && Object.keys(meta).length > 0) {
+		this.logger.info(message, meta);
+		} else {
+		this.logger.info(message);
+		}
+	}
+  }
+}
+
 export function enableDebug(state: boolean): void{
 	if (!SHOW_LOGS_FORCED){
 		SHOW_LOGS = state ? true : false
 	}
 }
 
-export function customDebug(msg: string, obj: any = {}){
-	if (SHOW_LOGS){
-		if (obj){
-			console.debug(msg, obj)
-		} else {
-			console.debug(msg)
-		}
-	}
-}
+// export function customDebug(
+//   logger: Logger,
+//   message: string,
+//   meta?: Record<string, unknown>,
+// ): void {
+// 	if (SHOW_LOGS){
+// 		if (meta && Object.keys(meta).length > 0) {
+// 			logger.info(message, meta);
+// 		} else {
+// 			logger.info(message);
+// 		}
+// 	}
+// }
 
-export function fieldsRemover(responseRoot: any, options: IDataObject) {
+export function fieldsRemover(responseRoot: IDataObject | IDataObject[], options: IDataObject) {
 	const fields = (options.fields as string).replace(/\s+/g, '').split(',') || [];
 	const inverseFields = (options.inverseFields as boolean) || false;
 
 	if (fields.length > 0) {
 		if (Array.isArray(responseRoot)) {
-			responseRoot.forEach((row: { [index: string]: any }) => {
+			responseRoot.forEach((row: IDataObject) => {
 				if (inverseFields) {
 					Object.keys(row)
 						.filter((k) => fields.includes(k))
@@ -75,14 +101,15 @@ export function addAdditionalFields(
 	this: IExecuteFunctions,
 	body: IDataObject,
 	index: number,
-	nodeVersion?: number,
-	instanceId?: string,
+	// nodeVersion?: number,
+	// instanceId?: string,
 ) {
 	// Add the additional fields
 	const additionalFields = this.getNodeParameter('additionalFields', index);
-	customDebug('additionalFields', additionalFields);
+	const irisLogger = new IrisLog(this.logger);
+	irisLogger.info('additionalFields', additionalFields);
 
-	if (additionalFields.hasOwnProperty('custom_attributes')) {
+	if (Object.prototype.hasOwnProperty.call(additionalFields, 'custom_attributes')) {
 		if (typeof additionalFields.custom_attributes !== 'object') {
 			try {
 				JSON.parse(additionalFields.custom_attributes as string);
@@ -96,7 +123,9 @@ export function addAdditionalFields(
 	}
 
 	Object.keys(additionalFields).forEach((f) => {
-		f.startsWith('__') ? delete additionalFields[f] : '';
+		if (f.startsWith('__')) {
+			delete additionalFields[f];
+		}
 	});
 	Object.assign(body, additionalFields);
 }
@@ -119,52 +148,60 @@ export function getFolderNested(
 }
 
 export function getNoteGroupsNested(
+	logger: Logger,
 	root: INoteGroup[],
 	data: INodePropertyOptions[] = [],
 	prefix: string = '',
 ) {
+	const irisLogger = new IrisLog(logger);
 	if (root.length > 0) {
 		root.forEach((e: INoteGroup) => {
-			customDebug('checking '+e.name)
+			irisLogger.info('checking '+e.name)
 			const oldEntry = data.filter((x) => x.value === e.id);
 			// if in sub >> remove sub id from root
 			if (prefix) {
 				if (oldEntry.length > 0) {
 					if (oldEntry[0].name.indexOf('--') === -1) {
-						customDebug('removing old entry with '+e.name)
-						customDebug('data before old', data)
+						irisLogger.info('removing old entry with '+e.name)
+						irisLogger.info('data before old:', {data})
 						data = data.filter((x) => x.value !== e.id);
-						customDebug('data after old', data)
+						irisLogger.info('data after old', {data})
 
-						customDebug('adding new prefixed(1) entry '+prefix+" "+e.name)
+						irisLogger.info('adding new prefixed(1) entry '+prefix+" "+e.name)
 						data.push({
 							name: `${prefix}${e.name}`,
 							value: e.id,
 						});
 					}
 				} else {
-					customDebug('adding new prefixed(2) entry '+prefix+" "+e.name)
+					irisLogger.info('adding new prefixed(2) entry '+prefix+" "+e.name)
 					data.push({
 						name: `${prefix}${e.name}`,
 						value: e.id,
 					});
 				}
 			} else if (oldEntry.length === 0) {
-				customDebug('adding new root entry '+e.name)
+				irisLogger.info('adding new root entry '+e.name)
 				data.push({
 					name: `${prefix}${e.name}`,
 					value: e.id,
 				});
 			}
-			customDebug('going in')
-			data = getNoteGroupsNested(e.subdirectories, data, `${prefix}-- `);
+			irisLogger.info('going in')
+			data = getNoteGroupsNested(logger, e.subdirectories, data, `${prefix}-- `);
 		});
 	}
-	customDebug('going out')
+	irisLogger.info('going out')
 	return data;
 }
 
-export function getFlattenGroups(root: INoteGroup[], data: any = {}, parentId: number = 0) {
+export function getFlattenGroups(
+	logger: Logger,
+	root: INoteGroup[], 
+	data: IDataObject = {}, 
+	parentId: number = 0
+) {
+	const irisLogger = new IrisLog(logger);
 	if (root.length > 0) {
 		// initialize
 		if (parentId === 0) {
@@ -173,20 +210,22 @@ export function getFlattenGroups(root: INoteGroup[], data: any = {}, parentId: n
 					return [x.id, { name: x.name, notes: x.notes }];
 				}),
 			);
-			customDebug('initialize data ' + data);
+			irisLogger.info('initialize data ' + data);
 		}
 		root.forEach((e: INoteGroup) => {
-			customDebug('checking ' + e.name);
+			irisLogger.info('checking ' + e.name);
 			if (parentId > 0) {
-				customDebug('changing prefixed(1) entry ' + parentId + '/' + e.name);
-				data[e.id].name = `${data[parentId].name}/${e.name}`;
+				irisLogger.info('changing prefixed(1) entry ' + parentId + '/' + e.name);
+				const dataId = data[e.id] as IDataObject
+				const dataPid = data[parentId] as IDataObject
+				dataId.name = `${dataPid?.name}/${e.name}`;
 			}
-			customDebug('going in');
-			data = getFlattenGroups(e.subdirectories, data, e.id);
+			irisLogger.info('going in');
+			data = getFlattenGroups(logger, e.subdirectories, data, e.id);
 		});
 	}
-	customDebug('going out');
-	customDebug('out data', data);
+	irisLogger.info('going out');
+	irisLogger.info('out data', data);
 	return data;
 }
 
@@ -197,10 +236,10 @@ export function getFlattenTree(
 	returnType: 'file'|'folder'|'all' = "all"){
 
   const ar = Object.entries(data)
-  let out: any = []
+  const out: IDataObject[] = []
 
   ar.forEach( ele => {
-    let [k,v] = ele
+    const [k,v] = ele
     if (v.type === "directory"){
       if (Object.keys( v.children ).length > 0){
         out.push(...getFlattenTree(v.children, k, v.name, returnType))
@@ -218,7 +257,7 @@ export function getFlattenTree(
 			}
     } else {
       if (returnType === 'file' || returnType === 'all' ){
-        const obj = Object.assign({}, {_parentId: parentId,_parentKey: parentKey, _key: k}, v)
+        const obj = Object.assign({}, {_parentId: parentId, _parentKey: parentKey, _key: k}, v) as unknown as IDataObject
         out.push(obj)
       }
     }

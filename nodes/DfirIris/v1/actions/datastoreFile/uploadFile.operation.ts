@@ -7,10 +7,6 @@ import type {
 
 import { NodeOperationError, BINARY_ENCODING, updateDisplayOptions } from 'n8n-workflow';
 
-import FormData from 'form-data';
-
-import type { Readable } from 'stream';
-
 import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
@@ -98,13 +94,13 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let body: IDataObject | FormData = {};
-	let response: INodeExecutionData[];
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	const body: IDataObject = {};
+	let response;
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
-	let uploadData: Buffer | Readable;
+	let uploadData: Buffer | unknown;
 
 	const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
 	const binaryData = this.helpers.assertBinaryData(i, binaryName);
@@ -120,14 +116,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	if (!fileName)
 		throw new NodeOperationError(this.getNode(), 'No file name given for file upload.');
 
-	// TODO: fix later formdata
-	// const formData = new FormData();
-
-	if (body.hasOwnProperty('file_is_ioc')) body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
-	if (body.hasOwnProperty('file_is_evidence'))
+	if (Object.prototype.hasOwnProperty.call(body, 'file_is_ioc')) body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
+	if (Object.prototype.hasOwnProperty.call(body, 'file_is_evidence'))
 		body.file_is_evidence = body.file_is_evidence ? 'y' : 'n';
-	if (!body.hasOwnProperty('file_description')) body.file_description = '';
-	if (!body.hasOwnProperty('file_tags')) body.file_tags = '';
+	if (!Object.prototype.hasOwnProperty.call(body, 'file_description')) body.file_description = '';
+	if (!Object.prototype.hasOwnProperty.call(body, 'file_tags')) body.file_tags = '';
 
 	const formData = {
 		file_content: {
@@ -153,15 +146,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
+	
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 
