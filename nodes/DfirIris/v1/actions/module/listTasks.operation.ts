@@ -47,6 +47,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		this,
 		'GET',
 		'dim/tasks/list/' + (this.getNodeParameter('rows_count', i, 10) as string),
+		{}
 	);
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;

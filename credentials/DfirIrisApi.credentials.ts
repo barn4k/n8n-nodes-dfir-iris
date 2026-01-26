@@ -30,7 +30,8 @@ export class DfirIrisApi implements ICredentialType {
 			displayName: 'Host',
 			name: 'host',
 			type: 'string',
-			default: '<yourserver.yourdomain>',
+			placeholder: 'iris.contoso.com',
+			default: '',
 			description: 'The FQDN, not the URL',
 		},
 		{

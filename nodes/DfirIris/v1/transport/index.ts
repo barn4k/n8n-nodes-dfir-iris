@@ -16,7 +16,7 @@ export async function apiRequest(
 	this: IHookFunctions | IExecuteFunctions | ILoadOptionsFunctions | IWebhookFunctions,
 	method: IHttpRequestMethods,
 	endpoint: string,
-	body: IDataObject = {},
+	body: IDataObject | FormData,
 	query?: IDataObject,
 	option: IDataObject = {},
 	isFormData: boolean = false,
@@ -25,11 +25,7 @@ export async function apiRequest(
 
 	enableDebug(credentials?.enableDebug as boolean)
 	const irisLogger = new IrisLog(this.logger);
-
 	const baseUrl = (credentials?.isHttp ? 'http://' : 'https://') + credentials?.host;
-	let headers = { 'content-type': 'application/json; charset=utf-8' };
-
-	if (isFormData) headers = { 'content-type': 'multipart/form-data; charset=utf-8' };
 
 	query = query || {};
 
@@ -38,20 +34,29 @@ export async function apiRequest(
 		: (credentials.allowUnauthorizedCerts as boolean);
 
 	let options: IHttpRequestOptions = {
-		headers: headers,
 		method,
 		url: `${baseUrl}/${endpoint}`,
-		body,
 		qs: query,
+		body,
+		returnFullResponse: false,
 		json: true,
+		headers: { 'content-type': 'application/json' },
 		skipSslCertificateValidation: disableSslChecks,
-		ignoreHttpStatusErrors: true,
-	};
+		ignoreHttpStatusErrors: false,
+	} satisfies IHttpRequestOptions;
+
+	if (isFormData){
+		irisLogger.info('Setting up form data request');
+		options.json = false
+		// options.returnFullResponse = true
+		delete options.headers
+	}
+
 	if (Object.keys(option).length > 0) {
 		options = Object.assign({}, options, option);
 	}
 
-	if (Object.keys(body).length === 0) {
+	if (Object.keys(body).length === 0 && !isFormData) {
 		delete options.body;
 	}
 

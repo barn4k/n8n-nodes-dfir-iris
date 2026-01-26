@@ -18,7 +18,6 @@ import { cidDescription } from '../helpers/types';
 export const versionDescription: INodeTypeDescription = {
 	displayName: 'DFIR IRIS',
 	name: 'dfirIris',
-	// icon: 'file:icons/iris.svg',
 	group: ['input'],
 	version: [1],
 	subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',

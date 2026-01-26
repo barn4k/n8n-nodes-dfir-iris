@@ -36,20 +36,6 @@ export function enableDebug(state: boolean): void{
 	}
 }
 
-// export function customDebug(
-//   logger: Logger,
-//   message: string,
-//   meta?: Record<string, unknown>,
-// ): void {
-// 	if (SHOW_LOGS){
-// 		if (meta && Object.keys(meta).length > 0) {
-// 			logger.info(message, meta);
-// 		} else {
-// 			logger.info(message);
-// 		}
-// 	}
-// }
-
 export function fieldsRemover(responseRoot: IDataObject | IDataObject[], options: IDataObject) {
 	const fields = (options.fields as string).replace(/\s+/g, '').split(',') || [];
 	const inverseFields = (options.inverseFields as boolean) || false;
