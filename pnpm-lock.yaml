@@ -6,11 +6,13 @@ settings:
 
 overrides:
   '@types/node': 20.19.30
-  form-data: '>=4.0.4'
-  glob: '>=11.1.0'
-  lodash: '>=4.17.23'
-  undici: '>=6.23.0'
-  js-yaml: '>=4.1.1'
+  form-data: 4.0.4
+  glob@10: 10.5.0
+  glob@7: 7.2.3
+  lodash-es: 4.17.23
+  undici@6: ^6.23.0
+  undici@7: ^7.18.2
+  js-yaml: 4.1.1
 
 importers:
 
@@ -1057,8 +1059,8 @@ packages:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
     engines: {node: '>=14'}
 
-  form-data@4.0.5:
-    resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
+  form-data@4.0.4:
+    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
     engines: {node: '>= 6'}
 
   function-bind@1.1.2:
@@ -1381,6 +1383,9 @@ packages:
 
   lodash.uniqby@4.7.0:
     resolution: {integrity: sha512-e/zcLx6CSbmaEgFHCA7BnoQKyCtKMxnuWrJygbwPs/AIn+IMKl66L8/s+wBUn5LRw2pZx3bUHibiV1b6aTWIww==}
+
+  lodash@4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
   lodash@4.17.23:
     resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
@@ -3114,7 +3119,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  form-data@4.0.5:
+  form-data@4.0.4:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
@@ -3430,6 +3435,8 @@ snapshots:
 
   lodash.uniqby@4.7.0: {}
 
+  lodash@4.17.21: {}
+
   lodash@4.17.23: {}
 
   log-symbols@7.0.1:
@@ -3517,12 +3524,12 @@ snapshots:
       ast-types: 0.16.1
       callsites: 3.1.0
       esprima-next: 5.8.4
-      form-data: 4.0.5
+      form-data: 4.0.4
       jmespath: 0.16.0
       js-base64: 3.7.2
       jsonrepair: 3.13.1
       jssha: 3.3.1
-      lodash: 4.17.23
+      lodash: 4.17.21
       luxon: 3.4.4
       md5: 2.3.0
       recast: 0.22.0
