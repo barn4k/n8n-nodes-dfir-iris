@@ -9,6 +9,7 @@ import * as icase from './case/Case.resource';
 import * as comment from './comment/Comment.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as evidence from './evidence/Evidence.resource';
 import * as ioc from './ioc/IOC.resource';
 import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
@@ -37,6 +38,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 					break;
 				case 'datastoreFolder':
 					returnData.push(...(await datastoreFolder[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'evidence':
+					returnData.push(...(await evidence[dfirIris.operation].execute.call(this, i)));
 					break;
 				case 'asset':
 					returnData.push(...(await asset[dfirIris.operation].execute.call(this, i)));

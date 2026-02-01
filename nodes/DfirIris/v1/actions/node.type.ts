@@ -32,6 +32,7 @@ type NodeMap = {
 		| 'moveFile'
 		| 'deleteFile';
 	datastoreFolder: 'getTree' | 'addFolder' | 'moveFolder' | 'renameFolder' | 'deleteFolder';
+	evidence: 'createEvidence' | 'deleteEvidence' | 'getEvidence' | 'listEvidences' | 'updateEvidence';
 	ioc: 'create' | 'deleteIOC' | 'get' | 'getAll' | 'update';
 	note: 'create' | 'deleteNote' | 'get' | 'search' | 'update';
 	noteDirectory: 'create' | 'deleteNoteDirectory' | 'getAll' | 'update';

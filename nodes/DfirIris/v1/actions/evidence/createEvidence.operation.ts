@@ -1,0 +1,101 @@
+import type {
+	IDataObject,
+	IExecuteFunctions,
+	INodeExecutionData,
+	INodeProperties,
+} from 'n8n-workflow';
+
+import { updateDisplayOptions } from 'n8n-workflow';
+
+import { endpoint } from './Evidence.resource';
+import { apiRequest } from '../../transport';
+import { utils, types } from '../../helpers';
+import * as local from './commonDescription';
+
+const fields = [
+    "acquisition_date",
+    "case",
+    "case_id",
+    "chain_of_custody",
+    "custom_attributes",
+    "date_added",
+    "end_date",
+    "file_description",
+    "file_hash",
+    "file_size",
+    "file_uuid",
+    "filename",
+    "id",
+    "start_date",
+    "type",
+    "type_id",
+    "user",
+    "user_id"
+]
+
+const properties: INodeProperties[] = [
+	local.fileName,
+	{
+		displayName: 'Additional Fields',
+		name: 'additionalFields',
+		type: 'collection',
+		placeholder: 'Add Field',
+		default: {},
+		options: [
+			local.fileSize,
+			local.fileDescription,
+			local.fileHash,
+			types.customAttributes,
+		],
+	},
+	{
+		displayName: 'Options',
+		name: 'options',
+		type: 'collection',
+		placeholder: 'Add Option',
+		default: {},
+		options: [...types.returnRaw, ...types.fieldProperties(fields)],
+	},
+];
+
+const displayOptions = {
+	show: {
+		resource: ['evidence'],
+		operation: ['createEvidence'],
+	},
+};
+
+export const description = updateDisplayOptions(displayOptions, properties);
+
+export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
+	const body: IDataObject = {};
+
+	body.filename = this.getNodeParameter(local.fileName.name, i) as string;
+
+	utils.addAdditionalFields.call(this, body, i);
+
+	response = await apiRequest.call(
+		this,
+		'POST',
+		`${endpoint}/add`,
+		body,
+		query,
+	);
+
+	const options = this.getNodeParameter('options', i, {});
+	const isRaw = (options.isRaw as boolean) || false;
+	
+	// field remover
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
+
+	const executionData = this.helpers.constructExecutionMetaData(
+		this.helpers.returnJsonArray(response as IDataObject[]),
+		{ itemData: { item: i } },
+	);
+
+	return executionData;
+}

@@ -7,6 +7,7 @@ import * as icase from './case/Case.resource';
 import * as comment from './comment/Comment.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as evidence from './evidence/Evidence.resource';
 import * as ioc from './ioc/IOC.resource';
 import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
@@ -66,6 +67,10 @@ export const versionDescription: INodeTypeDescription = {
 					value: 'datastoreFolder',
 				},
 				{
+					name: 'Evidence',
+					value: 'evidence',
+				},
+				{
 					name: 'IOC',
 					value: 'ioc',
 				},
@@ -78,10 +83,6 @@ export const versionDescription: INodeTypeDescription = {
 					name: 'Module',
 					value: 'module',
 				},
-				// {
-				// 	name: 'Evidence',
-				// 	value: 'evidence',
-				// },
 				{
 					name: 'Note',
 					value: 'note',
@@ -105,6 +106,7 @@ export const versionDescription: INodeTypeDescription = {
 		...comment.resource,
 		...datastoreFile.resource,
 		...datastoreFolder.resource,
+		...evidence.resource,
 		...ioc.resource,
 		...iModule.resource,
 		...note.resource,
