@@ -15,6 +15,8 @@ import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as task from './task/Task.resource';
+import * as timeline from './timeline/Timeline.resource';
+
 import { IrisLog } from '../helpers/utils';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -68,6 +70,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 					break;
 				case 'alert':
 					returnData.push(...(await alert[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'timeline':
+					returnData.push(...(await timeline[dfirIris.operation].execute.call(this, i)));
 					break;
 				default:
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);

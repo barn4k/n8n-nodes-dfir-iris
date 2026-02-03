@@ -4,7 +4,7 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import { apiRequest } from '../transport/index';
 import { utils } from './../helpers';
-import { IFolder, INoteGroup } from '../helpers/types';
+import { IFolder, INoteGroup, ITimelineAsset, ITimelineIOC } from '../helpers/types';
 
 export async function getUsers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'case/users/list';
@@ -436,6 +436,88 @@ export async function getModules(this: ILoadOptionsFunctions): Promise<INodeProp
 				value: `${row.hook_name};${row.manual_hook_ui_name};${row.module_name}`,
 			});
 		});
+	}
+	
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+export async function getTimelineAssets(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = `case/timeline/advanced-filter`;
+	const query = { cid: this.getNodeParameter('cid') as number, q: {} };
+
+	const irisLogger = new utils.IrisLog(this.logger);
+
+	const response = await apiRequest.call(this, 'GET', endpoint, {}, query);
+	if (response === undefined || null) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+	irisLogger.info('getTimelineAssets', {response});
+	const returnData: INodePropertyOptions[] = [];
+
+	if (response.data && typeof response.data === 'object' && 'assets' in response.data){
+		const assets = response.data.assets as ITimelineAsset;
+		if (Object.keys(assets).length === 0) {
+			return [];
+		}
+
+		Object.entries(assets).forEach( x => { 
+			returnData.push({ 
+				name: `${x[1][0]} (${x[1][1]})`, 
+				value: String(x[0]) 
+			}) 
+		})
+	}
+	
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+export async function getTimelineIocs(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const endpoint = `case/timeline/advanced-filter`;
+	const query = { cid: this.getNodeParameter('cid') as number, q: {} };
+
+	const irisLogger = new utils.IrisLog(this.logger);
+
+	const response = await apiRequest.call(this, 'GET', endpoint, {}, query);
+	if (response === undefined || null) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+	irisLogger.info('getTimelineIocs', {response});
+	const returnData: INodePropertyOptions[] = [];
+
+	if (response.data && typeof response.data === 'object' && 'iocs' in response.data){
+		const iocs = response.data.iocs as ITimelineIOC[];
+		if (iocs.length === 0) {
+			return [];
+		}
+
+		iocs.forEach( x => { 
+			returnData.push({ 
+				name: `${x.ioc_value}`, 
+				value: String(x.ioc_id) 
+			}) 
+		})
 	}
 	
 

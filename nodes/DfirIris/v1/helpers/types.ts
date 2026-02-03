@@ -86,6 +86,16 @@ export interface IAlert extends IDataObject {
 	alert_source_content?: object;
 }
 
+export interface ITimelineAsset extends IDataObject {
+	[key: string]: [string, string]
+}
+
+export interface ITimelineIOC extends IDataObject {
+	ioc_id: number;
+	ioc_description?: string;
+	ioc_value?: string;
+}
+
 export const taskFields = [
 	'task_open_date',
 	'task_userid_close',
