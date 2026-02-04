@@ -13,9 +13,9 @@ import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rAssetId,
-	local.rAssetName,
-	local.rAssetType,
+	{...local.assetId, required: true},
+	{...local.assetName, required: true},
+	{...local.assetType, required: true},
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -59,14 +59,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response;
 	const body: IDataObject = {};
 
-	body.asset_type_id = this.getNodeParameter('asset_type_id', i) as number;
-	body.asset_name = this.getNodeParameter('asset_name', i) as string;
+	body.asset_type_id = this.getNodeParameter(local.assetType.name, i) as number;
+	body.asset_name = this.getNodeParameter(local.assetName.name, i) as string;
 	utils.addAdditionalFields.call(this, body, i);
 
 	response = await apiRequest.call(
 		this,
 		'POST',
-		(`${endpoint}/update/` + this.getNodeParameter('asset_id', i)) as string,
+		(`${endpoint}/update/` + this.getNodeParameter(local.assetId.name, i)) as string,
 		body,
 		query,
 	);

@@ -13,7 +13,7 @@ import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rIocId,
+	{...local.iocId, required: true},
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -40,7 +40,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(
 		this,
 		'GET',
-		(`${endpoint}/` + this.getNodeParameter('id', i)) as string,
+		(`${endpoint}/` + this.getNodeParameter(local.iocId.name, i)) as string,
 		{},
 		query,
 	);

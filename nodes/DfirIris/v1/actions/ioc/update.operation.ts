@@ -13,7 +13,7 @@ import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rIocId,
+	{...local.iocId, required: true},
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',

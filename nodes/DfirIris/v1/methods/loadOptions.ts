@@ -184,7 +184,7 @@ export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropert
 		const data = response.data.ioc as IDataObject[];
 		data.forEach((row: IDataObject) => {
 			returnData.push({
-				name: `${row.ioc_value} | ${row.ioc_type} | ${row.tpl_name}`,
+				name: `${row.ioc_value} | ${row.ioc_type} | ${row.ioc_tlp_id}`,
 				value: row.ioc_id as string | number,
 			});
 		});

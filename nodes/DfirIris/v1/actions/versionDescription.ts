@@ -20,14 +20,13 @@ export const versionDescription: INodeTypeDescription = {
 	displayName: 'DFIR IRIS',
 	name: 'dfirIris',
 	group: ['input'],
-	version: [1],
+	version: [1, 1.1],
 	subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',
 	description: 'works with DFIR IRIS IRP',
 	defaults: {
 		name: 'DFIR IRIS',
 	},
 	inputs: [NodeConnectionTypes.Main],
-	 
 	outputs: [NodeConnectionTypes.Main],
 	credentials: [
 		{
