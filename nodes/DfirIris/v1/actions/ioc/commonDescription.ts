@@ -1,4 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { TLP } from '../../helpers/types';
+// import { TLP, TLPName, TLPValue } from '../../helpers/types';
 
 export const iocId: INodeProperties = {
 	displayName: 'IOC Name or ID',
@@ -12,20 +14,12 @@ export const iocId: INodeProperties = {
 	},
 	default: '',
 };
-
 export const iocTLP: INodeProperties = {
 	displayName: 'IOC TLP',
 	name: 'ioc_tlp_id',
 	type: 'options',
-	options: [
-		{ value: 1, name: 'Red' },
-		{ value: 2, name: 'Amber' },
-		{ value: 3, name: 'Green' },
-		{ value: 4, name: 'Clear' },
-		{ value: 5, name: 'Amber Strict' },
-	],
-	default: 1,
-	description: 'IOC Name',
+	options: Object.entries(TLP).map(([name, value]) => ({ name, value })),
+	default: '',
 };
 
 export const iocType: INodeProperties = {

@@ -19,6 +19,24 @@ interface INoteSub {
 	title: string;
 }
 
+export const TLP = {
+	Red: 1,
+	Amber: 2,
+	Green: 3,
+	Clear: 4,
+	AmberStrict: 5,
+} as const;
+
+export type TLPValue = typeof TLP[keyof typeof TLP];
+export type TLPName = keyof typeof TLP;
+
+export function getTLPName(value: TLPValue): TLPName | undefined {
+  return (Object.keys(TLP) as TLPName[]).find(
+    (key) => TLP[key] === value
+  );
+}
+
+
 export interface IFolderSub {
 	children: {
 		[key: string]: IFolderSub | IFileSub;
@@ -170,6 +188,28 @@ export const datastoreFileFields: string[] = [
 	'file_id',
 	'file_description',
 	'file_password',
+].sort();
+
+export const evidenceFields: string[] = [
+    "filename",
+    "type",
+    "user",
+    "case",
+    "id",
+    "file_uuid",
+    "date_added",
+    "acquisition_date",
+    "file_hash",
+    "file_description",
+    "file_size",
+    "start_date",
+    "end_date",
+    "case_id",
+    "user_id",
+    "type_id",
+    "custom_attributes",
+    "chain_of_custody",
+    "modification_history"
 ].sort();
 
 export const noteFields: string[] = [

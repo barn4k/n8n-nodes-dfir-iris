@@ -4,7 +4,7 @@ import { NodeOperationError } from 'n8n-workflow';
 
 import { apiRequest } from '../transport/index';
 import { utils } from './../helpers';
-import { IFolder, INoteGroup, ITimelineAsset, ITimelineIOC } from '../helpers/types';
+import { getTLPName, IFolder, INoteGroup, ITimelineAsset, ITimelineIOC, TLPValue } from '../helpers/types';
 
 export async function getUsers(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'case/users/list';
@@ -184,11 +184,47 @@ export async function getIOCs(this: ILoadOptionsFunctions): Promise<INodePropert
 		const data = response.data.ioc as IDataObject[];
 		data.forEach((row: IDataObject) => {
 			returnData.push({
-				name: `${row.ioc_value} | ${row.ioc_type} | ${row.ioc_tlp_id}`,
+				name: `${row.ioc_value} | ${row.ioc_type} | ${getTLPName(row.ioc_tlp_id as TLPValue)}`,
 				value: row.ioc_id as string | number,
 			});
 		});
 	}
+
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
+export async function getEvidences(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this, 'GET', 'case/evidences/list', {}, query);
+	// const irisLogger = new utils.IrisLog(this.logger);
+	// irisLogger.info('getEvidences response', {response});
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	if (response.data && typeof response.data === 'object' && 'evidences' in response.data ){
+		const data = response.data.evidences as IDataObject[];
+		data.forEach((row: IDataObject) => {
+			const rowType = row.type as IDataObject;
+			returnData.push({
+				name: `${row.filename} | ${rowType.name}`,
+				value: row.id as string | number,
+			});
+		});
+	}
+	// irisLogger.info('getEvidences returnData', {returnData});
 
 	returnData.sort((a, b) => {
 		if (a.name < b.name) {
