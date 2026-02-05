@@ -11,30 +11,31 @@ import { endpoint } from './Evidence.resource';
 import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
 import * as local from './commonDescription';
-
-const fields = [
-    "acquisition_date",
-    "case",
-    "case_id",
-    "chain_of_custody",
-    "custom_attributes",
-    "date_added",
-    "end_date",
-    "file_description",
-    "file_hash",
-    "file_size",
-    "file_uuid",
-    "filename",
-    "id",
-    "start_date",
-    "type",
-    "type_id",
-    "user",
-    "user_id"
-]
+import { BinaryToTextEncoding, createHash } from 'crypto';
 
 const properties: INodeProperties[] = [
+	{
+		displayName: 'Get Data From Binary File',
+		name: 'parseBinary',
+		type: 'boolean',
+		default: false,
+		description: 'Whether to read the file data from a binary property. If enabled, Will automatically fill filesize, filename and calculate sha256.',
+	},
+	{
+		displayName: 'Binary Property Name',
+		name: 'binaryName',
+		type: 'string',
+		default: 'data',
+		displayOptions: {
+			show: {
+				parseBinary: [true],
+			},
+		},
+		description: 'Name of the binary property for parsing data',
+	},
 	local.fileName,
+	local.fileSize,
+	local.fileHash,
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -42,9 +43,7 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			local.fileSize,
 			local.fileDescription,
-			local.fileHash,
 			types.customAttributes,
 		],
 	},
@@ -54,7 +53,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(fields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.evidenceFields)],
 	},
 ];
 
@@ -71,9 +70,32 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response;
 	const body: IDataObject = {};
+	const irisLogger = new utils.IrisLog(this.logger);
 
-	body.filename = this.getNodeParameter(local.fileName.name, i) as string;
+	const isBinary = this.getNodeParameter('parseBinary', i) as boolean;
+	if (isBinary) {
+		const binaryPropertyName = this.getNodeParameter('binaryName', i) as string;
+		const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
+		const binaryDataBuffer  = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+		const encoding = 'hex' as BinaryToTextEncoding;
 
+		body.file_size = binaryData.fileSize;
+		body.filename = binaryData.fileName;
+		body.file_hash = createHash('sha256')
+			.setEncoding(encoding)
+			.update(binaryDataBuffer)
+			.digest('hex');
+		irisLogger.info(`binary size b`,{bytesLength: binaryDataBuffer.byteLength, length: binaryDataBuffer.length, size: binaryData.fileSize});
+		irisLogger.info(`Parsed binary data`,{body});
+	} else {
+		const filename = this.getNodeParameter(local.fileName.name, i) as string;
+		const fileSize = this.getNodeParameter(local.fileSize.name, i) as number;
+		const fileHash = this.getNodeParameter(local.fileHash.name, i) as string;
+
+		if (filename) body.filename = filename;
+		if (fileSize) body.file_size = fileSize;
+		if (fileHash) body.file_hash = fileHash;
+	}
 	utils.addAdditionalFields.call(this, body, i);
 
 	response = await apiRequest.call(

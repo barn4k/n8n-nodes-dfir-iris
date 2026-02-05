@@ -11,26 +11,6 @@ import { endpoint } from './Evidence.resource';
 import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
 
-const fields = [
-    "acquisition_date",
-    "case",
-    "case_id",
-    "chain_of_custody",
-    "custom_attributes",
-    "date_added",
-    "end_date",
-    "file_description",
-    "file_hash",
-    "file_size",
-    "file_uuid",
-    "filename",
-    "id",
-    "start_date",
-    "type",
-    "type_id",
-    "user",
-    "user_id"
-]
 
 const properties: INodeProperties[] = [
 	{
@@ -39,7 +19,7 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(fields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.evidenceFields)],
 	},
 ];
 
