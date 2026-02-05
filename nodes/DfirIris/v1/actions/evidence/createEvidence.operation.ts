@@ -11,7 +11,7 @@ import { endpoint } from './Evidence.resource';
 import { apiRequest } from '../../transport';
 import { utils, types } from '../../helpers';
 import * as local from './commonDescription';
-import { BinaryToTextEncoding, createHash } from 'crypto';
+import { createHash } from 'crypto';
 
 const properties: INodeProperties[] = [
 	{
@@ -70,23 +70,21 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response;
 	const body: IDataObject = {};
-	const irisLogger = new utils.IrisLog(this.logger);
+	// const irisLogger = new utils.IrisLog(this.logger);
 
 	const isBinary = this.getNodeParameter('parseBinary', i) as boolean;
 	if (isBinary) {
 		const binaryPropertyName = this.getNodeParameter('binaryName', i) as string;
 		const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
 		const binaryDataBuffer  = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
-		const encoding = 'hex' as BinaryToTextEncoding;
 
-		body.file_size = binaryData.fileSize;
+		body.file_size = binaryDataBuffer.byteLength;
 		body.filename = binaryData.fileName;
 		body.file_hash = createHash('sha256')
-			.setEncoding(encoding)
+			.setEncoding('hex')
 			.update(binaryDataBuffer)
 			.digest('hex');
-		irisLogger.info(`binary size b`,{bytesLength: binaryDataBuffer.byteLength, length: binaryDataBuffer.length, size: binaryData.fileSize});
-		irisLogger.info(`Parsed binary data`,{body});
+		// irisLogger.info(`Parsed binary data`,{body});
 	} else {
 		const filename = this.getNodeParameter(local.fileName.name, i) as string;
 		const fileSize = this.getNodeParameter(local.fileSize.name, i) as number;
@@ -97,6 +95,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		if (fileHash) body.file_hash = fileHash;
 	}
 	utils.addAdditionalFields.call(this, body, i);
+	body.type_id = 1
 
 	response = await apiRequest.call(
 		this,

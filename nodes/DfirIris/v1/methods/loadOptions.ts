@@ -219,7 +219,7 @@ export async function getEvidences(this: ILoadOptionsFunctions): Promise<INodePr
 		data.forEach((row: IDataObject) => {
 			const rowType = row.type as IDataObject;
 			returnData.push({
-				name: `${row.filename} | ${rowType.name}`,
+				name: `${row.filename} | ${rowType?.name}`,
 				value: row.id as string | number,
 			});
 		});
