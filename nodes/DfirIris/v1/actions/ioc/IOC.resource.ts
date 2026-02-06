@@ -5,8 +5,9 @@ import * as deleteIOC from './deleteIOC.operation';
 import * as get from './get.operation';
 import * as getAll from './getAll.operation';
 import * as update from './update.operation';
+import * as getTypes from './getTypes.operation';
 
-export { create, deleteIOC, get, getAll, update };
+export { create, deleteIOC, get, getAll, update, getTypes };
 
 export const endpoint = 'case/ioc';
 
@@ -43,6 +44,12 @@ export const resource: INodeProperties[] = [
 				action: `Get ${thisRes}`,
 			},
 			{
+				name: 'Get Types',
+				value: 'getTypes',
+				description: `Get ${thisRes} types`,
+				action: `Get ${thisRes} types`,
+			},
+			{
 				name: 'Get Many',
 				value: 'getAll',
 				description: `Get multiple ${thisRes}`,
@@ -60,6 +67,7 @@ export const resource: INodeProperties[] = [
 	...create.description,
 	...deleteIOC.description,
 	...get.description,
+	...getTypes.description,
 	...getAll.description,
 	...update.description,
 ];

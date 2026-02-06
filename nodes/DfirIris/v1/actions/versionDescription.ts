@@ -68,16 +68,16 @@ export const versionDescription: INodeTypeDescription = {
 				{
 					name: 'Evidence',
 					value: 'evidence',
+					displayOptions: {
+						hide: {
+							'@version': [1],
+						},
+					},
 				},
 				{
 					name: 'IOC',
 					value: 'ioc',
 				},
-
-				// {
-				// 	name: 'Timeline',
-				// 	value: 'timeline',
-				// },
 				{
 					name: 'Module',
 					value: 'module',
@@ -90,10 +90,18 @@ export const versionDescription: INodeTypeDescription = {
 					name: 'Note Group',
 					value: 'noteDirectory',
 				},
-
 				{
 					name: 'Task',
 					value: 'task',
+				},
+				{
+					name: 'Timeline',
+					value: 'timeline',
+					displayOptions: {
+						hide: {
+							'@version': [1],
+						},
+					},
 				},
 			],
 			default: 'datastoreFolder',

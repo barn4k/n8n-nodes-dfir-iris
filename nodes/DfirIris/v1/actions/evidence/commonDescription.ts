@@ -57,3 +57,15 @@ export const fileDescription: INodeProperties = {
 	type: 'string',
 	default: '',
 };
+
+export const fileType: INodeProperties = {
+	displayName: 'Evidence Type Name or ID',
+	name: 'type_id',
+	type: 'options',
+	description:
+		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+	typeOptions: {
+		loadOptionsMethod: 'getEvidenceTypes',
+	},
+	default: '',
+};

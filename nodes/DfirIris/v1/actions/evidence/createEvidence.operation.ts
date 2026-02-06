@@ -33,6 +33,18 @@ const properties: INodeProperties[] = [
 		},
 		description: 'Name of the binary property for parsing data',
 	},
+	{
+		displayName: 'Sha256 Hash',
+		name: 'isSha256',
+		type: 'boolean',
+		default: true,
+		displayOptions: {
+			show: {
+				parseBinary: [true],
+			},
+		},
+		description: 'Whether to calculate the sha256 hash of the binary data or sha1',
+	},
 	local.fileName,
 	local.fileSize,
 	local.fileHash,
@@ -44,6 +56,7 @@ const properties: INodeProperties[] = [
 		default: {},
 		options: [
 			local.fileDescription,
+			local.fileType,
 			types.customAttributes,
 		],
 	},
@@ -77,10 +90,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		const binaryPropertyName = this.getNodeParameter('binaryName', i) as string;
 		const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
 		const binaryDataBuffer  = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+		const hashType = (this.getNodeParameter('isSha256', i) as boolean) ? 'sha256' : 'sha1';
 
 		body.file_size = binaryDataBuffer.byteLength;
 		body.filename = binaryData.fileName;
-		body.file_hash = createHash('sha256')
+		body.file_hash = createHash(hashType)
 			.setEncoding('hex')
 			.update(binaryDataBuffer)
 			.digest('hex');
@@ -95,7 +109,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		if (fileHash) body.file_hash = fileHash;
 	}
 	utils.addAdditionalFields.call(this, body, i);
-	body.type_id = 1
+	if (body.type_id === undefined || body.type_id === null) body.type_id = 1; // default to generic file type
 
 	response = await apiRequest.call(
 		this,

@@ -239,6 +239,39 @@ export async function getEvidences(this: ILoadOptionsFunctions): Promise<INodePr
 	return returnData;
 }
 
+export async function getEvidenceTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+	const query = { cid: this.getNodeParameter('cid') as number };
+
+	const response = await apiRequest.call(this, 'GET', 'manage/evidence-types/list', {}, query);
+	// const irisLogger = new utils.IrisLog(this.logger);
+	// irisLogger.info('getEvidenceTypes response', {response});
+	if (response === undefined) {
+		throw new NodeOperationError(this.getNode(), 'No data got returned');
+	}
+
+	const returnData: INodePropertyOptions[] = [];
+	if (response.data && typeof response.data === 'object' ){
+		const data = response.data as IDataObject[];
+		data.forEach((row: IDataObject) => {
+			returnData.push({
+				name: row.name as string,
+				value: row.id as number,
+			});
+		});
+	}
+	returnData.sort((a, b) => {
+		if (a.name < b.name) {
+			return -1;
+		}
+		if (a.name > b.name) {
+			return 1;
+		}
+		return 0;
+	});
+
+	return returnData;
+}
+
 export async function getIOCTypes(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 	const endpoint = 'manage/ioc-types/list';
 
