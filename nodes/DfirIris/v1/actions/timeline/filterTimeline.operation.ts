@@ -5,7 +5,7 @@ import type {
 	INodeProperties,
 } from 'n8n-workflow';
 
-import { NodeApiError, updateDisplayOptions } from 'n8n-workflow';
+import { updateDisplayOptions } from 'n8n-workflow';
 
 import { endpoint } from './Timeline.resource';
 import { apiRequest } from '../../transport';
@@ -56,8 +56,8 @@ const properties: INodeProperties[] = [
 				name: 'queryFields',
 				displayName: 'Query Field',
 				values: [
-					{...local.eventAssetsCSV, typeOptions: {...local.eventAssetsCSV.typeOptions, multipleValues: false}},
-					{...local.eventIocsCSV, typeOptions: {...local.eventIocsCSV.typeOptions, multipleValues: false}},
+					{...local.eventAssetsMV, type: "options", typeOptions: {...local.eventAssetsMV.typeOptions, multipleValues: false}},
+					{...local.eventIocsMV, type: "options", typeOptions: {...local.eventIocsMV.typeOptions, multipleValues: false}},
 					local.eventTags,
 					local.eventTitle,
 					local.eventDescription,
@@ -108,12 +108,12 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const q: IDataObject = {}
 
 	const queryFields = this.getNodeParameter('queryUI.queryFields', i, []) as IDataObject[];
-	if (queryFields.some((field) => Object.prototype.hasOwnProperty.call(field, local.eventAssetsCSV.name))) {
-		const asset = queryFields.find((field) => Object.prototype.hasOwnProperty.call(field, local.eventAssetsCSV.name)) as IDataObject;
+	if (queryFields.some((field) => Object.prototype.hasOwnProperty.call(field, local.eventAssetsMV.name))) {
+		const asset = queryFields.find((field) => Object.prototype.hasOwnProperty.call(field, local.eventAssetsMV.name)) as IDataObject;
 		q.asset = asset.value;
 	}
-	if (queryFields.some((field) => Object.prototype.hasOwnProperty.call(field, local.eventIocsCSV.name))) {
-		const ioc = queryFields.find((field) => Object.prototype.hasOwnProperty.call(field, local.eventIocsCSV.name)) as IDataObject;
+	if (queryFields.some((field) => Object.prototype.hasOwnProperty.call(field, local.eventIocsMV.name))) {
+		const ioc = queryFields.find((field) => Object.prototype.hasOwnProperty.call(field, local.eventIocsMV.name)) as IDataObject;
 		q.ioc = ioc.value;
 	}
 	if (queryFields.some((field) => Object.prototype.hasOwnProperty.call(field, local.eventTags.name))) {
@@ -142,9 +142,9 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	}
 
 	if (Object.keys(q).length > 0){
-		query.q = q
+		query.q = JSON.stringify(q);
 	} else {
-		throw new NodeApiError(this.getNode(), {message: 'Query is empty', level: 'warning'});
+		query.q = "{}"
 	}
 
 	response = await apiRequest.call(

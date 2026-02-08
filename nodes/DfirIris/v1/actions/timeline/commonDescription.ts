@@ -2,10 +2,15 @@ import type { INodeProperties } from 'n8n-workflow';
 
 
 export const eventId: INodeProperties = {
-	displayName: 'Event ID',
+	displayName: 'Event Name or ID',
 	name: 'event_id',
-	type: 'number',
-	default: 0,
+	type: 'options',
+    description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
+    typeOptions: {
+		loadOptionsMethod: 'getTimelineEvent',
+		loadOptionsDependsOn: ['cid'],
+	},
+	default: '',
 }
 
 export const parentEventId: INodeProperties = {
@@ -37,26 +42,28 @@ export const eventSource: INodeProperties = {
     default: '',
 };
 
-export const eventAssetsCSV: INodeProperties = {
+export const eventAssetsMV: INodeProperties = {
     displayName: 'Event Assets Names or IDs',
     name: 'event_assets',
     type: 'multiOptions',
     typeOptions: {
-		loadOptionsMethod: 'getTimelineAssets',
-        multipleValues: true,
+		loadOptionsMethod: 'getAssets',
+		loadOptionsDependsOn: ['cid'],
+        multipleValues: false,
         // loadOptionsDependsOn: ['event_id']
 	},
     default: [],
     description: 'List of event assets. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 };
 
-export const eventIocsCSV: INodeProperties = {
+export const eventIocsMV: INodeProperties = {
     displayName: 'Event IOCs Names or IDs',
     name: 'event_iocs',
     type: 'multiOptions',
     typeOptions: {
-        multipleValues: true,
-		loadOptionsMethod: 'getTimelineIOCs',
+        multipleValues: false,
+		loadOptionsMethod: 'getIOCs',
+        loadOptionsDependsOn: ['cid'],
         // loadOptionsDependsOn: ['event_id']
 	},
     default: [],
@@ -149,12 +156,43 @@ export const eventInGraph: INodeProperties = {
 export const eventColor: INodeProperties = {
     displayName: 'Event Color',
     name: 'event_color',
-    type: 'color',
-    default: '',
+    type: 'options',
+    options: [
+        {
+            name: 'Blue',
+            value: '#48ABF799',
+        },
+        {
+            name: 'Dark-Blue',
+            value: '#1572E899',
+        },
+        {
+            name: 'Green',
+            value: '#31CE3699',
+        },
+        {
+            name: 'Orange',
+            value: '#FFAD4699',
+        },
+        
+        {
+            name: 'Purple',
+            value: '#6861CE99',
+        },
+        {
+            name: 'Red',
+            value: '#F2596199',
+        },
+        {
+            name: 'White',
+            value: '#FFF',
+        },
+    ],
+    default: '#FFF',
 };
 
 export const eventDate: INodeProperties = {
-    displayName: 'Event Date',
+    displayName: 'Event Date UTC',
     name: 'event_date',
     type: 'dateTime',
     default: '',
@@ -168,7 +206,7 @@ export const eventDescription: INodeProperties = {
 };
 
 export const eventSyncIocsAssets: INodeProperties = {
-    displayName: 'Event Sync IOCs/Assets',
+    displayName: 'Link IOC to Asset',
     name: 'event_sync_iocs_assets',
     type: 'boolean',
     default: false,

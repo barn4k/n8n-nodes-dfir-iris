@@ -39,14 +39,14 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			local.eventAssetsCSV,
+			local.eventAssetsMV,
 			local.eventCategory,
 			local.eventColor,
 			local.eventContent,
 			local.eventDate,
 			local.eventInGraph,
 			local.eventInSummary,
-			local.eventIocsCSV,
+			local.eventIocsMV,
 			local.eventRaw,
 			local.eventSource,
 			local.eventSyncIocsAssets,
@@ -83,13 +83,17 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	utils.addAdditionalFields.call(this, body, i);
 
-	if (body.event_iocs) {
-		body.event_iocs = (body.event_iocs as string).split(',').map((ioc: string) => ioc.trim());
+	if (body.event_date) {
+		body.event_date = (body.event_date as string).substring(0, 19) + '.000';
+		body.event_tz = "+00:00"
 	}
+	// if (body.event_iocs) {
+	// 	body.event_iocs = (body.event_iocs as string).split(',').map((ioc: string) => ioc.trim());
+	// }
 
-	if (body.event_assets) {
-		body.event_assets = (body.event_assets as string).split(',').map((asset: string) => asset.trim());
-	}
+	// if (body.event_assets) {
+	// 	body.event_assets = (body.event_assets as string).split(',').map((asset: string) => asset.trim());
+	// }
 
 	// add event_tz later
 	response = await apiRequest.call(
