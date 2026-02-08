@@ -21,7 +21,7 @@ export const resource: INodeProperties[] = [
         displayOptions: {
             show: {
                 resource: ['timeline'],
-            },
+            }
         },
         options: [
             {

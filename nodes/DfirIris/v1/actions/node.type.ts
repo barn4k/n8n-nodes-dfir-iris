@@ -39,6 +39,17 @@ type NodeMap = {
 	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';
 	timeline: 'addEvent' | 'queryTimeline' | 'deleteEvent' | 'fetchEvent' | 'flagEvent' | 'updateEvent' | 'getTimelineState';
 	module: 'callModule';
+	manage:
+		| 'getAssetTypes'
+		| 'getCaseClassifications'
+		| 'getCaseCustomers'
+		| 'getCaseStates'
+		| 'getCaseTemplates'
+		| 'getEvidenceTypes'
+		| 'getIOCTypes'
+		| 'getSeverities'
+		| 'getUsers'
+		| 'getTaskStatuses';
 };
 
 export type DfirIrisType = AllEntities<NodeMap>;

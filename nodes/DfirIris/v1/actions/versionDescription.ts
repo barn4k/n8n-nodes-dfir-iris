@@ -13,6 +13,8 @@ import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as task from './task/Task.resource';
+import * as manage from './manage/Manage.resource';
+import * as timeline from './timeline/Timeline.resource';
 
 import { cidDescription } from '../helpers/types';
 
@@ -79,6 +81,15 @@ export const versionDescription: INodeTypeDescription = {
 					value: 'ioc',
 				},
 				{
+					name: "Manage Metadata",
+					value: 'manage',
+					displayOptions: {
+						hide: {
+							'@version': [1],
+						},
+					},
+				},
+				{
 					name: 'Module',
 					value: 'module',
 				},
@@ -116,8 +127,10 @@ export const versionDescription: INodeTypeDescription = {
 		...evidence.resource,
 		...ioc.resource,
 		...iModule.resource,
+		...manage.resource,
 		...note.resource,
 		...noteDirectory.resource,
 		...task.resource,
+		...timeline.resource,
 	],
 };

@@ -19,7 +19,7 @@ export const resource: INodeProperties[] = [
         displayOptions: {
             show: {
                 resource: ['evidence'],
-            },
+            }
         },
         options: [
             {

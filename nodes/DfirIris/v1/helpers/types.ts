@@ -311,7 +311,7 @@ export const cidDescription: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			hide: {
-				resource: ['alert', 'case'],
+				resource: ['alert', 'case', 'manage'],
 			},
 		},
 		required: true,
