@@ -11,13 +11,11 @@ import { apiRequest } from '../../transport';
 import { types, utils } from '../../helpers';
 
 const fields = [
-    "type_id",
-    "type_name",
-    "type_description",
-    "type_taxonomy",
-    "type_validation_regex",
-    "type_validation_expect"
-]
+    "id",
+    "name",
+    "description",
+    "creation_date"
+].sort();
 
 const properties: INodeProperties[] = [
 	{
@@ -32,8 +30,8 @@ const properties: INodeProperties[] = [
 
 const displayOptions = {
 	show: {
-		resource: ['ioc'],
-		operation: ['getTypes'],
+		resource: ['manage'],
+		operation: ['getEvidenceTypes'],
 	},
 };
 
@@ -43,7 +41,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
 	let response;
 
-	response = await apiRequest.call(this, 'GET', `manage/ioc-types/list`, {}, query);
+	response = await apiRequest.call(this, 'GET', `manage/evidence-types/list`, {}, query);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
