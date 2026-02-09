@@ -70,11 +70,6 @@ export const versionDescription: INodeTypeDescription = {
 				{
 					name: 'Evidence',
 					value: 'evidence',
-					displayOptions: {
-						hide: {
-							'@version': [1],
-						},
-					},
 				},
 				{
 					name: 'IOC',
@@ -83,11 +78,6 @@ export const versionDescription: INodeTypeDescription = {
 				{
 					name: "Manage Metadata",
 					value: 'manage',
-					displayOptions: {
-						hide: {
-							'@version': [1],
-						},
-					},
 				},
 				{
 					name: 'Module',
@@ -108,11 +98,6 @@ export const versionDescription: INodeTypeDescription = {
 				{
 					name: 'Timeline',
 					value: 'timeline',
-					displayOptions: {
-						hide: {
-							'@version': [1],
-						},
-					},
 				},
 			],
 			default: 'datastoreFolder',

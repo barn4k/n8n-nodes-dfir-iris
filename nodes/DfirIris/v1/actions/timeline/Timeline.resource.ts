@@ -6,7 +6,7 @@ import * as flagEvent from './flagEvent.operation';
 import * as fetchEvent from './fetchEvent.operation';
 import * as getTimelineState from './getTimelineState.operation';
 import * as updateEvent from './updateEvent.operation';
-import * as queryTimeline from './filterTimeline.operation';
+import * as queryTimeline from './queryTimeline.operation';
 
 export { addEvent, deleteEvent, flagEvent, fetchEvent, getTimelineState, updateEvent, queryTimeline };
 
