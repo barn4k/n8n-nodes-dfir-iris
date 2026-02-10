@@ -32,6 +32,11 @@ const fields = [
 
 const properties: INodeProperties[] = [
 	{...local.eventId, required: true},
+	{...local.eventAssetsMV, required: true},
+	{...local.eventCategory, required: true},
+	{...local.eventDate, required: true},
+	{...local.eventIocsMV, required: true},
+	{...local.eventTitle, required: true},
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -39,19 +44,14 @@ const properties: INodeProperties[] = [
 		placeholder: 'Add Field',
 		default: {},
 		options: [
-			local.eventAssetsMV,
-			local.eventCategory,
 			local.eventColor,
 			local.eventContent,
-			local.eventDate,
 			local.eventInGraph,
 			local.eventInSummary,
-			local.eventIocsMV,
 			local.eventRaw,
 			local.eventSource,
 			local.eventSyncIocsAssets,
 			local.eventTags,
-			local.eventTitle,
 			local.parentEventId,
 			types.customAttributes,
 		],
@@ -80,12 +80,15 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	let response;
 	const body: IDataObject = {};
 
+	body.event_title = this.getNodeParameter(local.eventTitle.name, i) as string;
+	body.event_date = (this.getNodeParameter(local.eventDate.name, i) as string).substring(0, 19) + '.000';
+	body.event_tz = "+00:00"
+	body.event_category_id = this.getNodeParameter(local.eventCategory.name, i) as number;
+	body.event_assets = this.getNodeParameter(local.eventAssetsMV.name, i) as number[];
+	body.event_iocs = this.getNodeParameter(local.eventIocsMV.name, i) as number[];
+
 	utils.addAdditionalFields.call(this, body, i);
 
-	if (body.event_date) {
-		body.event_date = (body.event_date as string).substring(0, 19) + '.000';
-		body.event_tz = "+00:00"
-	}
 	response = await apiRequest.call(
 		this,
 		'POST',
