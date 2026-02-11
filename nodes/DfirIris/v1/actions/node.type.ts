@@ -16,6 +16,7 @@ type NodeMap = {
 	asset: 'create' | 'deleteAsset' | 'get' | 'getAll' | 'update';
 	case:
 		| 'create'
+		| 'addTaskLog'
 		| 'update'
 		| 'updateSummary'
 		| 'getSummary'
@@ -38,7 +39,7 @@ type NodeMap = {
 	noteDirectory: 'create' | 'deleteNoteDirectory' | 'getAll' | 'update';
 	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';
 	timeline: 'addEvent' | 'queryTimeline' | 'deleteEvent' | 'fetchEvent' | 'flagEvent' | 'updateEvent' | 'getTimelineState';
-	module: 'callModule';
+	module: 'callModule' | 'listHooks' | 'listTasks';
 	manage:
 		| 'getAssetTypes'
 		| 'getCaseClassifications'

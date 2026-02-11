@@ -8,6 +8,7 @@ import * as filterCases from './filterCases.operation';
 import * as update from './update.operation';
 import * as updateSummary from './updateSummary.operation';
 import * as exportCase from './exportCase.operation';
+import * as addTaskLog from './addTaskLog.operation';
 
 export {
 	create,
@@ -18,6 +19,7 @@ export {
 	updateSummary,
 	countCases,
 	exportCase,
+	addTaskLog
 };
 
 export const endpoint = 'manage/cases';
@@ -41,6 +43,12 @@ export const resource: INodeProperties[] = [
 				value: 'create',
 				description: `Create new ${thisRes}`,
 				action: `Add new ${thisRes}`,
+			},
+			{
+				name: 'Add Activity Log',
+				value: 'addTaskLog',
+				description: `Add activity log to ${thisRes}`,
+				action: `Add activity log to ${thisRes}`,
 			},
 			{
 				name: 'Count Cases',
@@ -89,6 +97,7 @@ export const resource: INodeProperties[] = [
 	},
 	...countCases.description,
 	...create.description,
+	...addTaskLog.description,
 	...deleteCase.description,
 	...exportCase.description,
 	...filterCases.description,
