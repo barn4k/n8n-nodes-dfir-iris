@@ -41,21 +41,21 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let response: INodeExecutionData[];
+	let response;
 
 	response = await apiRequest.call(
 		this,
 		'GET',
 		'dim/tasks/list/' + (this.getNodeParameter('rows_count', i, 10) as string),
+		{}
 	);
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
-	if (!isRaw) responseModified = responseModified.data;
+	
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

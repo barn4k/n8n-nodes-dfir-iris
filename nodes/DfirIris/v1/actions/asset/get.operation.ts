@@ -13,8 +13,7 @@ import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rAssetId,
-
+	{...local.assetId, required: true},
 	{
 		displayName: 'Options',
 		name: 'options',
@@ -35,28 +34,27 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
 
 	response = await apiRequest.call(
 		this,
 		'GET',
-		(`${endpoint}/` + this.getNodeParameter('asset_id', i)) as string,
+		(`${endpoint}/` + this.getNodeParameter(local.assetId.name, i)) as string,
 		{},
 		query,
 	);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
+	
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

@@ -96,9 +96,9 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	const body: IDataObject = {};
+	let response;
 
 	body.alert_title = this.getNodeParameter('alert_title', i) as string;
 	body.alert_customer_id = this.getNodeParameter('alert_customer_id', i) as number;
@@ -107,12 +107,12 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	utils.addAdditionalFields.call(this, body, i);
 
-	let kvUI = this.getNodeParameter(
+	const kvUI = this.getNodeParameter(
 		'__alertContextKV.parameters',
 		i,
 		null,
 	) as INodePropertyOptions[];
-	let jsUI = this.getNodeParameter('__alertContextJSON', i, null) as string;
+	const jsUI = this.getNodeParameter('__alertContextJSON', i, null) as string;
 
 	if (kvUI !== null && kvUI.length > 0) {
 		body.alert_context = Object.fromEntries(
@@ -139,12 +139,12 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 		null,
 	) as Array<IAsset>;
 
-	let iocsJSON = this.getNodeParameter(
+	const iocsJSON = this.getNodeParameter(
 		'additionalFields.__iocsCollectionJSON',
 		i,
 		null,
 	) as Array<IIOC>;
-	let assetsJSON = this.getNodeParameter(
+	const assetsJSON = this.getNodeParameter(
 		'additionalFields.__assetsCollectionJSON',
 		i,
 		null,
@@ -162,15 +162,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
 
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

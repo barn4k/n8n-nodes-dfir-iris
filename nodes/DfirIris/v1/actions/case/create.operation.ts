@@ -68,9 +68,9 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = {};
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = {};
+	let response;
+	const body: IDataObject = {};
 
 	body.case_soc_id = this.getNodeParameter('case_soc_id', i) as string;
 	body.case_customer = this.getNodeParameter('case_customer', i) as number;
@@ -83,15 +83,14 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
+	
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

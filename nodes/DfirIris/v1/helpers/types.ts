@@ -19,6 +19,24 @@ interface INoteSub {
 	title: string;
 }
 
+export const TLP = {
+	Red: 1,
+	Amber: 2,
+	Green: 3,
+	Clear: 4,
+	AmberStrict: 5,
+} as const;
+
+export type TLPValue = typeof TLP[keyof typeof TLP];
+export type TLPName = keyof typeof TLP;
+
+export function getTLPName(value: TLPValue): TLPName | undefined {
+  return (Object.keys(TLP) as TLPName[]).find(
+    (key) => TLP[key] === value
+  );
+}
+
+
 export interface IFolderSub {
 	children: {
 		[key: string]: IFolderSub | IFileSub;
@@ -31,7 +49,7 @@ export interface IFolderSub {
 export interface IFileSub {
 	file_parent_id: number
 	file_description: string
-	modification_history: any
+	modification_history: IDataObject
 	file_date_added: string
 	added_by_user_id: number
 	file_id: number
@@ -84,6 +102,16 @@ export interface IAlert extends IDataObject {
 	alert_customer_id?: number;
 	alert_classification_id?: number;
 	alert_source_content?: object;
+}
+
+export interface ITimelineAsset extends IDataObject {
+	[key: string]: [string, string]
+}
+
+export interface ITimelineIOC extends IDataObject {
+	ioc_id: number;
+	ioc_description?: string;
+	ioc_value?: string;
 }
 
 export const taskFields = [
@@ -160,6 +188,28 @@ export const datastoreFileFields: string[] = [
 	'file_id',
 	'file_description',
 	'file_password',
+].sort();
+
+export const evidenceFields: string[] = [
+    "filename",
+    "type",
+    "user",
+    "case",
+    "id",
+    "file_uuid",
+    "date_added",
+    "acquisition_date",
+    "file_hash",
+    "file_description",
+    "file_size",
+    "start_date",
+    "end_date",
+    "case_id",
+    "user_id",
+    "type_id",
+    "custom_attributes",
+    "chain_of_custody",
+    "modification_history"
 ].sort();
 
 export const noteFields: string[] = [
@@ -261,7 +311,7 @@ export const cidDescription: INodeProperties[] = [
 		default: '',
 		displayOptions: {
 			hide: {
-				resource: ['alert', 'case'],
+				resource: ['alert', 'case', 'manage'],
 			},
 		},
 		required: true,

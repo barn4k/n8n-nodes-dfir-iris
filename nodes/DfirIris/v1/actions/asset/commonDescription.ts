@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-export const rAssetId: INodeProperties = {
+export const assetId: INodeProperties = {
 	displayName: 'Asset Name or ID',
 	name: 'asset_id',
 	type: 'options',
@@ -11,7 +11,6 @@ export const rAssetId: INodeProperties = {
 		loadOptionsDependsOn: ['cid'],
 	},
 	default: '',
-	required: true,
 };
 
 export const assetName: INodeProperties = {
@@ -19,14 +18,6 @@ export const assetName: INodeProperties = {
 	name: 'asset_name',
 	type: 'string',
 	default: '',
-};
-
-export const rAssetName: INodeProperties = {
-	displayName: 'Asset Name',
-	name: 'asset_name',
-	type: 'string',
-	default: '',
-	required: true,
 };
 
 export const assetType: INodeProperties = {
@@ -37,21 +28,9 @@ export const assetType: INodeProperties = {
 		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
 	typeOptions: {
 		loadOptionsMethod: 'getAssetTypes',
+		loadOptionsDependsOn: ['cid'],
 	},
 	default: '',
-};
-
-export const rAssetType: INodeProperties = {
-	displayName: 'Asset Type Name or ID',
-	name: 'asset_type_id',
-	type: 'options',
-	description:
-		'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-	typeOptions: {
-		loadOptionsMethod: 'getAssetTypes',
-	},
-	default: '',
-	required: true,
 };
 
 export const assetAnalysisStatus: INodeProperties = {

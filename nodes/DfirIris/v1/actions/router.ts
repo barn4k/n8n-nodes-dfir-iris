@@ -2,7 +2,6 @@ import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
 
 import type { DfirIrisType } from './node.type';
-import { customDebug } from '../helpers/utils';
 
 import * as alert from './alert/Alert.resource';
 import * as asset from './asset/Asset.resource';
@@ -10,15 +9,21 @@ import * as icase from './case/Case.resource';
 import * as comment from './comment/Comment.resource';
 import * as datastoreFile from './datastoreFile/DatastoreFile.resource';
 import * as datastoreFolder from './datastoreFolder/DatastoreFolder.resource';
+import * as evidence from './evidence/Evidence.resource';
 import * as ioc from './ioc/IOC.resource';
 import * as iModule from './module/Module.resource';
 import * as note from './note/Note.resource';
 import * as noteDirectory from './noteDirectory/NoteDirectory.resource';
 import * as task from './task/Task.resource';
+import * as timeline from './timeline/Timeline.resource';
+import * as manage from './manage/Manage.resource';
+
+import { IrisLog } from '../helpers/utils';
 
 export async function router(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 	const items = this.getInputData();
 	const returnData: INodeExecutionData[] = [];
+	const irisLogger = new IrisLog(this.logger);
 
 	const resource = this.getNodeParameter<DfirIrisType>('resource', 0);
 	const operation = this.getNodeParameter('operation', 0);
@@ -36,6 +41,9 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 					break;
 				case 'datastoreFolder':
 					returnData.push(...(await datastoreFolder[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'evidence':
+					returnData.push(...(await evidence[dfirIris.operation].execute.call(this, i)));
 					break;
 				case 'asset':
 					returnData.push(...(await asset[dfirIris.operation].execute.call(this, i)));
@@ -64,11 +72,17 @@ export async function router(this: IExecuteFunctions): Promise<INodeExecutionDat
 				case 'alert':
 					returnData.push(...(await alert[dfirIris.operation].execute.call(this, i)));
 					break;
+				case 'timeline':
+					returnData.push(...(await timeline[dfirIris.operation].execute.call(this, i)));
+					break;
+				case 'manage':
+					returnData.push(...(await manage[dfirIris.operation].execute.call(this, i)));
+					break;
 				default:
 					throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not known`);
 			}
 
-			customDebug('router returnData:', returnData)
+			irisLogger.info('router returnData:', {returnData});
 		} catch (error) {
 			if (this.continueOnFail()) {
 				if (resource === 'datastoreFile' && operation === 'downloadFile') {

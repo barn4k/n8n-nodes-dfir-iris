@@ -59,8 +59,8 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
 
 	response = await apiRequest.call(this, 'GET', `${endpoint}/list/tree`, {}, query);
 
@@ -68,18 +68,17 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const isRaw = (options.isRaw as boolean) || false;
 	const returnSimple = (options.__simplify as boolean) || false;
 	const returnSimpleType = options.__simplify_type as 'file'|'folder'|'all' || 'all';
-	let responseModified = response as any;
-
+	
 
 	if (returnSimple){
-		responseModified.data = getFlattenTree(responseModified.data, "", "", returnSimpleType)
+		response.data = getFlattenTree((response.data as types.IFolder['data']), "", "", returnSimpleType)
 	}
 
-		if (!isRaw) responseModified = responseModified.data;
+	if (!isRaw) response = response.data;
 
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

@@ -5,11 +5,7 @@ import type {
 	INodeProperties,
 } from 'n8n-workflow';
 
-import { NodeOperationError, BINARY_ENCODING, updateDisplayOptions } from 'n8n-workflow';
-
-import FormData from 'form-data';
-
-import type { Readable } from 'stream';
+import { NodeOperationError, updateDisplayOptions } from 'n8n-workflow';
 
 import { endpoint } from './DatastoreFile.resource';
 import { apiRequest } from '../../transport';
@@ -98,70 +94,74 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let body: IDataObject | FormData = {};
-	let response: INodeExecutionData[];
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	const body: IDataObject = {};
+	let response;
+	const irisLogger = new utils.IrisLog(this.logger);
 	// const nodeVersion = this.getNode().typeVersion;
 	// const instanceId = this.getInstanceId();
 
-	let uploadData: Buffer | Readable;
-
-	const binaryName = (this.getNodeParameter('binaryName', i, '') as string).trim();
-	const binaryData = this.helpers.assertBinaryData(i, binaryName);
+	const binaryProperty = (this.getNodeParameter('binaryName', i, 'data') as string).trim();
+	const binaryData = this.helpers.assertBinaryData(i, binaryProperty);
+	const binaryDataBuffer  = await this.helpers.getBinaryDataBuffer(i, binaryProperty);
 	utils.addAdditionalFields.call(this, body, i);
-
-	if (binaryData.id) {
-		uploadData = await this.helpers.getBinaryStream(binaryData.id);
-	} else {
-		uploadData = Buffer.from(binaryData.data, BINARY_ENCODING);
-	}
 
 	const fileName = binaryData.fileName as string;
 	if (!fileName)
 		throw new NodeOperationError(this.getNode(), 'No file name given for file upload.');
 
-	// TODO: fix later formdata
-	// const formData = new FormData();
+	const form = new FormData();
+	irisLogger.info('Uploading file', { fileName, mimeType: binaryData.mimeType });
+	irisLogger.info('binaryDataBuffer', { buffer: binaryDataBuffer });
+	form.append(
+		'file_content',
+		new Blob([binaryDataBuffer], { type: binaryData.mimeType }),
+		fileName
+	);
 
-	if (body.hasOwnProperty('file_is_ioc')) body.file_is_ioc = body.file_is_ioc ? 'y' : 'n';
-	if (body.hasOwnProperty('file_is_evidence'))
-		body.file_is_evidence = body.file_is_evidence ? 'y' : 'n';
-	if (!body.hasOwnProperty('file_description')) body.file_description = '';
-	if (!body.hasOwnProperty('file_tags')) body.file_tags = '';
+	form.append('file_original_name', fileName);
+	const file_is_ioc = body.file_is_ioc ? 'y' : 'n';
+	const file_is_evidence = body.file_is_evidence ? 'y' : 'n';
+	const file_description = body.file_description || '';
+	const file_tags = body.file_tags || '';
 
-	const formData = {
-		file_content: {
-			value: uploadData,
-			options: {
-				filename: fileName,
-				contentType: binaryData.mimeType,
-			},
-		},
-		file_original_name: fileName,
-		...body,
-	};
+	if (Object.prototype.hasOwnProperty.call(body, 'file_is_ioc')) 
+		form.append('file_is_ioc', file_is_ioc);
+	if (Object.prototype.hasOwnProperty.call(body, 'file_is_evidence')) 
+		form.append('file_is_evidence', file_is_evidence);
+	if (Object.prototype.hasOwnProperty.call(body, 'file_description')) 
+		form.append('file_description', file_description);
+	if (Object.prototype.hasOwnProperty.call(body, 'file_tags')) 
+		form.append('file_tags', file_tags);
+
+	// for debugging
+	// for (const [key, value] of form.entries()) {
+	// 	irisLogger.info('formData entry', {
+	// 		key,
+	// 		valueType: value.constructor.name,
+	// 		isBlob: value instanceof Blob,
+	// 	});
+	// }
 
 	response = await apiRequest.call(
 		this,
 		'POST',
 		(`${endpoint}/file/add/` + this.getNodeParameter('folderId', i, 0)) as string,
-		formData,
+		form,
 		query,
 		{},
 		true,
 	);
-
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
+	
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

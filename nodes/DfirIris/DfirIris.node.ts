@@ -8,15 +8,16 @@ export class DfirIris extends VersionedNodeType {
 		const baseDescription: INodeTypeBaseDescription = {
 			displayName: 'DFIR IRIS',
 			name: 'dfirIris',
-			icon: 'file:iris.svg',
+			icon: { light: "file:iris.svg", dark: "file:iris.svg"} as const,
 			group: ['input'],
 			subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',
 			description: 'works with DFIR IRIS IRP',
-			defaultVersion: 1,
+			defaultVersion: 1.1,
 		};
 
 		const nodeVersions: IVersionedNodeType['nodeVersions'] = {
 			1: new DfirIrisV1(baseDescription),
+			1.1: new DfirIrisV1(baseDescription),
 			// 2: new DfirIrisV2(baseDescription),
 			// 2.1: new DfirIrisV2(baseDescription),
 		};

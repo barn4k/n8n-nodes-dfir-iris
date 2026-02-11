@@ -35,9 +35,9 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('case_id', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('case_id', i, 0) as number };
+	let response;
+	const body: IDataObject = {};
 
 	const options = this.getNodeParameter('options', i, {});
 
@@ -46,12 +46,11 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	response = await apiRequest.call(this, 'POST', `case/summary/update`, body, query);
 
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-
-	if (!isRaw) responseModified = { status: 'success' };
+	
+	if (!isRaw) response = [{ status: 'success' }];
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

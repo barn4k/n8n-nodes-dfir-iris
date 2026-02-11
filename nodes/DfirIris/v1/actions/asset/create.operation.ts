@@ -5,7 +5,7 @@ import type {
 	INodeProperties,
 } from 'n8n-workflow';
 
-import { updateDisplayOptions } from 'n8n-workflow';
+import { NodeApiError, updateDisplayOptions } from 'n8n-workflow';
 
 import { endpoint } from './Asset.resource';
 import { apiRequest } from '../../transport';
@@ -13,8 +13,8 @@ import { types, utils } from '../../helpers';
 import * as local from './commonDescription';
 
 const properties: INodeProperties[] = [
-	local.rAssetName,
-	local.rAssetType,
+	{...local.assetName, required: true},
+	{...local.assetType, required: true},
 	{
 		displayName: 'Additional Fields',
 		name: 'additionalFields',
@@ -40,7 +40,18 @@ const properties: INodeProperties[] = [
 		type: 'collection',
 		placeholder: 'Add Option',
 		default: {},
-		options: [...types.returnRaw, ...types.fieldProperties(types.assetFields)],
+		options: [...types.returnRaw, ...types.fieldProperties(types.assetFields), {
+			displayName: 'Ignore Empty',
+			displayOptions: {
+				hide: {
+					'@version': [1],
+				},
+			},
+			name: 'ignore_empty',
+			type: 'boolean',
+			default: false,
+			description: 'Whether to ignore empty or null Asset Name. Won\'t send the request if the value is empty.',
+		}],
 	},
 ];
 
@@ -54,27 +65,35 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: this.getNodeParameter('cid', i, 0) as number };
+	let response;
+	const body: IDataObject = {};
 
-	body.asset_type_id = this.getNodeParameter('asset_type_id', i) as number;
-	body.asset_name = this.getNodeParameter('asset_name', i) as string;
+	body.asset_type_id = this.getNodeParameter(local.assetType.name, i) as number;
+	body.asset_name = this.getNodeParameter(local.assetName.name, i) as string;
 	utils.addAdditionalFields.call(this, body, i);
-
-	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
+	
+	if (body.asset_name === '' || body.asset_name === null || body.asset_name === undefined){
+		// added in v1.1
+		if (options.ignore_empty === true) {
+			return this.helpers.returnJsonArray([{status: 'skipped', reason: 'Asset Name is empty and "Ignore Empty" option is enabled.'}]);
+		} else {
+			throw new NodeApiError(this.getNode(), { message: 'Asset Name is required and cannot be empty.' });
+		}
+	}
+
+	response = await apiRequest.call(this, 'POST', `${endpoint}/add`, body, query);
 
 	// field remover
-	if (options.hasOwnProperty('fields'))
-		responseModified.data = utils.fieldsRemover(responseModified.data, options);
-	if (!isRaw) responseModified = responseModified.data;
+	if (Object.prototype.hasOwnProperty.call(options, 'fields'))
+		response.data = utils.fieldsRemover((response.data as IDataObject[]), options);
+	if (!isRaw) response = response.data;
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

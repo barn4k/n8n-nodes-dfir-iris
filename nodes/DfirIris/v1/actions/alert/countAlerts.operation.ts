@@ -91,12 +91,13 @@ const displayOptions = {
 export const description = updateDisplayOptions(displayOptions, properties);
 
 export async function execute(this: IExecuteFunctions, i: number): Promise<INodeExecutionData[]> {
-	let query: IDataObject = { cid: 1, sort: 'desc' };
-	let response: INodeExecutionData[];
-	let body: IDataObject = {};
+	const query: IDataObject = { cid: 1, sort: 'desc' };
+	const body: IDataObject = {};
+	const irisLogger = new utils.IrisLog(this.logger);
+	let response
 
 	utils.addAdditionalFields.call(this, body, i);
-	utils.customDebug('updated body', body);
+	irisLogger.info('updated body', {body});
 
 	Object.assign(query, body);
 
@@ -104,17 +105,23 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 
 	const options = this.getNodeParameter('options', i, {});
 	const isRaw = (options.isRaw as boolean) || false;
-	let responseModified = response as any;
-	utils.customDebug('responseModified', responseModified);
+	irisLogger.info('response', {response});
 
 	// field remover
-	if (options.hasOwnProperty('fields') && responseModified.hasOwnProperty('data'))
-		responseModified.data.alerts = utils.fieldsRemover(responseModified.data?.alerts, options);
+	if (
+		Object.prototype.hasOwnProperty.call(options, 'fields') 
+		&& response.data 
+		&& typeof response.data === 'object' 
+		&& 'alerts' in response.data
+	) {
+		const data = response.data as IDataObject;
+		data.alerts = utils.fieldsRemover((data.alerts as IDataObject[]), options);
+	}
 
-	if (!isRaw) responseModified = { total: responseModified.data?.total || 0 };
+	if (!isRaw) response = [{ total: (response.data as IDataObject).total || 0 }];
 
 	const executionData = this.helpers.constructExecutionMetaData(
-		this.helpers.returnJsonArray(responseModified as IDataObject[]),
+		this.helpers.returnJsonArray(response as IDataObject[]),
 		{ itemData: { item: i } },
 	);
 

@@ -16,6 +16,7 @@ type NodeMap = {
 	asset: 'create' | 'deleteAsset' | 'get' | 'getAll' | 'update';
 	case:
 		| 'create'
+		| 'addTaskLog'
 		| 'update'
 		| 'updateSummary'
 		| 'getSummary'
@@ -32,11 +33,24 @@ type NodeMap = {
 		| 'moveFile'
 		| 'deleteFile';
 	datastoreFolder: 'getTree' | 'addFolder' | 'moveFolder' | 'renameFolder' | 'deleteFolder';
+	evidence: 'createEvidence' | 'deleteEvidence' | 'getEvidence' | 'listEvidences' | 'updateEvidence';
 	ioc: 'create' | 'deleteIOC' | 'get' | 'getAll' | 'update';
 	note: 'create' | 'deleteNote' | 'get' | 'search' | 'update';
 	noteDirectory: 'create' | 'deleteNoteDirectory' | 'getAll' | 'update';
 	task: 'create' | 'deleteTask' | 'get' | 'getAll' | 'update';
-	module: 'callModule';
+	timeline: 'addEvent' | 'queryTimeline' | 'deleteEvent' | 'fetchEvent' | 'flagEvent' | 'updateEvent' | 'getTimelineState';
+	module: 'callModule' | 'listHooks' | 'listTasks';
+	manage:
+		| 'getAssetTypes'
+		| 'getCaseClassifications'
+		| 'getCaseCustomers'
+		| 'getCaseStates'
+		| 'getCaseTemplates'
+		| 'getEvidenceTypes'
+		| 'getIOCTypes'
+		| 'getSeverities'
+		| 'getUsers'
+		| 'getTaskStatuses';
 };
 
 export type DfirIrisType = AllEntities<NodeMap>;

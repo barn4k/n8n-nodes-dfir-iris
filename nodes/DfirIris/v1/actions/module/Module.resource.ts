@@ -2,8 +2,9 @@ import type { INodeProperties } from 'n8n-workflow';
 
 import * as callModule from './callModule.operation';
 import * as listTasks from './listTasks.operation';
+import * as listHooks from './listHooks.operation';
 
-export { callModule, listTasks };
+export { callModule, listHooks, listTasks };
 
 export const resource: INodeProperties[] = [
 	{
@@ -24,6 +25,11 @@ export const resource: INodeProperties[] = [
 				action: 'Call a module',
 			},
 			{
+				name: 'List Available Modules',
+				value: 'listHooks',
+				action: 'List available modules',
+			},
+			{
 				name: 'List Module Tasks',
 				value: 'listTasks',
 				action: 'List module tasks',
@@ -33,4 +39,5 @@ export const resource: INodeProperties[] = [
 	},
 	...callModule.description,
 	...listTasks.description,
+	...listHooks.description,
 ];
