@@ -19,14 +19,14 @@ Supported operations:
 |--|--|
 |Alerts|Fully supported|
 |Case Assets|Fully supported|
-|Case General|Fully supported since v1.0.15|
-|Case Evidence|Fully supported since v1.0.15|
+|Case General|Fully supported since v1.1.0|
+|Case Evidence|Fully supported since v1.1.0|
 |Case IOCs|Fully supported|
-|Case Modules|Fully supported since v1.0.15|
+|Case Modules|Fully supported since v1.1.0|
 |Case Notes|Fully supported|
 |Case Note Groups|Fully supported|
 |Case Tasks|Fully supported|
-|Case Timeline|Fully supported since v1.0.15|
+|Case Timeline|Fully supported since v1.1.0|
 |Comments|Fully supported|
 |Datastore File|Fully supported|
 |Datastore Folder|Fully supported|
