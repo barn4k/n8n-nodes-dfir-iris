@@ -9,3 +9,4 @@ yarn.lock
 .vscode/*.code-workspace
 test.ps1
 Debug.md
+.claude

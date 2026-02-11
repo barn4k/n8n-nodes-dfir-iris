@@ -1,5 +1,47 @@
 # Changelog
 
+# v1.0.15
+
+
+### Bug fixes
+* fixed issue with FormData in download/upload Datastore file operations
+* disabled debug logs
+
+### Features
+
+* added debug option in the credentials for extended logs
+* added n8n node v1.1
+* ⚠️ only v1.1. added option to ignore empty iocs on creation
+* added list Hooks module operation
+* added Evidence resource with operations:
+* * Create Evidence
+* * Delete Evidence
+* * Get Evidence
+* * List Evidence
+* * Update Evidence
+* added Manage resource with operations:
+* * Get Asset Types
+* * Get Case Classifications
+* * Get Case Customers
+* * Get Case States
+* * Get Evidence Types
+* * Get IOC Types
+* * Get Severities
+* * Get Task Statuses
+* * Get Users
+* added Timeline resource with operations:
+* * Create Timeline Event
+* * Delete Timeline Event
+* * Fetch Timeline Event
+* * Flag or Unflag Timeline Event
+* * Get Timeline State
+* * Query Timeline
+* * Update Timeline Event
+
+### Misc
+
+* updated the code for n8n v2 linter (`n8n node lint`).
+
 # v1.0.14
 
 
