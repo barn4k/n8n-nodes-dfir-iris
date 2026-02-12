@@ -114,8 +114,8 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	utils.addAdditionalFields.call(this, body, i);
 	body.case_tags ??= '';
 	
-	body.assets_import_list = (body.assets_import_list as string).split(',') || [];
-	body.iocs_import_list = (body.iocs_import_list as string).split(',') || [];
+	body.assets_import_list = (body.assets_import_list as string)?.split(',') || [];
+	body.iocs_import_list = (body.iocs_import_list as string)?.split(',') || [];
 
 	response = await apiRequest.call(
 		this,
