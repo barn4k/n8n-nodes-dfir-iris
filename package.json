@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-dfir-iris",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "n8n node for DFIR IRIS IRP",
   "license": "MIT",
   "homepage": "",
