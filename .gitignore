@@ -10,3 +10,4 @@ yarn.lock
 test.ps1
 Debug.md
 .claude
+.env
