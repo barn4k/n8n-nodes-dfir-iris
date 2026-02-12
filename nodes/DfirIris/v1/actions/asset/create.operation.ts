@@ -77,7 +77,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	const isRaw = (options.isRaw as boolean) || false;
 	
 	if (body.asset_name === '' || body.asset_name === null || body.asset_name === undefined){
-		// added in v1.1
+		// added in v2
 		if (options.ignore_empty === true) {
 			return this.helpers.returnJsonArray([{status: 'skipped', reason: 'Asset Name is empty and "Ignore Empty" option is enabled.'}]);
 		} else {

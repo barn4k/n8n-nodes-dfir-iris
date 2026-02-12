@@ -74,7 +74,7 @@ export async function execute(this: IExecuteFunctions, i: number): Promise<INode
 	
 	
 	if (body.ioc_value === '' || body.ioc_value === null || body.ioc_value === undefined){
-		// added in v1.1
+		// added in v2
 		if (options.ignore_empty === true) {
 			return this.helpers.returnJsonArray([{status: 'skipped', reason: 'IOC Value is empty and "Ignore Empty" option is enabled.'}]);
 		} else {

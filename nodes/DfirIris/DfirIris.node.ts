@@ -12,13 +12,12 @@ export class DfirIris extends VersionedNodeType {
 			group: ['input'],
 			subtitle: '={{ $parameter["resource"] + ": " + $parameter["operation"] }}',
 			description: 'works with DFIR IRIS IRP',
-			defaultVersion: 1.1,
+			defaultVersion: 2,
 		};
 
 		const nodeVersions: IVersionedNodeType['nodeVersions'] = {
 			1: new DfirIrisV1(baseDescription),
-			1.1: new DfirIrisV1(baseDescription),
-			// 2: new DfirIrisV2(baseDescription),
+			2: new DfirIrisV1(baseDescription),
 			// 2.1: new DfirIrisV2(baseDescription),
 		};
 
