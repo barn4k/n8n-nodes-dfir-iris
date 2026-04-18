@@ -351,7 +351,7 @@ export const alertNote: INodeProperties = {
 	name: 'alert_note',
 	type: 'string',
 	default: '',
-	description: 'Note of the alrt',
+	description: 'Note of the alert',
 };
 
 export const alertSource: INodeProperties = {

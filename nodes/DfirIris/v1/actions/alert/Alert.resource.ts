@@ -89,7 +89,7 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Get Relations',
 				value: 'getRelations',
-				description: 'Get Similiar Entitites Relevant to the Alert',
+				description: 'Get Similiar Entities Relevant to the Alert',
 				action: `Get Alert Relations`,
 			},
 			{
@@ -107,7 +107,7 @@ export const resource: INodeProperties[] = [
 			{
 				name: 'Unmerge',
 				value: 'unmerge',
-				description: `Unlink ${thisRes} from a cse`,
+				description: `Unlink ${thisRes} from a case`,
 				action: `Unmerge ${thisRes}`,
 			},
 			{

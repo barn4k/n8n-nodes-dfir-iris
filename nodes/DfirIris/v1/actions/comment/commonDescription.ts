@@ -7,8 +7,8 @@ export const rObjectName: INodeProperties = {
 	options: [
 		{ name: 'Alert', value: 'alert' },
 		{ name: 'Asset', value: 'assets' },
-		// {name: "Event", value: "events"},
-		// {name: "Evidence", value: "evidences"},
+		{ name: "Event", value: "events"},
+		{ name: "Evidence", value: "evidences"},
 		{ name: 'IOC', value: 'ioc' },
 		{ name: 'Note', value: 'notes' },
 		{ name: 'Task', value: 'tasks' },

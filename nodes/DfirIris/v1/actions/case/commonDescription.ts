@@ -342,7 +342,7 @@ export const caseOpenStartDate: INodeProperties = {
 	type: 'dateTime',
 	default: '',
 	description:
-		'Lower Boundary when case was openedTime of the Event in UTC according to RFC. Works only together with end date.',
+		'Lower Boundary when case was opened. Time of the Event in UTC according to RFC. Works only together with end date.',
 	hint: 'e.g. 2023-03-26T03:00:30',
 };
 
