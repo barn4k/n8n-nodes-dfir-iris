@@ -33,3 +33,12 @@ jobs:
 
       - name: Publish with provenance
         run: pnpm publish --provenance --access public --no-git-checks --ignore-scripts
+      
+      - name: Collect logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: npm-logs
+          path: /home/runner/.npm/_logs/*.log
+          retention-days: 1
+        
