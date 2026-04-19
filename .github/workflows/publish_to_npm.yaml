@@ -33,4 +33,3 @@ jobs:
 
       - name: Publish with provenance
         run: pnpm publish --provenance --access public --no-git-checks --ignore-scripts
-        # run: pnpm publish --provenance --access public --no-git-checks --ignore-scripts
